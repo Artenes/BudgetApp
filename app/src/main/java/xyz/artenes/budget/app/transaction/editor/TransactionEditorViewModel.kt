@@ -28,8 +28,8 @@ class TransactionEditorViewModel @Inject constructor(private val database: AppDa
     private val _amount = MutableStateFlow("")
     val amount: StateFlow<String> = _amount
 
-    private val _finish = MutableStateFlow(Event(true))
-    val finish: StateFlow<Event> = _finish
+    private val _event = MutableStateFlow(Event())
+    val event: StateFlow<Event> = _event
 
     fun setDescription(value: String) {
         _description.value = value
@@ -51,7 +51,7 @@ class TransactionEditorViewModel @Inject constructor(private val database: AppDa
                     )
                 )
             }
-            _finish.value = Event()
+            _event.value = Event("finish")
         }
     }
 

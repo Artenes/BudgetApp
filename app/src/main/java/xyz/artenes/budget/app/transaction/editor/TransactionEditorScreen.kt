@@ -23,9 +23,9 @@ fun TransactionEditorScreen(
 
     Scaffold { it ->
 
-        val finish by viewModel.finish.collectAsState()
-        LaunchedEffect(key1 = finish) {
-            finish.consume {
+        val event by viewModel.event.collectAsState()
+        LaunchedEffect(key1 = event) {
+            event.consume {
                 back()
             }
         }
