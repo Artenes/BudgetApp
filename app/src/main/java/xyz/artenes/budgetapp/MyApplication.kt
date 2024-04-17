@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package xyz.artenes.app
+package xyz.artenes.budgetapp
 
 import android.app.Application
-import xyz.artenes.app.logging.ProductionTree
+import xyz.artenes.budgetapp.logging.ProductionTree
 import dagger.hilt.android.HiltAndroidApp
 import timber.log.Timber
 

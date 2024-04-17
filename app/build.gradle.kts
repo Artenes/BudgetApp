@@ -24,17 +24,17 @@ plugins {
 }
 
 android {
-    namespace = "xyz.artenes.app"
+    namespace = "xyz.artenes.budgetapp"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "xyz.artenes.app"
+        applicationId = "xyz.artenes.budgetapp"
         minSdk = 21
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
 
-        testInstrumentationRunner = "xyz.artenes.app.HiltTestRunner"
+        testInstrumentationRunner = "xyz.artenes.budgetapp.HiltTestRunner"
         vectorDrawables {
             useSupportLibrary = true
         }
@@ -53,6 +53,7 @@ android {
     }
 
     compileOptions {
+        isCoreLibraryDesugaringEnabled = true
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
     }
@@ -85,6 +86,8 @@ dependencies {
     val composeBom = platform(libs.androidx.compose.bom)
     implementation(composeBom)
     androidTestImplementation(composeBom)
+
+    coreLibraryDesugaring(libs.android.tools.desugar)
 
     // Core Android dependencies
     implementation(libs.androidx.core.ktx)

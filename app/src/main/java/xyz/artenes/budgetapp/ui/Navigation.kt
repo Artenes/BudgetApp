@@ -14,23 +14,36 @@
  * limitations under the License.
  */
 
-package xyz.artenes.app.ui
+package xyz.artenes.budgetapp.ui
 
-import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import xyz.artenes.app.ui.mymodel.MyModelScreen
+import xyz.artenes.budgetapp.ui.transaction.TransactionEditorScreen
+import xyz.artenes.budgetapp.ui.transactions.BudgetScreen
 
 @Composable
 fun MainNavigation() {
     val navController = rememberNavController()
 
-    NavHost(navController = navController, startDestination = "main") {
-        composable("main") { MyModelScreen(modifier = Modifier.padding(16.dp)) }
-        // TODO: Add more destinations
+    NavHost(navController = navController, startDestination = "transactions") {
+
+        composable("transactions") {
+            BudgetScreen(
+                navigateToTransactionEditScreen = {
+                    navController.navigate("transactionEditor")
+                }
+            )
+        }
+
+        composable("transactionEditor") {
+            TransactionEditorScreen(
+                back = {
+                    navController.popBackStack()
+                }
+            )
+        }
+
     }
 }

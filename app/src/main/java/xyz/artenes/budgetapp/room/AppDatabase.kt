@@ -14,28 +14,12 @@
  * limitations under the License.
  */
 
-package xyz.artenes.app.data.local.database
+package xyz.artenes.budgetapp.room
 
-import androidx.room.Dao
-import androidx.room.Entity
-import androidx.room.Insert
-import androidx.room.PrimaryKey
-import androidx.room.Query
-import kotlinx.coroutines.flow.Flow
+import androidx.room.Database
+import androidx.room.RoomDatabase
 
-@Entity
-data class MyModel(
-    val name: String
-) {
-    @PrimaryKey(autoGenerate = true)
-    var uid: Int = 0
-}
-
-@Dao
-interface MyModelDao {
-    @Query("SELECT * FROM mymodel ORDER BY uid DESC LIMIT 10")
-    fun getMyModels(): Flow<List<MyModel>>
-
-    @Insert
-    suspend fun insertMyModel(item: MyModel)
+@Database(entities = [TransactionEntity::class], version = 1)
+abstract class AppDatabase : RoomDatabase() {
+    abstract fun transactionsDao(): TransactionDao
 }
