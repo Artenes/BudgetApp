@@ -14,14 +14,12 @@
  * limitations under the License.
  */
 
-package xyz.artenes.budgetapp.ui.theme
+package xyz.artenes.budget.data
 
-import androidx.compose.ui.graphics.Color
+import androidx.room.Database
+import androidx.room.RoomDatabase
 
-val Purple80 = Color(0xFFD0BCFF)
-val PurpleGrey80 = Color(0xFFCCC2DC)
-val Pink80 = Color(0xFFEFB8C8)
-
-val Purple40 = Color(0xFF6650a4)
-val PurpleGrey40 = Color(0xFF625b71)
-val Pink40 = Color(0xFF7D5260)
+@Database(entities = [TransactionEntity::class], version = 1)
+abstract class AppDatabase : RoomDatabase() {
+    abstract fun transactionsDao(): TransactionDao
+}

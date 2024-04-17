@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package xyz.artenes.budgetapp.ui.theme
+package xyz.artenes.budget.app.theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle

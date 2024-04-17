@@ -1,4 +1,4 @@
-package xyz.artenes.budgetapp.logging
+package xyz.artenes.budget.utils
 
 import android.util.Log
 import timber.log.Timber

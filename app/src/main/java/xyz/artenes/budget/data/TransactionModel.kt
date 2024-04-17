@@ -1,4 +1,4 @@
-package xyz.artenes.budgetapp.room
+package xyz.artenes.budget.data
 
 import androidx.room.Dao
 import androidx.room.Entity

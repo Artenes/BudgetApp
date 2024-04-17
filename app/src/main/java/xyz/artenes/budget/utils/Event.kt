@@ -1,4 +1,4 @@
-package xyz.artenes.budgetapp.utils
+package xyz.artenes.budget.utils
 
 class Event(private val ignore: Boolean = false) {
 

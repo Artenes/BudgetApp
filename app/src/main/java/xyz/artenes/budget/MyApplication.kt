@@ -14,30 +14,20 @@
  * limitations under the License.
  */
 
-package xyz.artenes.budgetapp.room
+package xyz.artenes.budget
 
-import android.content.Context
-import androidx.room.Room
-import dagger.Module
-import dagger.Provides
-import dagger.hilt.InstallIn
-import dagger.hilt.android.qualifiers.ApplicationContext
-import dagger.hilt.components.SingletonComponent
-import javax.inject.Singleton
+import android.app.Application
+import xyz.artenes.budget.utils.ProductionTree
+import dagger.hilt.android.HiltAndroidApp
+import timber.log.Timber
 
+@HiltAndroidApp
+class MyApplication : Application() {
 
-@Module
-@InstallIn(SingletonComponent::class)
-class RoomModule {
-
-    @Provides
-    @Singleton
-    fun provideAppDatabase(@ApplicationContext appContext: Context): AppDatabase {
-        return Room.databaseBuilder(
-            appContext,
-            AppDatabase::class.java,
-            "budget.db"
-        ).build()
+    override fun onCreate() {
+        super.onCreate()
+        val tree = if (BuildConfig.DEBUG) Timber.DebugTree() else ProductionTree()
+        Timber.plant(tree)
     }
 
 }

@@ -1,4 +1,4 @@
-package xyz.artenes.budgetapp.ui.transaction
+package xyz.artenes.budget.app.transaction.editor
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -8,9 +8,9 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import xyz.artenes.budgetapp.room.AppDatabase
-import xyz.artenes.budgetapp.room.TransactionEntity
-import xyz.artenes.budgetapp.utils.Event
+import xyz.artenes.budget.data.AppDatabase
+import xyz.artenes.budget.data.TransactionEntity
+import xyz.artenes.budget.utils.Event
 import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter
 import java.util.UUID

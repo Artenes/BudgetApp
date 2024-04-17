@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package xyz.artenes.budgetapp.ui
+package xyz.artenes.budget.app
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -24,7 +24,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import dagger.hilt.android.AndroidEntryPoint
-import xyz.artenes.budgetapp.ui.theme.MyApplicationTheme
+import xyz.artenes.budget.app.theme.MyApplicationTheme
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {

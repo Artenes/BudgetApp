@@ -14,12 +14,30 @@
  * limitations under the License.
  */
 
-package xyz.artenes.budgetapp.room
+package xyz.artenes.budget.data
 
-import androidx.room.Database
-import androidx.room.RoomDatabase
+import android.content.Context
+import androidx.room.Room
+import dagger.Module
+import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
+import dagger.hilt.components.SingletonComponent
+import javax.inject.Singleton
 
-@Database(entities = [TransactionEntity::class], version = 1)
-abstract class AppDatabase : RoomDatabase() {
-    abstract fun transactionsDao(): TransactionDao
+
+@Module
+@InstallIn(SingletonComponent::class)
+class RoomModule {
+
+    @Provides
+    @Singleton
+    fun provideAppDatabase(@ApplicationContext appContext: Context): AppDatabase {
+        return Room.databaseBuilder(
+            appContext,
+            AppDatabase::class.java,
+            "budget.db"
+        ).build()
+    }
+
 }

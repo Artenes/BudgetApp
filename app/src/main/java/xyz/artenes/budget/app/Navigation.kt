@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package xyz.artenes.budgetapp.ui
+package xyz.artenes.budget.app
 
 import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import xyz.artenes.budgetapp.ui.transaction.TransactionEditorScreen
-import xyz.artenes.budgetapp.ui.transactions.BudgetScreen
+import xyz.artenes.budget.app.transaction.editor.TransactionEditorScreen
+import xyz.artenes.budget.app.transaction.list.BudgetScreen
 
 @Composable
 fun MainNavigation() {

@@ -1,4 +1,4 @@
-package xyz.artenes.budgetapp.ui.transaction
+package xyz.artenes.budget.app.transaction.editor
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding

@@ -1,4 +1,4 @@
-package xyz.artenes.budgetapp.ui.transactions
+package xyz.artenes.budget.app.transaction.list
 
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn

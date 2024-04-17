@@ -14,20 +14,14 @@
  * limitations under the License.
  */
 
-package xyz.artenes.budgetapp
+package xyz.artenes.budget.app.theme
 
-import android.app.Application
-import xyz.artenes.budgetapp.logging.ProductionTree
-import dagger.hilt.android.HiltAndroidApp
-import timber.log.Timber
+import androidx.compose.ui.graphics.Color
 
-@HiltAndroidApp
-class MyApplication : Application() {
+val Purple80 = Color(0xFFD0BCFF)
+val PurpleGrey80 = Color(0xFFCCC2DC)
+val Pink80 = Color(0xFFEFB8C8)
 
-    override fun onCreate() {
-        super.onCreate()
-        val tree = if (BuildConfig.DEBUG) Timber.DebugTree() else ProductionTree()
-        Timber.plant(tree)
-    }
-
-}
+val Purple40 = Color(0xFF6650a4)
+val PurpleGrey40 = Color(0xFF625b71)
+val Pink40 = Color(0xFF7D5260)
