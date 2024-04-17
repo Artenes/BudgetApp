@@ -3,12 +3,10 @@ package xyz.artenes.budget.app.transaction.editor
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import xyz.artenes.budget.data.AppDatabase
+import xyz.artenes.budget.data.AppRepository
 import xyz.artenes.budget.data.TransactionEntity
 import xyz.artenes.budget.utils.Event
 import java.time.OffsetDateTime
@@ -17,7 +15,7 @@ import java.util.UUID
 import javax.inject.Inject
 
 @HiltViewModel
-class TransactionEditorViewModel @Inject constructor(private val database: AppDatabase) :
+class TransactionEditorViewModel @Inject constructor(private val repository: AppRepository) :
     ViewModel() {
 
     private val dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
@@ -41,16 +39,14 @@ class TransactionEditorViewModel @Inject constructor(private val database: AppDa
 
     fun save() {
         viewModelScope.launch {
-            withContext(Dispatchers.IO) {
-                database.transactionsDao().insert(
-                    TransactionEntity(
-                        UUID.randomUUID().toString(),
-                        _description.value,
-                        _amount.value.toInt(),
-                        OffsetDateTime.now().format(dateFormatter)
-                    )
+            repository.saveTransaction(
+                TransactionEntity(
+                    UUID.randomUUID().toString(),
+                    _description.value,
+                    _amount.value.toInt(),
+                    OffsetDateTime.now().format(dateFormatter)
                 )
-            }
+            )
             _event.value = Event("finish")
         }
     }
