@@ -16,6 +16,8 @@
 
 package xyz.artenes.budget.app
 
+import androidx.compose.animation.AnimatedContentTransitionScope
+import androidx.compose.animation.core.tween
 import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -37,7 +39,19 @@ fun MainNavigation() {
             )
         }
 
-        composable("transactionEditor") {
+        composable(
+            "transactionEditor",
+            enterTransition = {
+                slideIntoContainer(
+                    AnimatedContentTransitionScope.SlideDirection.Up, tween(400)
+                )
+            },
+            exitTransition = {
+                slideOutOfContainer(
+                    AnimatedContentTransitionScope.SlideDirection.Down, tween(400)
+                )
+            },
+        ) {
             TransactionEditorScreen(
                 back = {
                     navController.popBackStack()
