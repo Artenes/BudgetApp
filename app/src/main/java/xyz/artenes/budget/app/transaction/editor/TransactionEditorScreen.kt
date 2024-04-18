@@ -5,12 +5,11 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -21,6 +20,9 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusDirection
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -49,6 +51,8 @@ fun TransactionEditorScreen(
             verticalArrangement = Arrangement.Center
         ) {
 
+            val focusManager = LocalFocusManager.current
+
             val description by viewModel.description.collectAsState()
             val amount by viewModel.amount.collectAsState()
 
@@ -74,7 +78,12 @@ fun TransactionEditorScreen(
                     unfocusedContainerColor = MaterialTheme.colorScheme.secondaryContainer,
                     focusedContainerColor = MaterialTheme.colorScheme.secondaryContainer,
                     focusedTextColor = MaterialTheme.colorScheme.onSecondaryContainer,
-                )
+                ),
+                maxLines = 1,
+                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
+                keyboardActions = KeyboardActions(onNext = {
+                    focusManager.moveFocus(FocusDirection.Down)
+                })
             )
 
             TextField(
@@ -84,7 +93,6 @@ fun TransactionEditorScreen(
                 label = {
                     Text(text = "Price")
                 },
-                keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
                 value = amount,
                 onValueChange = { value ->
                     viewModel.setAmount(value)
@@ -93,7 +101,12 @@ fun TransactionEditorScreen(
                     unfocusedContainerColor = MaterialTheme.colorScheme.secondaryContainer,
                     focusedContainerColor = MaterialTheme.colorScheme.secondaryContainer,
                     focusedTextColor = MaterialTheme.colorScheme.onSecondaryContainer,
-                )
+                ),
+                maxLines = 1,
+                keyboardOptions = KeyboardOptions(
+                    imeAction = ImeAction.Done,
+                    keyboardType = KeyboardType.Number
+                ),
             )
 
             Button(
