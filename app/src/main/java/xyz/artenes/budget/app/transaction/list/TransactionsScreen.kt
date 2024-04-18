@@ -6,6 +6,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -15,13 +16,12 @@ import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 
 @Composable
-fun BudgetScreen(
+fun TransactionsListScreen(
     navigateToTransactionEditScreen: () -> Unit,
     viewModel: TransactionsViewModel = hiltViewModel()
 ) {
 
     Scaffold(
-
         floatingActionButton = {
             FloatingActionButton(onClick = navigateToTransactionEditScreen) {
                 Icon(imageVector = Icons.Filled.Add, contentDescription = "")
@@ -41,7 +41,10 @@ fun BudgetScreen(
                 }
             ) { index ->
 
-                Text(text = transactions[index].description)
+                Text(
+                    color = MaterialTheme.colorScheme.onBackground,
+                    text = transactions[index].description
+                )
 
             }
 

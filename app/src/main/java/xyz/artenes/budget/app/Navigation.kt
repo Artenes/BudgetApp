@@ -21,7 +21,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import xyz.artenes.budget.app.transaction.editor.TransactionEditorScreen
-import xyz.artenes.budget.app.transaction.list.BudgetScreen
+import xyz.artenes.budget.app.transaction.list.TransactionsListScreen
 
 @Composable
 fun MainNavigation() {
@@ -30,7 +30,7 @@ fun MainNavigation() {
     NavHost(navController = navController, startDestination = "transactions") {
 
         composable("transactions") {
-            BudgetScreen(
+            TransactionsListScreen(
                 navigateToTransactionEditScreen = {
                     navController.navigate("transactionEditor")
                 }
