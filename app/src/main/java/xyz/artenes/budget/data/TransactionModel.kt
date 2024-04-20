@@ -23,7 +23,7 @@ interface TransactionDao {
     fun getAll(): Flow<List<TransactionEntity>>
 
     @Query("SELECT SUM(amount) FROM transactions WHERE date LIKE :yearAndMonth")
-    suspend fun totalAmountForMonth(yearAndMonth: String): Int
+    fun totalAmountForMonthAsFlow(yearAndMonth: String): Flow<Int>
 
     @Insert
     suspend fun insert(transaction: TransactionEntity)

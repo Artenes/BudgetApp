@@ -1,5 +1,6 @@
 package xyz.artenes.budget.data
 
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
 import xyz.artenes.budget.utils.YearAndMonth
 import javax.inject.Inject
@@ -20,10 +21,7 @@ class AppRepository @Inject constructor(
         }
     }
 
-    suspend fun totalAmountForMonth(yearAndMonth: YearAndMonth): Int {
-        return withContext(dispatcher) {
-            appDatabase.transactionsDao().totalAmountForMonth("$yearAndMonth%")
-        }
-    }
+    fun totalAmountForMonthAsFlow(yearAndMonth: YearAndMonth): Flow<Int> =
+        appDatabase.transactionsDao().totalAmountForMonthAsFlow("$yearAndMonth%")
 
 }

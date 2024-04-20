@@ -1,24 +1,31 @@
 package xyz.artenes.budget.app.transaction.editor
 
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Check
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldDefaults
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.platform.LocalFocusManager
@@ -27,13 +34,43 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TransactionEditorScreen(
     back: () -> Unit,
     viewModel: TransactionEditorViewModel = hiltViewModel()
 ) {
 
-    Scaffold { it ->
+    Scaffold(
+
+        topBar = {
+
+            TopAppBar(
+                title = { },
+                colors = TopAppBarDefaults.topAppBarColors().copy(
+                    containerColor = MaterialTheme.colorScheme.background
+                ),
+                navigationIcon = {
+                    IconButton(onClick = back) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = ""
+                        )
+                    }
+                }
+            )
+
+        },
+
+        floatingActionButton = {
+
+            FloatingActionButton(onClick = { viewModel.save() }) {
+                Icon(imageVector = Icons.Filled.Check, contentDescription = "")
+            }
+
+        }
+
+    ) { padding ->
 
         val event by viewModel.event.collectAsState()
         LaunchedEffect(key1 = event) {
@@ -44,26 +81,21 @@ fun TransactionEditorScreen(
 
         Column(
             modifier = Modifier
-                .padding(it)
+                .padding(padding)
                 .padding(20.dp)
                 .fillMaxSize(),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
         ) {
 
+            /*
+            State
+             */
             val focusManager = LocalFocusManager.current
-
             val description by viewModel.description.collectAsState()
             val amount by viewModel.amount.collectAsState()
 
-            Text(
-                modifier = Modifier.padding(bottom = 20.dp),
-                text = "Create Transaction",
-                style = MaterialTheme.typography.titleLarge,
-                color = MaterialTheme.colorScheme.onBackground
-            )
+            Spacer(modifier = Modifier.height(120.dp))
 
-            TextField(
+            OutlinedTextField(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(bottom = 10.dp),
@@ -74,10 +106,13 @@ fun TransactionEditorScreen(
                 onValueChange = { value ->
                     viewModel.setDescription(value)
                 },
-                colors = TextFieldDefaults.colors().copy(
-                    unfocusedContainerColor = MaterialTheme.colorScheme.secondaryContainer,
-                    focusedContainerColor = MaterialTheme.colorScheme.secondaryContainer,
-                    focusedTextColor = MaterialTheme.colorScheme.onSecondaryContainer,
+                colors = OutlinedTextFieldDefaults.colors().copy(
+                    focusedTextColor = MaterialTheme.colorScheme.onBackground,
+                    focusedLabelColor = MaterialTheme.colorScheme.onBackground,
+                    unfocusedLabelColor = MaterialTheme.colorScheme.onBackground,
+                    unfocusedIndicatorColor = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.5f),
+                    focusedIndicatorColor = MaterialTheme.colorScheme.onBackground,
+                    cursorColor = MaterialTheme.colorScheme.onBackground,
                 ),
                 maxLines = 1,
                 keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
@@ -86,7 +121,7 @@ fun TransactionEditorScreen(
                 })
             )
 
-            TextField(
+            OutlinedTextField(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(bottom = 10.dp),
@@ -97,10 +132,13 @@ fun TransactionEditorScreen(
                 onValueChange = { value ->
                     viewModel.setAmount(value)
                 },
-                colors = TextFieldDefaults.colors().copy(
-                    unfocusedContainerColor = MaterialTheme.colorScheme.secondaryContainer,
-                    focusedContainerColor = MaterialTheme.colorScheme.secondaryContainer,
-                    focusedTextColor = MaterialTheme.colorScheme.onSecondaryContainer,
+                colors = OutlinedTextFieldDefaults.colors().copy(
+                    focusedTextColor = MaterialTheme.colorScheme.onBackground,
+                    focusedLabelColor = MaterialTheme.colorScheme.onBackground,
+                    unfocusedLabelColor = MaterialTheme.colorScheme.onBackground,
+                    unfocusedIndicatorColor = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.5f),
+                    focusedIndicatorColor = MaterialTheme.colorScheme.onBackground,
+                    cursorColor = MaterialTheme.colorScheme.onBackground,
                 ),
                 maxLines = 1,
                 keyboardOptions = KeyboardOptions(
@@ -108,20 +146,6 @@ fun TransactionEditorScreen(
                     keyboardType = KeyboardType.Number
                 ),
             )
-
-            Button(
-                modifier = Modifier.fillMaxWidth(),
-                onClick = { viewModel.save() },
-                shape = MaterialTheme.shapes.small,
-                colors = ButtonDefaults.buttonColors().copy(
-                    containerColor = MaterialTheme.colorScheme.tertiary,
-                )
-            ) {
-                Text(
-                    color = MaterialTheme.colorScheme.onTertiary,
-                    text = "Save"
-                )
-            }
 
         }
 
