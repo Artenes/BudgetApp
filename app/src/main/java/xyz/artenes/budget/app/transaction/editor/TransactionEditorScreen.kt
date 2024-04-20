@@ -3,11 +3,9 @@ package xyz.artenes.budget.app.transaction.editor
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardActions
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Check
@@ -16,10 +14,7 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
@@ -33,6 +28,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import xyz.artenes.budget.app.components.CustomTextField
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -95,56 +91,25 @@ fun TransactionEditorScreen(
 
             Spacer(modifier = Modifier.height(120.dp))
 
-            OutlinedTextField(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = 10.dp),
-                label = {
-                    Text(text = "Description")
-                },
+            CustomTextField(
+                modifier = Modifier.padding(bottom = 10.dp),
+                label = "Description",
                 value = description,
-                onValueChange = { value ->
-                    viewModel.setDescription(value)
-                },
-                colors = OutlinedTextFieldDefaults.colors().copy(
-                    focusedTextColor = MaterialTheme.colorScheme.onBackground,
-                    focusedLabelColor = MaterialTheme.colorScheme.onBackground,
-                    unfocusedLabelColor = MaterialTheme.colorScheme.onBackground,
-                    unfocusedIndicatorColor = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.5f),
-                    focusedIndicatorColor = MaterialTheme.colorScheme.onBackground,
-                    cursorColor = MaterialTheme.colorScheme.onBackground,
-                ),
-                maxLines = 1,
-                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
-                keyboardActions = KeyboardActions(onNext = {
-                    focusManager.moveFocus(FocusDirection.Down)
-                })
+                onValueChange = viewModel::setDescription,
+                imeAction = ImeAction.Next,
+                keyboardActions = KeyboardActions(
+                    onNext = {
+                        focusManager.moveFocus(FocusDirection.Down)
+                    },
+                )
             )
 
-            OutlinedTextField(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = 10.dp),
-                label = {
-                    Text(text = "Price")
-                },
+            CustomTextField(
+                modifier = Modifier.padding(bottom = 10.dp),
+                label = "Amount",
                 value = amount,
-                onValueChange = { value ->
-                    viewModel.setAmount(value)
-                },
-                colors = OutlinedTextFieldDefaults.colors().copy(
-                    focusedTextColor = MaterialTheme.colorScheme.onBackground,
-                    focusedLabelColor = MaterialTheme.colorScheme.onBackground,
-                    unfocusedLabelColor = MaterialTheme.colorScheme.onBackground,
-                    unfocusedIndicatorColor = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.5f),
-                    focusedIndicatorColor = MaterialTheme.colorScheme.onBackground,
-                    cursorColor = MaterialTheme.colorScheme.onBackground,
-                ),
-                maxLines = 1,
-                keyboardOptions = KeyboardOptions(
-                    imeAction = ImeAction.Done,
-                    keyboardType = KeyboardType.Number
-                ),
+                onValueChange = viewModel::setAmount,
+                keyboardType = KeyboardType.Number
             )
 
         }
