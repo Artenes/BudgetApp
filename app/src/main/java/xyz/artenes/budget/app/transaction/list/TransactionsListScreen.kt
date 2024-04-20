@@ -23,6 +23,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import java.time.format.DateTimeFormatter
 
 @Composable
 fun TransactionsListScreen(
@@ -99,7 +100,7 @@ fun TransactionsListScreen(
                                 )
                                 Text(
                                     color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.5f),
-                                    text = transactions[index].date,
+                                    text = transactions[index].date.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")),
                                     style = MaterialTheme.typography.bodySmall
                                 )
                             }

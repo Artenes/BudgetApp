@@ -9,16 +9,14 @@ import kotlinx.coroutines.launch
 import xyz.artenes.budget.data.AppRepository
 import xyz.artenes.budget.data.TransactionEntity
 import xyz.artenes.budget.utils.Event
+import java.time.LocalDate
 import java.time.OffsetDateTime
-import java.time.format.DateTimeFormatter
 import java.util.UUID
 import javax.inject.Inject
 
 @HiltViewModel
 class TransactionEditorViewModel @Inject constructor(private val repository: AppRepository) :
     ViewModel() {
-
-    private val dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
 
     private val _description = MutableStateFlow("")
     val description: StateFlow<String> = _description
@@ -41,10 +39,11 @@ class TransactionEditorViewModel @Inject constructor(private val repository: App
         viewModelScope.launch {
             repository.saveTransaction(
                 TransactionEntity(
-                    UUID.randomUUID().toString(),
+                    UUID.randomUUID(),
                     _description.value,
                     _amount.value.toInt(),
-                    OffsetDateTime.now().format(dateFormatter)
+                    LocalDate.now(),
+                    OffsetDateTime.now()
                 )
             )
             _event.value = Event("finish")
