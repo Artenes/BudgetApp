@@ -25,6 +25,7 @@ private val DarkColorScheme = darkColorScheme(
     secondaryContainer = Color(0XFFFFFFFF),
     onSecondaryContainer = Color(0XFF757575),
     onTertiary = Color(0XFFFFFFFF),
+    scrim = Color(0XFF757575)
 )
 
 private val LightColorScheme = lightColorScheme(
