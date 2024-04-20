@@ -1,3 +1,9 @@
+import java.util.Properties
+
+val secrets = Properties().apply {
+    load(rootProject.file("secrets.properties").inputStream())
+}
+
 @Suppress("DSL_SCOPE_VIOLATION") // Remove when fixed https://youtrack.jetbrains.com/issue/KTIJ-19369
 plugins {
     alias(libs.plugins.android.application)
@@ -8,6 +14,14 @@ plugins {
 }
 
 android {
+    signingConfigs {
+        create("release") {
+            storeFile = file(secrets["keystorePath"] as String)
+            storePassword = secrets["keystorePassword"] as String
+            keyAlias = secrets["keystoreAlias"] as String
+            keyPassword = secrets["keystoreAliasPassword"] as String
+        }
+    }
     namespace = "xyz.artenes.budget"
     compileSdk = 34
 
@@ -33,6 +47,7 @@ android {
         getByName("release") {
             isMinifyEnabled = false
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+            signingConfig = signingConfigs.getByName("release")
         }
     }
 
