@@ -9,6 +9,7 @@ import kotlinx.coroutines.launch
 import xyz.artenes.budget.data.AppRepository
 import xyz.artenes.budget.data.TransactionEntity
 import xyz.artenes.budget.utils.Event
+import xyz.artenes.budget.utils.ValueWithError
 import java.time.LocalDate
 import java.time.OffsetDateTime
 import java.util.UUID
@@ -18,30 +19,49 @@ import javax.inject.Inject
 class TransactionEditorViewModel @Inject constructor(private val repository: AppRepository) :
     ViewModel() {
 
-    private val _description = MutableStateFlow("")
-    val description: StateFlow<String> = _description
+    private val _description = MutableStateFlow(ValueWithError())
+    val description: StateFlow<ValueWithError> = _description
 
-    private val _amount = MutableStateFlow("")
-    val amount: StateFlow<String> = _amount
+    private val _amount = MutableStateFlow(ValueWithError())
+    val amount: StateFlow<ValueWithError> = _amount
 
     private val _event = MutableStateFlow(Event())
     val event: StateFlow<Event> = _event
 
     fun setDescription(value: String) {
-        _description.value = value
+        _description.value = ValueWithError(value)
     }
 
     fun setAmount(value: String) {
-        _amount.value = value
+        _amount.value = ValueWithError(value)
     }
 
     fun save() {
+
+        val description = _description.value
+        val amount = _amount.value
+
+        if (description.value.isEmpty()) {
+            _description.value = description.copy(error = "Required")
+            return
+        }
+
+        if (amount.value.isEmpty()) {
+            _amount.value = amount.copy(error = "Required")
+            return
+        }
+
+        if (amount.value.toIntOrNull() == null) {
+            _amount.value = amount.copy(error = "Invalid value")
+            return
+        }
+
         viewModelScope.launch {
             repository.saveTransaction(
                 TransactionEntity(
                     UUID.randomUUID(),
-                    _description.value,
-                    _amount.value.toInt(),
+                    description.value,
+                    amount.value.toInt(),
                     LocalDate.now(),
                     OffsetDateTime.now()
                 )

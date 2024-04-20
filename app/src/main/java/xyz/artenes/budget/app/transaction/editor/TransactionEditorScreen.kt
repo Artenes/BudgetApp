@@ -94,8 +94,9 @@ fun TransactionEditorScreen(
             CustomTextField(
                 modifier = Modifier.padding(bottom = 10.dp),
                 label = "Description",
-                value = description,
+                value = description.value,
                 onValueChange = viewModel::setDescription,
+                errorMessage = description.error,
                 imeAction = ImeAction.Next,
                 keyboardActions = KeyboardActions(
                     onNext = {
@@ -107,7 +108,8 @@ fun TransactionEditorScreen(
             CustomTextField(
                 modifier = Modifier.padding(bottom = 10.dp),
                 label = "Amount",
-                value = amount,
+                value = amount.value,
+                errorMessage = amount.error,
                 onValueChange = viewModel::setAmount,
                 keyboardType = KeyboardType.Number
             )

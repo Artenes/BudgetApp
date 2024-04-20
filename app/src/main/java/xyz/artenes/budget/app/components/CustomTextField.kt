@@ -17,6 +17,7 @@ fun CustomTextField(
     modifier: Modifier = Modifier,
     label: String = "",
     value: String = "",
+    errorMessage: String? = null,
     onValueChange: (String) -> Unit = {},
     imeAction: ImeAction = ImeAction.Done,
     keyboardActions: KeyboardActions = KeyboardActions(),
@@ -30,6 +31,12 @@ fun CustomTextField(
         label = {
             Text(text = label)
         },
+        isError = errorMessage != null,
+        supportingText = if (errorMessage != null) {
+            { Text(text = errorMessage) }
+        } else {
+            null
+        },
         value = value,
         onValueChange = onValueChange,
         colors = OutlinedTextFieldDefaults.colors().copy(
@@ -38,6 +45,7 @@ fun CustomTextField(
             unfocusedLabelColor = MaterialTheme.colorScheme.onBackground,
             unfocusedIndicatorColor = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.5f),
             focusedIndicatorColor = MaterialTheme.colorScheme.onBackground,
+            errorIndicatorColor = MaterialTheme.colorScheme.tertiary,
             cursorColor = MaterialTheme.colorScheme.onBackground,
         ),
         maxLines = 1,
