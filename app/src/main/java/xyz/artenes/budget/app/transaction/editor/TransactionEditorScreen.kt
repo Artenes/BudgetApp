@@ -21,6 +21,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.platform.LocalFocusManager
@@ -28,6 +31,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import xyz.artenes.budget.app.components.CustomSpinner
 import xyz.artenes.budget.app.components.CustomTextField
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -90,6 +94,20 @@ fun TransactionEditorScreen(
             val amount by viewModel.amount.collectAsState()
 
             Spacer(modifier = Modifier.height(120.dp))
+
+            var value by remember {
+                mutableStateOf("expense")
+            }
+            CustomSpinner(
+                label = "Type",
+                value = value,
+                options = listOf("expense", "income"),
+                onOptionSelected = {
+                    value = it
+                }
+            )
+
+            Spacer(modifier = Modifier.height(10.dp))
 
             CustomTextField(
                 modifier = Modifier.padding(bottom = 10.dp),
