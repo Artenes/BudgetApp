@@ -21,6 +21,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -31,8 +32,11 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import xyz.artenes.budget.app.components.CustomDatePicker
 import xyz.artenes.budget.app.components.CustomSpinner
 import xyz.artenes.budget.app.components.CustomTextField
+import java.time.Instant
+import java.time.LocalDate
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -130,6 +134,18 @@ fun TransactionEditorScreen(
                 errorMessage = amount.error,
                 onValueChange = viewModel::setAmount,
                 keyboardType = KeyboardType.Number
+            )
+
+            var date by remember {
+                mutableStateOf(LocalDate.now())
+            }
+
+            CustomDatePicker(
+                label = "Date",
+                value = date,
+                onDateSelected = { newDate ->
+                    date = newDate
+                }
             )
 
         }
