@@ -7,6 +7,7 @@ import androidx.room.Insert
 import androidx.room.PrimaryKey
 import androidx.room.Query
 import kotlinx.coroutines.flow.Flow
+import xyz.artenes.budget.core.TransactionType
 import java.time.LocalDate
 import java.time.OffsetDateTime
 import java.util.UUID
@@ -18,6 +19,7 @@ data class TransactionEntity(
     val description: String,
     val amount: Int,
     val date: LocalDate,
+    val type: TransactionType,
     @ColumnInfo("created_at")
     val createdAt: OffsetDateTime
 )

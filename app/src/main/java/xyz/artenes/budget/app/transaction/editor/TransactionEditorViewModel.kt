@@ -6,6 +6,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import xyz.artenes.budget.core.TransactionType
 import xyz.artenes.budget.data.AppRepository
 import xyz.artenes.budget.data.TransactionEntity
 import xyz.artenes.budget.utils.Event
@@ -25,6 +26,12 @@ class TransactionEditorViewModel @Inject constructor(private val repository: App
     private val _amount = MutableStateFlow(ValueWithError())
     val amount: StateFlow<ValueWithError> = _amount
 
+    private val _type = MutableStateFlow(TransactionType.EXPENSE)
+    val type: StateFlow<TransactionType> = _type
+
+    private val _date = MutableStateFlow(LocalDate.now())
+    val date: StateFlow<LocalDate> = _date
+
     private val _event = MutableStateFlow(Event())
     val event: StateFlow<Event> = _event
 
@@ -34,6 +41,14 @@ class TransactionEditorViewModel @Inject constructor(private val repository: App
 
     fun setAmount(value: String) {
         _amount.value = ValueWithError(value)
+    }
+
+    fun setType(value: TransactionType) {
+        _type.value = value
+    }
+
+    fun setDate(value: LocalDate) {
+        _date.value = value
     }
 
     fun save() {
@@ -62,7 +77,8 @@ class TransactionEditorViewModel @Inject constructor(private val repository: App
                     UUID.randomUUID(),
                     description.value,
                     amount.value.toInt(),
-                    LocalDate.now(),
+                    _date.value,
+                    _type.value,
                     OffsetDateTime.now()
                 )
             )

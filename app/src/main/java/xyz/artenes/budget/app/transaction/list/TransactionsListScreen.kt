@@ -18,11 +18,13 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import xyz.artenes.budget.core.TransactionType
 import java.time.format.DateTimeFormatter
 
 @Composable
@@ -89,27 +91,42 @@ fun TransactionsListScreen(
                     Column {
 
                         Row(
-                            modifier = Modifier.padding(20.dp)
+                            modifier = Modifier.padding(20.dp),
+                            verticalAlignment = Alignment.CenterVertically
                         ) {
+
+                            val transaction = transactions[index]
 
                             Column {
                                 Text(
                                     color = MaterialTheme.colorScheme.onBackground,
-                                    text = transactions[index].description,
+                                    text = transaction.description,
                                     style = MaterialTheme.typography.titleLarge
                                 )
                                 Text(
                                     color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.5f),
-                                    text = transactions[index].date.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")),
+                                    text = transaction.date.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")),
                                     style = MaterialTheme.typography.bodySmall
                                 )
                             }
 
                             Spacer(modifier = Modifier.weight(1f))
 
+                            val color = if (transaction.type == TransactionType.EXPENSE) {
+                                MaterialTheme.colorScheme.onBackground
+                            } else {
+                                MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f)
+                            }
+
+                            val text = if (transaction.type == TransactionType.EXPENSE) {
+                                "- R$ ${transaction.amount}"
+                            } else {
+                                "+ R$ ${transaction.amount}"
+                            }
+
                             Text(
-                                color = MaterialTheme.colorScheme.onBackground,
-                                text = "R$ ${transactions[index].amount}",
+                                color = color,
+                                text = text,
                                 style = MaterialTheme.typography.titleLarge
                             )
 

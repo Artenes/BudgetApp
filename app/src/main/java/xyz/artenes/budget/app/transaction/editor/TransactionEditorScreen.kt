@@ -21,7 +21,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -35,7 +34,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import xyz.artenes.budget.app.components.CustomDatePicker
 import xyz.artenes.budget.app.components.CustomSpinner
 import xyz.artenes.budget.app.components.CustomTextField
-import java.time.Instant
+import xyz.artenes.budget.core.TransactionType
+import xyz.artenes.budget.utils.ValueAndLabel
 import java.time.LocalDate
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -96,18 +96,20 @@ fun TransactionEditorScreen(
             val focusManager = LocalFocusManager.current
             val description by viewModel.description.collectAsState()
             val amount by viewModel.amount.collectAsState()
+            val type by viewModel.type.collectAsState()
+            val date by viewModel.date.collectAsState()
 
-            Spacer(modifier = Modifier.height(120.dp))
+            Spacer(modifier = Modifier.height(80.dp))
 
-            var value by remember {
-                mutableStateOf("expense")
-            }
             CustomSpinner(
                 label = "Type",
-                value = value,
-                options = listOf("expense", "income"),
-                onOptionSelected = {
-                    value = it
+                value = typeToItem(type),
+                options = listOf(
+                    typeToItem(TransactionType.EXPENSE),
+                    typeToItem(TransactionType.INCOME),
+                ),
+                onOptionSelected = { item ->
+                    viewModel.setType(item.value)
                 }
             )
 
@@ -136,15 +138,11 @@ fun TransactionEditorScreen(
                 keyboardType = KeyboardType.Number
             )
 
-            var date by remember {
-                mutableStateOf(LocalDate.now())
-            }
-
             CustomDatePicker(
                 label = "Date",
                 value = date,
                 onDateSelected = { newDate ->
-                    date = newDate
+                    viewModel.setDate(newDate)
                 }
             )
 
@@ -152,4 +150,9 @@ fun TransactionEditorScreen(
 
     }
 
+}
+
+private fun typeToItem(type: TransactionType) = when (type) {
+    TransactionType.EXPENSE -> ValueAndLabel(type, "Expense")
+    else -> ValueAndLabel(type, "Income")
 }

@@ -20,14 +20,15 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import xyz.artenes.budget.utils.ValueAndLabel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CustomSpinner(
+fun <T> CustomSpinner(
     label: String,
-    value: String,
-    options: List<String>,
-    onOptionSelected: (String) -> Unit
+    value: ValueAndLabel<T>,
+    options: List<ValueAndLabel<T>>,
+    onOptionSelected: (ValueAndLabel<T>) -> Unit
 ) {
 
     var expanded by remember {
@@ -36,7 +37,7 @@ fun CustomSpinner(
 
     ExposedDropdownMenuBox(expanded = expanded, onExpandedChange = { expanded = !expanded }) {
         OutlinedTextField(
-            value = value,
+            value = value.label,
             onValueChange = {},
             modifier = Modifier
                 .menuAnchor()
@@ -73,7 +74,7 @@ fun CustomSpinner(
         ) {
             options.forEach {
                 DropdownMenuItem(
-                    text = { Text(text = it) },
+                    text = { Text(text = it.label) },
                     onClick = {
                         onOptionSelected(it)
                         expanded = false
