@@ -15,7 +15,8 @@ class TransactionsListViewModel @Inject constructor(private val repository: AppR
     ViewModel() {
 
     val transactions =
-        repository.getAllTransactions().stateIn(viewModelScope, SharingStarted.Lazily, emptyList())
+        repository.getAllTransactionsWithCategory()
+            .stateIn(viewModelScope, SharingStarted.Lazily, emptyList())
 
     val total = repository.totalAmountForMonthAsFlow(YearAndMonth.fromLocalDate(LocalDate.now()))
         .stateIn(viewModelScope, SharingStarted.Lazily, 0)

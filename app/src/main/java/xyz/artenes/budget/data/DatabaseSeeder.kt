@@ -9,6 +9,7 @@ import androidx.compose.material.icons.outlined.Money
 import androidx.compose.material.icons.outlined.MonitorHeart
 import androidx.compose.material.icons.outlined.QuestionMark
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.graphics.vector.ImageVector
 import kotlinx.coroutines.withContext
 import xyz.artenes.budget.R
@@ -100,7 +101,7 @@ class DatabaseSeeder @Inject constructor(
         return CategoryEntity(
             UUID.randomUUID(),
             messages.get(id),
-            color.value.toLong(),
+            color.toArgb(),
             icon,
             type,
             OffsetDateTime.now(),

@@ -8,8 +8,10 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import xyz.artenes.budget.core.TransactionType
 import xyz.artenes.budget.data.AppRepository
+import xyz.artenes.budget.data.CategoryEntity
 import xyz.artenes.budget.data.TransactionEntity
 import xyz.artenes.budget.utils.Event
+import xyz.artenes.budget.utils.ListWithValue
 import xyz.artenes.budget.utils.ValueWithError
 import java.time.LocalDate
 import java.time.OffsetDateTime
@@ -32,8 +34,17 @@ class TransactionEditorViewModel @Inject constructor(private val repository: App
     private val _date = MutableStateFlow(LocalDate.now())
     val date: StateFlow<LocalDate> = _date
 
+    private val _categories = MutableStateFlow(ListWithValue<CategoryEntity>())
+    val categories: StateFlow<ListWithValue<CategoryEntity>> = _categories
+
     private val _event = MutableStateFlow(Event())
     val event: StateFlow<Event> = _event
+
+    init {
+        viewModelScope.launch {
+            refreshCategories()
+        }
+    }
 
     fun setDescription(value: String) {
         _description.value = ValueWithError(value)
@@ -45,6 +56,13 @@ class TransactionEditorViewModel @Inject constructor(private val repository: App
 
     fun setType(value: TransactionType) {
         _type.value = value
+        viewModelScope.launch {
+            refreshCategories()
+        }
+    }
+
+    fun setCategory(value: CategoryEntity) {
+        _categories.value = _categories.value.copy(value = value)
     }
 
     fun setDate(value: LocalDate) {
@@ -55,6 +73,7 @@ class TransactionEditorViewModel @Inject constructor(private val repository: App
 
         val description = _description.value
         val amount = _amount.value
+        val category = _categories.value.value
 
         if (description.value.isEmpty()) {
             _description.value = description.copy(error = "Required")
@@ -79,11 +98,17 @@ class TransactionEditorViewModel @Inject constructor(private val repository: App
                     amount.value.toInt(),
                     _date.value,
                     _type.value,
+                    category!!.id,
                     OffsetDateTime.now()
                 )
             )
             _event.value = Event("finish")
         }
+    }
+
+    private suspend fun refreshCategories() {
+        val categories = repository.getCategoriesByType(_type.value)
+        _categories.value = ListWithValue(categories.first(), categories)
     }
 
 }

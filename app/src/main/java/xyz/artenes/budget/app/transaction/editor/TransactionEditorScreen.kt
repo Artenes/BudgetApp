@@ -21,9 +21,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.platform.LocalFocusManager
@@ -36,7 +33,6 @@ import xyz.artenes.budget.app.components.CustomSpinner
 import xyz.artenes.budget.app.components.CustomTextField
 import xyz.artenes.budget.core.TransactionType
 import xyz.artenes.budget.utils.ValueAndLabel
-import java.time.LocalDate
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -98,6 +94,7 @@ fun TransactionEditorScreen(
             val amount by viewModel.amount.collectAsState()
             val type by viewModel.type.collectAsState()
             val date by viewModel.date.collectAsState()
+            val categories by viewModel.categories.collectAsState()
 
             Spacer(modifier = Modifier.height(80.dp))
 
@@ -109,7 +106,7 @@ fun TransactionEditorScreen(
                     typeToItem(TransactionType.INCOME),
                 ),
                 onOptionSelected = { item ->
-                    viewModel.setType(item.value)
+                    viewModel.setType(item.value!!)
                 }
             )
 
@@ -143,6 +140,22 @@ fun TransactionEditorScreen(
                 value = date,
                 onDateSelected = { newDate ->
                     viewModel.setDate(newDate)
+                }
+            )
+
+            Spacer(modifier = Modifier.height(10.dp))
+
+            CustomSpinner(
+                label = "Category",
+                value = ValueAndLabel(
+                    categories.value,
+                    categories.value?.name ?: ""
+                ),
+                options = categories.list.map { category ->
+                    ValueAndLabel(category, category.name)
+                },
+                onOptionSelected = { item ->
+                    viewModel.setCategory(item.value!!)
                 }
             )
 

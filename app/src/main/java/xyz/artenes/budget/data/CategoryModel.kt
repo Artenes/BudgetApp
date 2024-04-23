@@ -16,7 +16,7 @@ data class CategoryEntity(
     @PrimaryKey
     val id: UUID,
     val name: String,
-    val color: Long,
+    val color: Int,
     val icon: ImageVector,
     val type: TransactionType,
     @ColumnInfo("created_at")
@@ -36,6 +36,9 @@ interface CategoryDao {
 
     @Query("SELECT * FROM categories WHERE deleted_at IS NULL")
     suspend fun getAllNotDeleted(): List<CategoryEntity>
+
+    @Query("SELECT * FROM categories WHERE deleted_at IS NULL AND type = :type ORDER BY name ASC")
+    suspend fun getAllNotDeletedByType(type: TransactionType): List<CategoryEntity>
 
     @Query("SELECT EXISTS(SELECT 1 FROM categories LIMIT 1)")
     suspend fun hasEntries(): Boolean
