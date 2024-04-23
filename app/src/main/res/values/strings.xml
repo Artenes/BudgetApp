@@ -16,4 +16,13 @@
 
 <resources>
     <string name="app_name">Budget App</string>
+
+    <!-- CATEGORIES -->
+    <string name="category_transportation">Transportation</string>
+    <string name="category_health">Health</string>
+    <string name="category_groceries">Groceries</string>
+    <string name="category_education">Education</string>
+    <string name="category_home">Home</string>
+    <string name="category_others">Others</string>
+    <string name="category_paycheck">Paycheck</string>
 </resources>

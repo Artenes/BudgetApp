@@ -1,6 +1,8 @@
 package xyz.artenes.budget.data
 
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.room.TypeConverter
+import xyz.artenes.budget.utils.IconsMap
 import java.time.Instant
 import java.time.LocalDate
 import java.time.OffsetDateTime
@@ -48,6 +50,19 @@ class Converters {
             return null
         }
         return UUID.fromString(value)
+    }
+
+    @TypeConverter
+    fun fromImageVector(value: ImageVector?): String? {
+        return value?.name
+    }
+
+    @TypeConverter
+    fun toImageVector(value: String?): ImageVector? {
+        if (value == null) {
+            return null
+        }
+        return IconsMap.getIcon(value)
     }
 
 }

@@ -20,8 +20,9 @@ import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 
-@Database(entities = [TransactionEntity::class], version = 1)
+@Database(entities = [TransactionEntity::class, CategoryEntity::class], version = 1)
 @TypeConverters(Converters::class)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun transactionsDao(): TransactionDao
+    abstract fun categoryDao(): CategoryDao
 }

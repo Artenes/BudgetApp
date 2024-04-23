@@ -19,15 +19,34 @@ package xyz.artenes.budget
 import android.app.Application
 import xyz.artenes.budget.utils.ProductionTree
 import dagger.hilt.android.HiltAndroidApp
+import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import timber.log.Timber
+import xyz.artenes.budget.data.DatabaseSeeder
+import javax.inject.Inject
 
 @HiltAndroidApp
 class MyApplication : Application() {
 
+    @Inject
+    lateinit var seeder: DatabaseSeeder
+
+    @OptIn(DelicateCoroutinesApi::class)
     override fun onCreate() {
         super.onCreate()
         val tree = if (BuildConfig.DEBUG) Timber.DebugTree() else ProductionTree()
         Timber.plant(tree)
+
+        /*
+        Seed the database.
+        This can happen in global scope since it loads few data and it is quite fast
+        so there are no race condition problems with it
+         */
+        GlobalScope.launch {
+            seeder.seed()
+        }
+
     }
 
 }
