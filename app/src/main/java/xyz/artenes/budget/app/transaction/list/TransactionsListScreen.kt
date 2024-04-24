@@ -176,9 +176,9 @@ private fun Transaction(transaction: TransactionWithCategoryEntity) {
                 Spacer(modifier = Modifier.weight(1f))
 
                 val color = if (transaction.type == TransactionType.EXPENSE) {
-                    MaterialTheme.colorScheme.onBackground
-                } else {
                     MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f)
+                } else {
+                    MaterialTheme.colorScheme.onBackground
                 }
 
                 val text = if (transaction.type == TransactionType.EXPENSE) {
