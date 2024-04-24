@@ -34,8 +34,21 @@ data class TransactionWithCategoryEntity(
     val date: LocalDate,
     val type: TransactionType,
     val color: Int,
-    val icon: ImageVector
-)
+    val icon: ImageVector,
+    @ColumnInfo("created_at")
+    val createdAt: OffsetDateTime
+) {
+
+    val signedAmount: Int
+        get() {
+            return if (type == TransactionType.EXPENSE) {
+                -amount
+            } else {
+                amount
+            }
+        }
+
+}
 
 @Dao
 interface TransactionDao {
@@ -43,8 +56,14 @@ interface TransactionDao {
     @Query("SELECT * FROM transactions ORDER BY created_at DESC")
     fun getAll(): Flow<List<TransactionEntity>>
 
-    @Query("SELECT transactions.id, description, amount, date, transactions.type, color, icon FROM transactions INNER JOIN categories ON category_id = categories.id ORDER BY transactions.created_at DESC")
-    fun getAllWithCategory(): Flow<List<TransactionWithCategoryEntity>>
+    @Query(
+        "SELECT transactions.id, description, amount, date, transactions.type, color, icon, transactions.created_at " +
+                "FROM transactions " +
+                "INNER JOIN categories ON category_id = categories.id " +
+                "WHERE date LIKE :yearAndMonth " +
+                "ORDER BY transactions.date DESC"
+    )
+    fun getAllWithCategoryByMonth(yearAndMonth: String): Flow<List<TransactionWithCategoryEntity>>
 
     @Query("SELECT SUM(amount) FROM transactions WHERE date LIKE :yearAndMonth")
     fun totalAmountForMonthAsFlow(yearAndMonth: String): Flow<Int>

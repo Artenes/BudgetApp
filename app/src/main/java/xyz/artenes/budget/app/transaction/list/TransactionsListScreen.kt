@@ -31,7 +31,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import xyz.artenes.budget.core.TransactionType
+import xyz.artenes.budget.data.TransactionWithCategoryEntity
 import java.time.format.DateTimeFormatter
+
+private val dateFormat = DateTimeFormatter.ofPattern("dd/MM/yyyy")
 
 @Composable
 fun TransactionsListScreen(
@@ -48,7 +51,7 @@ fun TransactionsListScreen(
 
     ) {
 
-        val transactions by viewModel.transactions.collectAsState()
+        val transactionGroups by viewModel.transactions.collectAsState()
         val total by viewModel.total.collectAsState()
 
         LazyColumn(
@@ -82,89 +85,30 @@ fun TransactionsListScreen(
 
             }
 
-            items(
-                count = transactions.size,
-                key = { index ->
-                    transactions[index].id
+            transactionGroups.forEach { group ->
+
+                item {
+                    Text(
+                        modifier = Modifier.padding(horizontal = 20.dp),
+                        color = MaterialTheme.colorScheme.onBackground,
+                        text = group.date.format(dateFormat),
+                        style = MaterialTheme.typography.bodyLarge
+                    )
                 }
-            ) { index ->
 
-                Surface(
-                    color = Color.Transparent,
-                    onClick = { }
-                ) {
-
-                    Column {
-
-                        Row(
-                            modifier = Modifier.padding(20.dp),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-
-                            val transaction = transactions[index]
-
-                            Box(
-                                modifier = Modifier
-                                    .size(40.dp)
-                                    .clip(CircleShape)
-                                    .border(
-                                        1.dp,
-                                        MaterialTheme.colorScheme.onBackground.copy(alpha = 0.5f),
-                                        CircleShape
-                                    ),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                Icon(
-                                    imageVector = transaction.icon,
-                                    contentDescription = "",
-                                    tint = MaterialTheme.colorScheme.onBackground
-                                )
-                            }
-
-                            Spacer(modifier = Modifier.width(10.dp))
-
-                            Column {
-                                Text(
-                                    color = MaterialTheme.colorScheme.onBackground,
-                                    text = transaction.description,
-                                    style = MaterialTheme.typography.titleLarge
-                                )
-                                Text(
-                                    color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.5f),
-                                    text = transaction.date.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")),
-                                    style = MaterialTheme.typography.bodySmall
-                                )
-                            }
-
-                            Spacer(modifier = Modifier.weight(1f))
-
-                            val color = if (transaction.type == TransactionType.EXPENSE) {
-                                MaterialTheme.colorScheme.onBackground
-                            } else {
-                                MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f)
-                            }
-
-                            val text = if (transaction.type == TransactionType.EXPENSE) {
-                                "- R$ ${transaction.amount}"
-                            } else {
-                                "+ R$ ${transaction.amount}"
-                            }
-
-                            Text(
-                                color = color,
-                                text = text,
-                                style = MaterialTheme.typography.titleLarge
-                            )
-
-                        }
-
-                        HorizontalDivider(
-                            thickness = 2.dp,
-                            color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.2f)
-                        )
-
+                items(
+                    count = group.transactions.size,
+                    key = { index ->
+                        group.transactions[index].id
                     }
+                ) { index ->
 
+                    Transaction(transaction = group.transactions[index])
+
+                }
+
+                item {
+                    Spacer(modifier = Modifier.height(50.dp))
                 }
 
             }
@@ -174,6 +118,87 @@ fun TransactionsListScreen(
                 Spacer(modifier = Modifier.height(100.dp))
 
             }
+
+        }
+
+    }
+
+}
+
+@Composable
+private fun Transaction(transaction: TransactionWithCategoryEntity) {
+
+    Surface(
+        color = Color.Transparent,
+        onClick = { }
+    ) {
+
+        Column {
+
+            Row(
+                modifier = Modifier.padding(20.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+
+                Box(
+                    modifier = Modifier
+                        .size(40.dp)
+                        .clip(CircleShape)
+                        .border(
+                            1.dp,
+                            MaterialTheme.colorScheme.onBackground.copy(alpha = 0.5f),
+                            CircleShape
+                        ),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(
+                        imageVector = transaction.icon,
+                        contentDescription = "",
+                        tint = MaterialTheme.colorScheme.onBackground
+                    )
+                }
+
+                Spacer(modifier = Modifier.width(10.dp))
+
+                Column {
+                    Text(
+                        color = MaterialTheme.colorScheme.onBackground,
+                        text = transaction.description,
+                        style = MaterialTheme.typography.titleLarge
+                    )
+                    Text(
+                        color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.5f),
+                        text = transaction.date.format(dateFormat),
+                        style = MaterialTheme.typography.bodySmall
+                    )
+                }
+
+                Spacer(modifier = Modifier.weight(1f))
+
+                val color = if (transaction.type == TransactionType.EXPENSE) {
+                    MaterialTheme.colorScheme.onBackground
+                } else {
+                    MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f)
+                }
+
+                val text = if (transaction.type == TransactionType.EXPENSE) {
+                    "- R$ ${transaction.amount}"
+                } else {
+                    "+ R$ ${transaction.amount}"
+                }
+
+                Text(
+                    color = color,
+                    text = text,
+                    style = MaterialTheme.typography.titleLarge
+                )
+
+            }
+
+            HorizontalDivider(
+                thickness = 2.dp,
+                color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.2f)
+            )
 
         }
 

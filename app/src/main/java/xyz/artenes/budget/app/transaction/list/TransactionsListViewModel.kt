@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import xyz.artenes.budget.data.AppRepository
 import xyz.artenes.budget.utils.YearAndMonth
@@ -15,10 +16,25 @@ class TransactionsListViewModel @Inject constructor(private val repository: AppR
     ViewModel() {
 
     val transactions =
-        repository.getAllTransactionsWithCategory()
-            .stateIn(viewModelScope, SharingStarted.Lazily, emptyList())
+        repository.getAllTransactionsWithCategoryByMonthGroupedByDate(
+            YearAndMonth.fromLocalDate(
+                LocalDate.now()
+            )
+        ).stateIn(viewModelScope, SharingStarted.Lazily, emptyList())
 
-    val total = repository.totalAmountForMonthAsFlow(YearAndMonth.fromLocalDate(LocalDate.now()))
-        .stateIn(viewModelScope, SharingStarted.Lazily, 0)
+    /**
+     * This sum all amounts from the transactions returned from flow above
+     * and reduce them to an integer
+     */
+    val total = transactions.map { groups ->
+        //we have group of transactions, so we sum them first
+        groups.sumOf { group ->
+            //then for each group, we sum the value from each transaction
+            group.transactions.sumOf { transaction ->
+                //based on the type of transaction we either reduce or increase the value of the sum
+                transaction.signedAmount
+            }
+        }
+    }.stateIn(viewModelScope, SharingStarted.Lazily, 0)
 
 }

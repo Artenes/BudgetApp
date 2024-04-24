@@ -14,6 +14,11 @@ data class YearAndMonth(val year: Int, val month: Int) {
             return YearAndMonth(localDate.year, localDate.monthValue)
         }
 
+        fun fromString(value: String): YearAndMonth {
+            val parts = value.split("-")
+            return YearAndMonth(parts[0].toInt(), parts[1].toInt())
+        }
+
     }
 
 }

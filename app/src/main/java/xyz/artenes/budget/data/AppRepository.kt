@@ -1,6 +1,7 @@
 package xyz.artenes.budget.data
 
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 import xyz.artenes.budget.core.TransactionType
 import xyz.artenes.budget.utils.YearAndMonth
@@ -16,7 +17,21 @@ class AppRepository @Inject constructor(
 
     fun getAllTransactions() = appDatabase.transactionsDao().getAll()
 
-    fun getAllTransactionsWithCategory() = appDatabase.transactionsDao().getAllWithCategory()
+    /**
+     * This returns all transactions for a given month, grouped by date
+     */
+    fun getAllTransactionsWithCategoryByMonthGroupedByDate(yearAndMonth: YearAndMonth) =
+        appDatabase.transactionsDao()
+            .getAllWithCategoryByMonth("${yearAndMonth}%").map { transactions ->
+                //after getting all transactions, group them by date
+                transactions.groupBy { transaction -> transaction.date }
+                    .entries.map { entry ->
+                        //then for each group, sort the list of transactions by created time
+                        //so groups are sorted by date and transactions are sorted by created time
+                        val sortedList = entry.value.sortedByDescending { it.createdAt }
+                        TransactionGroup(sortedList, entry.key)
+                    }
+            }
 
     suspend fun saveTransaction(transaction: TransactionEntity) {
         withContext(dispatcher) {

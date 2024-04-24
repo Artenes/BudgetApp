@@ -3,6 +3,7 @@ package xyz.artenes.budget.data
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.room.TypeConverter
 import xyz.artenes.budget.utils.IconsMap
+import xyz.artenes.budget.utils.YearAndMonth
 import java.time.Instant
 import java.time.LocalDate
 import java.time.OffsetDateTime
