@@ -32,12 +32,11 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import xyz.artenes.budget.core.TransactionType
 import xyz.artenes.budget.data.TransactionWithCategoryEntity
-import java.time.format.DateTimeFormatter
-
-private val dateFormat = DateTimeFormatter.ofPattern("dd/MM/yyyy")
+import xyz.artenes.budget.utils.LocaleFormatter
 
 @Composable
 fun TransactionsListScreen(
+    localeFormatter: LocaleFormatter,
     navigateToTransactionEditScreen: () -> Unit,
     viewModel: TransactionsListViewModel = hiltViewModel()
 ) {
@@ -58,6 +57,9 @@ fun TransactionsListScreen(
             modifier = Modifier.padding(it)
         ) {
 
+            /*
+            Total amount based on current filters
+             */
             item {
 
                 Column(
@@ -73,7 +75,11 @@ fun TransactionsListScreen(
                         fontSize = 12.sp
                     )
                     Text(
-                        text = "R$ $total",
+                        text = "${localeFormatter.getCurrencySymbol()} ${
+                            total.format(
+                                localeFormatter.getMoneyFormat()
+                            )
+                        }",
                         color = MaterialTheme.colorScheme.onBackground,
                         style = MaterialTheme.typography.titleLarge,
                         fontSize = 30.sp
@@ -87,13 +93,34 @@ fun TransactionsListScreen(
 
             transactionGroups.forEach { group ->
 
+                /*
+                Date
+                 */
                 item {
-                    Text(
+                    val relativeDate = localeFormatter.formatDateAsRelative(group.date)
+                    Row(
                         modifier = Modifier.padding(horizontal = 20.dp),
-                        color = MaterialTheme.colorScheme.onBackground,
-                        text = group.date.format(dateFormat),
-                        style = MaterialTheme.typography.bodyLarge
-                    )
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            modifier = Modifier.padding(end = 10.dp),
+                            color = MaterialTheme.colorScheme.onBackground,
+                            text = if (relativeDate.isRelative) {
+                                relativeDate.relative
+                            } else {
+                                relativeDate.absolute
+                            },
+                            style = MaterialTheme.typography.bodyLarge
+                        )
+                        if (relativeDate.isRelative) {
+                            Text(
+                                color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.5f),
+                                text = relativeDate.absolute,
+                                style = MaterialTheme.typography.bodySmall
+                            )
+                        }
+
+                    }
                 }
 
                 items(
@@ -103,7 +130,10 @@ fun TransactionsListScreen(
                     }
                 ) { index ->
 
-                    Transaction(transaction = group.transactions[index])
+                    Transaction(
+                        transaction = group.transactions[index],
+                        localeFormatter = localeFormatter
+                    )
 
                 }
 
@@ -126,7 +156,10 @@ fun TransactionsListScreen(
 }
 
 @Composable
-private fun Transaction(transaction: TransactionWithCategoryEntity) {
+private fun Transaction(
+    localeFormatter: LocaleFormatter,
+    transaction: TransactionWithCategoryEntity
+) {
 
     Surface(
         color = Color.Transparent,
@@ -160,36 +193,36 @@ private fun Transaction(transaction: TransactionWithCategoryEntity) {
 
                 Spacer(modifier = Modifier.width(10.dp))
 
-                Column {
-                    Text(
-                        color = MaterialTheme.colorScheme.onBackground,
-                        text = transaction.description,
-                        style = MaterialTheme.typography.titleLarge
-                    )
-                    Text(
-                        color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.5f),
-                        text = transaction.date.format(dateFormat),
-                        style = MaterialTheme.typography.bodySmall
-                    )
-                }
+                Text(
+                    color = MaterialTheme.colorScheme.onBackground,
+                    text = transaction.description,
+                    style = MaterialTheme.typography.titleLarge
+                )
 
                 Spacer(modifier = Modifier.weight(1f))
 
+                /*
+                Amount
+                 */
                 val color = if (transaction.type == TransactionType.EXPENSE) {
                     MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f)
                 } else {
                     MaterialTheme.colorScheme.onBackground
                 }
 
-                val text = if (transaction.type == TransactionType.EXPENSE) {
-                    "- R$ ${transaction.amount}"
+                val sign = if (transaction.type == TransactionType.EXPENSE) {
+                    "-"
                 } else {
-                    "+ R$ ${transaction.amount}"
+                    "+"
                 }
 
                 Text(
                     color = color,
-                    text = text,
+                    text = "$sign ${localeFormatter.getCurrencySymbol()} ${
+                        transaction.amount.format(
+                            localeFormatter.getMoneyFormat()
+                        )
+                    }",
                     style = MaterialTheme.typography.titleLarge
                 )
 

@@ -8,6 +8,6 @@ import javax.inject.Singleton
 @Singleton
 class Messages @Inject constructor(@ApplicationContext private val context: Context) {
 
-    fun get(id: Int) = context.getString(id)
+    fun get(id: Int, vararg args: Any) = context.getString(id, *args)
 
 }

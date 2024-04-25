@@ -24,15 +24,19 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import xyz.artenes.budget.app.transaction.editor.TransactionEditorScreen
 import xyz.artenes.budget.app.transaction.list.TransactionsListScreen
+import xyz.artenes.budget.utils.LocaleFormatter
 
 @Composable
-fun MainNavigation() {
+fun MainNavigation(
+    localeFormatter: LocaleFormatter
+) {
     val navController = rememberNavController()
 
     NavHost(navController = navController, startDestination = "transactions") {
 
         composable("transactions") {
             TransactionsListScreen(
+                localeFormatter = localeFormatter,
                 navigateToTransactionEditScreen = {
                     navController.navigate("transactionEditor")
                 }

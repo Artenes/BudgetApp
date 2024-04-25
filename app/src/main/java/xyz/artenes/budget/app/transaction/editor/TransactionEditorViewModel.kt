@@ -6,6 +6,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import xyz.artenes.budget.core.Money
 import xyz.artenes.budget.core.TransactionType
 import xyz.artenes.budget.data.AppRepository
 import xyz.artenes.budget.data.CategoryEntity
@@ -95,7 +96,7 @@ class TransactionEditorViewModel @Inject constructor(private val repository: App
                 TransactionEntity(
                     UUID.randomUUID(),
                     description.value,
-                    amount.value.toInt(),
+                    Money(amount.value.toInt()),
                     _date.value,
                     _type.value,
                     category!!.id,

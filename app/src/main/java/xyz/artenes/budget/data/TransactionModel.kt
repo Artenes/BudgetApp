@@ -8,6 +8,7 @@ import androidx.room.Insert
 import androidx.room.PrimaryKey
 import androidx.room.Query
 import kotlinx.coroutines.flow.Flow
+import xyz.artenes.budget.core.Money
 import xyz.artenes.budget.core.TransactionType
 import java.time.LocalDate
 import java.time.OffsetDateTime
@@ -18,7 +19,7 @@ data class TransactionEntity(
     @PrimaryKey
     val id: UUID,
     val description: String,
-    val amount: Int,
+    val amount: Money,
     val date: LocalDate,
     val type: TransactionType,
     @ColumnInfo("category_id")
@@ -30,25 +31,14 @@ data class TransactionEntity(
 data class TransactionWithCategoryEntity(
     val id: UUID,
     val description: String,
-    val amount: Int,
+    val amount: Money,
     val date: LocalDate,
     val type: TransactionType,
     val color: Int,
     val icon: ImageVector,
     @ColumnInfo("created_at")
     val createdAt: OffsetDateTime
-) {
-
-    val signedAmount: Int
-        get() {
-            return if (type == TransactionType.EXPENSE) {
-                -amount
-            } else {
-                amount
-            }
-        }
-
-}
+)
 
 @Dao
 interface TransactionDao {

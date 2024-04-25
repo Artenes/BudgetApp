@@ -2,8 +2,8 @@ package xyz.artenes.budget.data
 
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.room.TypeConverter
+import xyz.artenes.budget.core.Money
 import xyz.artenes.budget.utils.IconsMap
-import xyz.artenes.budget.utils.YearAndMonth
 import java.time.Instant
 import java.time.LocalDate
 import java.time.OffsetDateTime
@@ -64,6 +64,19 @@ class Converters {
             return null
         }
         return IconsMap.getIcon(value)
+    }
+
+    @TypeConverter
+    fun fromMoney(value: Money?): Int? {
+        return value?.amount
+    }
+
+    @TypeConverter
+    fun toMoney(value: Int?): Money? {
+        if (value == null) {
+            return null
+        }
+        return Money(value)
     }
 
 }

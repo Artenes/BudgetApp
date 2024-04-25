@@ -1,0 +1,42 @@
+package xyz.artenes.budget.utils
+
+import xyz.artenes.budget.R
+import xyz.artenes.budget.android.Messages
+import java.text.NumberFormat
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
+import java.time.format.FormatStyle
+import java.time.temporal.ChronoUnit
+import java.util.Currency
+import java.util.Locale
+import javax.inject.Inject
+import javax.inject.Singleton
+
+@Singleton
+class LocaleFormatter @Inject constructor(private val messages: Messages) {
+
+    private val dayOfWeekFormat = DateTimeFormatter.ofPattern("EEEE")
+
+    fun getDateFormat() = DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT)
+
+    fun getMoneyFormat() = NumberFormat.getNumberInstance().also {
+        it.minimumFractionDigits = 2
+        it.maximumFractionDigits = 2
+    }
+
+    fun getCurrencySymbol() = Currency.getInstance(Locale.getDefault()).symbol
+
+    fun formatDateAsRelative(date: LocalDate): RelativeDate {
+        val today = LocalDate.now()
+        val daysBetween = ChronoUnit.DAYS.between(date, today)
+
+        val formattedDate = date.format(getDateFormat())
+        return when (daysBetween) {
+            0L -> RelativeDate(messages.get(R.string.today), formattedDate)
+            1L -> RelativeDate(messages.get(R.string.yesterday), formattedDate)
+            in 2..6 -> RelativeDate(date.format(dayOfWeekFormat), formattedDate)
+            else -> RelativeDate("", formattedDate)
+        }
+    }
+
+}

@@ -17,6 +17,9 @@
 <resources>
     <string name="app_name">Budget App</string>
 
+    <string name="today">Today</string>
+    <string name="yesterday">Yesterday</string>
+
     <!-- CATEGORIES -->
     <string name="category_transportation">Transportation</string>
     <string name="category_health">Health</string>

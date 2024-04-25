@@ -6,6 +6,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
+import xyz.artenes.budget.core.Money
 import xyz.artenes.budget.data.AppRepository
 import xyz.artenes.budget.utils.YearAndMonth
 import java.time.LocalDate
@@ -28,13 +29,15 @@ class TransactionsListViewModel @Inject constructor(private val repository: AppR
      */
     val total = transactions.map { groups ->
         //we have group of transactions, so we sum them first
-        groups.sumOf { group ->
+        val total = groups.sumOf { group ->
             //then for each group, we sum the value from each transaction
             group.transactions.sumOf { transaction ->
                 //based on the type of transaction we either reduce or increase the value of the sum
-                transaction.signedAmount
+                transaction.amount.toSigned(transaction.type)
             }
         }
-    }.stateIn(viewModelScope, SharingStarted.Lazily, 0)
+        //then we return the value as money
+        Money(total)
+    }.stateIn(viewModelScope, SharingStarted.Lazily, Money(0))
 
 }
