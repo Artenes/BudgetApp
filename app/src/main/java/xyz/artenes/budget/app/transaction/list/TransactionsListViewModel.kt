@@ -11,10 +11,37 @@ import xyz.artenes.budget.core.TransactionType
 import xyz.artenes.budget.data.AppRepository
 import xyz.artenes.budget.data.TransactionGroup
 import xyz.artenes.budget.data.TransactionWithCategoryEntity
+import xyz.artenes.budget.utils.LoadingData
 import xyz.artenes.budget.utils.LocaleFormatter
 import xyz.artenes.budget.utils.YearAndMonth
 import java.time.LocalDate
 import javax.inject.Inject
+
+/*
+
+sealed class DataState<out T> {
+    data class Success<out T>(val data: T) : DataState<T>()
+    object Loading : DataState<Nothing>()
+    data class Error(val exception: Exception) : DataState<Nothing>()
+}
+
+val myData: Flow<DataState<List<MyData>>> = myDao.getAll()
+        .map { DataState.Success(it) } // map data to Success state
+        .catch { e -> emit(DataState.Error(e)) } // catch any error and emit Error state
+        .onStart { emit(DataState.Loading) } // emit Loading state at the start
+
+val myData: Flow<DataState<List<MyData>>> = flow {
+        emit(DataState.Loading)
+        try {
+            val data = myDao.getAll()
+            emit(DataState.Success(data))
+        } catch (e: Exception) {
+            emit(DataState.Error(e))
+        }
+    }
+}
+
+ */
 
 @HiltViewModel
 class TransactionsListViewModel @Inject constructor(
@@ -27,29 +54,34 @@ class TransactionsListViewModel @Inject constructor(
      * List of transactions to display
      */
     val transactions =
+        //we get the values from DB
         repository.getAllTransactionsWithCategoryByMonthGroupedByDate(
             YearAndMonth.fromLocalDate(
                 LocalDate.now()
             )
         ).map { groups ->
+            //then format them for display
             groups.map { group ->
                 groupToItem(group)
             }
-        }.stateIn(viewModelScope, SharingStarted.Lazily, emptyList())
+        }.map {
+            //then inform that loading is complete
+            LoadingData(false, it)
+        }.stateIn(viewModelScope, SharingStarted.Lazily, LoadingData(true, null))
 
     /**
      * This sum all amounts from the transactions returned from flow above
      * and reduce them to an integer
      */
-    val total = transactions.map { groups ->
+    val total = transactions.map { loadingData ->
         //we have group of transactions, so we sum them first
-        val total = groups.sumOf { group ->
+        val total = loadingData.data?.sumOf { group ->
             //then for each group, we sum the value from each transaction
             group.transactions.sumOf { transaction ->
                 //based on the type of transaction we either reduce or increase the value of the sum
                 transaction.amount.toSigned(transaction.type)
             }
-        }
+        } ?: 0
         //then we return the value as a formatted string
         val currencySymbol = formatter.getCurrencySymbol()
         val formattedValue = formatter.formatMoney(Money(total))
