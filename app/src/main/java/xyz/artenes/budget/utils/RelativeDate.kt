@@ -7,6 +7,10 @@ data class RelativeDate(
 
     val isRelative = relative.isNotEmpty()
 
+    val displayValue = relative.ifEmpty {
+        absolute
+    }
+
     override fun toString(): String {
         return "$relative ($absolute)"
     }

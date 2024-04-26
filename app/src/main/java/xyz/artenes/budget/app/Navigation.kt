@@ -27,16 +27,13 @@ import xyz.artenes.budget.app.transaction.list.TransactionsListScreen
 import xyz.artenes.budget.utils.LocaleFormatter
 
 @Composable
-fun MainNavigation(
-    localeFormatter: LocaleFormatter
-) {
+fun MainNavigation() {
     val navController = rememberNavController()
 
     NavHost(navController = navController, startDestination = "transactions") {
 
         composable("transactions") {
             TransactionsListScreen(
-                localeFormatter = localeFormatter,
                 navigateToTransactionEditScreen = {
                     navController.navigate("transactionEditor")
                 }

@@ -30,13 +30,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import xyz.artenes.budget.core.TransactionType
-import xyz.artenes.budget.data.TransactionWithCategoryEntity
-import xyz.artenes.budget.utils.LocaleFormatter
 
 @Composable
 fun TransactionsListScreen(
-    localeFormatter: LocaleFormatter,
     navigateToTransactionEditScreen: () -> Unit,
     viewModel: TransactionsListViewModel = hiltViewModel()
 ) {
@@ -50,6 +46,9 @@ fun TransactionsListScreen(
 
     ) {
 
+        /*
+        State
+         */
         val transactionGroups by viewModel.transactions.collectAsState()
         val total by viewModel.total.collectAsState()
 
@@ -75,11 +74,7 @@ fun TransactionsListScreen(
                         fontSize = 12.sp
                     )
                     Text(
-                        text = "${localeFormatter.getCurrencySymbol()} ${
-                            total.format(
-                                localeFormatter.getMoneyFormat()
-                            )
-                        }",
+                        text = total,
                         color = MaterialTheme.colorScheme.onBackground,
                         style = MaterialTheme.typography.titleLarge,
                         fontSize = 30.sp
@@ -97,7 +92,7 @@ fun TransactionsListScreen(
                 Date
                  */
                 item {
-                    val relativeDate = localeFormatter.formatDateAsRelative(group.date)
+
                     Row(
                         modifier = Modifier.padding(horizontal = 20.dp),
                         verticalAlignment = Alignment.CenterVertically
@@ -105,17 +100,13 @@ fun TransactionsListScreen(
                         Text(
                             modifier = Modifier.padding(end = 10.dp),
                             color = MaterialTheme.colorScheme.onBackground,
-                            text = if (relativeDate.isRelative) {
-                                relativeDate.relative
-                            } else {
-                                relativeDate.absolute
-                            },
+                            text = group.date.displayValue,
                             style = MaterialTheme.typography.bodyLarge
                         )
-                        if (relativeDate.isRelative) {
+                        if (group.date.isRelative) {
                             Text(
                                 color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.5f),
-                                text = relativeDate.absolute,
+                                text = group.date.absolute,
                                 style = MaterialTheme.typography.bodySmall
                             )
                         }
@@ -131,8 +122,7 @@ fun TransactionsListScreen(
                 ) { index ->
 
                     Transaction(
-                        transaction = group.transactions[index],
-                        localeFormatter = localeFormatter
+                        transaction = group.transactions[index]
                     )
 
                 }
@@ -157,8 +147,7 @@ fun TransactionsListScreen(
 
 @Composable
 private fun Transaction(
-    localeFormatter: LocaleFormatter,
-    transaction: TransactionWithCategoryEntity
+    transaction: TransactionItem
 ) {
 
     Surface(
@@ -204,25 +193,9 @@ private fun Transaction(
                 /*
                 Amount
                  */
-                val color = if (transaction.type == TransactionType.EXPENSE) {
-                    MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f)
-                } else {
-                    MaterialTheme.colorScheme.onBackground
-                }
-
-                val sign = if (transaction.type == TransactionType.EXPENSE) {
-                    "-"
-                } else {
-                    "+"
-                }
-
                 Text(
-                    color = color,
-                    text = "$sign ${localeFormatter.getCurrencySymbol()} ${
-                        transaction.amount.format(
-                            localeFormatter.getMoneyFormat()
-                        )
-                    }",
+                    color = MaterialTheme.colorScheme.onBackground.copy(alpha = transaction.colorAlpha),
+                    text = transaction.formattedAmount,
                     style = MaterialTheme.typography.titleLarge
                 )
 

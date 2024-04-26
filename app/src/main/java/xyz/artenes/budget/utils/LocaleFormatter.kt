@@ -2,6 +2,7 @@ package xyz.artenes.budget.utils
 
 import xyz.artenes.budget.R
 import xyz.artenes.budget.android.Messages
+import xyz.artenes.budget.core.Money
 import java.text.NumberFormat
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -25,6 +26,10 @@ class LocaleFormatter @Inject constructor(private val messages: Messages) {
     }
 
     fun getCurrencySymbol() = Currency.getInstance(Locale.getDefault()).symbol
+
+    fun formatMoney(money: Money): String {
+        return getMoneyFormat().format(money.toDouble)
+    }
 
     fun formatDateAsRelative(date: LocalDate): RelativeDate {
         val today = LocalDate.now()

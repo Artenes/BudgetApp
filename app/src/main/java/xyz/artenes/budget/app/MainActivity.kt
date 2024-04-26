@@ -27,17 +27,12 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
-    @Inject
-    lateinit var localeFormatter: LocaleFormatter
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
             MyApplicationTheme {
 
-                MainNavigation(
-                    localeFormatter = localeFormatter
-                )
+                MainNavigation()
 
             }
         }
