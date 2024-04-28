@@ -1,24 +1,36 @@
 package xyz.artenes.budget.app.transaction.list
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.ArrowDownward
+import androidx.compose.material.icons.filled.ArrowUpward
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.InputChip
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -29,9 +41,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import xyz.artenes.budget.app.theme.CustomColorScheme
 
 @Composable
 fun TransactionsListScreen(
@@ -63,90 +77,246 @@ fun TransactionsListScreen(
             return@Scaffold
         }
 
-        LazyColumn(
+        Column(
             modifier = Modifier.padding(it)
         ) {
 
-            /*
-            Total amount based on current filters
-             */
-            item {
 
-                Column(
-                    modifier = Modifier.padding(horizontal = 20.dp)
+            Column(
+                Modifier.background(MaterialTheme.colorScheme.tertiaryContainer)
+            ) {
+
+                /*
+                Search box
+                 */
+                OutlinedTextField(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(start = 20.dp, end = 20.dp, top = 20.dp),
+                    value = "",
+                    onValueChange = {},
+                    colors = CustomColorScheme.outlineTextField(),
+                    placeholder = { Text(text = "Search transactions") },
+                    trailingIcon = {
+                        IconButton(onClick = { /*TODO*/ }) {
+                            Icon(imageVector = Icons.Filled.Close, contentDescription = "")
+                        }
+                    }
+                )
+
+                /*
+                List of filters
+                 */
+                LazyRow {
+
+                    item {
+                        FilterChip(
+                            modifier = Modifier.padding(end = 10.dp, start = 20.dp),
+                            selected = false,
+                            onClick = { /*TODO*/ },
+                            label = { Text(text = "Day") },
+                            colors = CustomColorScheme.filterChipColor(),
+                            border = CustomColorScheme.chipBorder(
+                                enabled = true,
+                                selected = false
+                            )
+                        )
+                    }
+
+                    item {
+                        FilterChip(
+                            modifier = Modifier.padding(end = 10.dp),
+                            selected = false,
+                            onClick = { /*TODO*/ },
+                            label = { Text(text = "Week") },
+                            colors = CustomColorScheme.filterChipColor(),
+                            border = CustomColorScheme.chipBorder(
+                                enabled = true,
+                                selected = false
+                            )
+                        )
+                    }
+
+                    item {
+                        FilterChip(
+                            modifier = Modifier.padding(end = 10.dp),
+                            selected = false,
+                            onClick = { /*TODO*/ },
+                            label = { Text(text = "Month") },
+                            colors = CustomColorScheme.filterChipColor(),
+                            border = CustomColorScheme.chipBorder(
+                                enabled = true,
+                                selected = false
+                            )
+                        )
+                    }
+
+                    item {
+                        FilterChip(
+                            modifier = Modifier.padding(end = 10.dp),
+                            selected = false,
+                            onClick = { /*TODO*/ },
+                            label = { Text(text = "Year") },
+                            colors = CustomColorScheme.filterChipColor(),
+                            border = CustomColorScheme.chipBorder(
+                                enabled = true,
+                                selected = false
+                            )
+                        )
+                    }
+
+                    item {
+                        FilterChip(
+                            modifier = Modifier.padding(end = 10.dp),
+                            selected = false,
+                            onClick = { /*TODO*/ },
+                            label = { Text(text = "Custom period") },
+                            colors = CustomColorScheme.filterChipColor(),
+                            border = CustomColorScheme.chipBorder(
+                                enabled = true,
+                                selected = false
+                            )
+                        )
+                    }
+
+                }
+
+                /*
+                Current selected filter
+                 */
+                Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
+
+                    InputChip(
+                        selected = false,
+                        onClick = { /*TODO*/ },
+                        label = { Text(text = "2024-04-23") },
+                        trailingIcon = {
+                            Icon(imageVector = Icons.Filled.Edit, contentDescription = "")
+                        },
+                        colors = CustomColorScheme.inputChipColor(),
+                        border = CustomColorScheme.chipBorder(enabled = true, selected = false)
+                    )
+
+                }
+
+                /*
+                Totals
+                 */
+
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 40.dp),
                 ) {
 
-                    Spacer(modifier = Modifier.height(150.dp))
+                    Row(
+                        modifier = Modifier.weight(1f),
+                        horizontalArrangement = Arrangement.Center
+                    ) {
+                        Icon(
+                            imageVector = Icons.Filled.ArrowDownward,
+                            contentDescription = "",
+                            tint = CustomColorScheme.textColor()
+                        )
+                        Text(
+                            text = "+ $340.00",
+                            color = CustomColorScheme.textColor(),
+                            style = MaterialTheme.typography.titleLarge
+                        )
+                    }
 
-                    Text(
-                        text = "Total of expenses this month",
-                        color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.5f),
-                        style = MaterialTheme.typography.bodySmall,
-                        fontSize = 12.sp
-                    )
-                    Text(
-                        text = total,
-                        color = MaterialTheme.colorScheme.onBackground,
-                        style = MaterialTheme.typography.titleLarge,
-                        fontSize = 30.sp
-                    )
+                    Row(
+                        modifier = Modifier.weight(1f),
+                        horizontalArrangement = Arrangement.Center
+                    ) {
+                        Icon(
+                            imageVector = Icons.Filled.ArrowUpward,
+                            contentDescription = "",
+                            tint = CustomColorScheme.textColor().copy(alpha = 0.7f)
+                        )
+                        Text(
+                            text = "- $210.00",
+                            color = CustomColorScheme.textColor().copy(alpha = 0.7f),
+                            style = MaterialTheme.typography.titleLarge
+                        )
+                    }
+
+                }
+
+                /*
+                Total amount of transactions
+                 */
+                Text(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 50.dp, bottom = 5.dp),
+                    textAlign = TextAlign.Center,
+                    text = "34 transactions",
+                    color = CustomColorScheme.textColor(),
+                    textDecoration = TextDecoration.Underline,
+                    style = MaterialTheme.typography.labelSmall
+                )
+
+            }
+
+            LazyColumn {
+
+                item {
+                    Box(modifier = Modifier.height(20.dp))
+                }
+
+                loadingTransactions.data!!.forEach { group ->
+
+                    /*
+                    Date
+                     */
+                    item {
+
+                        Row(
+                            modifier = Modifier.padding(horizontal = 20.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(
+                                modifier = Modifier.padding(end = 10.dp),
+                                color = MaterialTheme.colorScheme.onBackground,
+                                text = group.date.displayValue,
+                                style = MaterialTheme.typography.bodyLarge
+                            )
+                            if (group.date.isRelative) {
+                                Text(
+                                    color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.5f),
+                                    text = group.date.absolute,
+                                    style = MaterialTheme.typography.bodySmall
+                                )
+                            }
+
+                        }
+                    }
+
+                    items(
+                        count = group.transactions.size,
+                        key = { index ->
+                            group.transactions[index].id
+                        }
+                    ) { index ->
+
+                        Transaction(
+                            transaction = group.transactions[index]
+                        )
+
+                    }
+
+                    item {
+                        Spacer(modifier = Modifier.height(50.dp))
+                    }
+
+                }
+
+                item {
 
                     Spacer(modifier = Modifier.height(100.dp))
 
                 }
-
-            }
-
-            loadingTransactions.data!!.forEach { group ->
-
-                /*
-                Date
-                 */
-                item {
-
-                    Row(
-                        modifier = Modifier.padding(horizontal = 20.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text(
-                            modifier = Modifier.padding(end = 10.dp),
-                            color = MaterialTheme.colorScheme.onBackground,
-                            text = group.date.displayValue,
-                            style = MaterialTheme.typography.bodyLarge
-                        )
-                        if (group.date.isRelative) {
-                            Text(
-                                color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.5f),
-                                text = group.date.absolute,
-                                style = MaterialTheme.typography.bodySmall
-                            )
-                        }
-
-                    }
-                }
-
-                items(
-                    count = group.transactions.size,
-                    key = { index ->
-                        group.transactions[index].id
-                    }
-                ) { index ->
-
-                    Transaction(
-                        transaction = group.transactions[index]
-                    )
-
-                }
-
-                item {
-                    Spacer(modifier = Modifier.height(50.dp))
-                }
-
-            }
-
-            item {
-
-                Spacer(modifier = Modifier.height(100.dp))
 
             }
 
