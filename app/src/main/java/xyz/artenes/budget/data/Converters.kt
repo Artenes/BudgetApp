@@ -68,7 +68,7 @@ class Converters {
 
     @TypeConverter
     fun fromMoney(value: Money?): Int? {
-        return value?.amount
+        return value?.value
     }
 
     @TypeConverter

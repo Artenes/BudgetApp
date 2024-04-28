@@ -10,6 +10,8 @@ import androidx.room.Query
 import kotlinx.coroutines.flow.Flow
 import xyz.artenes.budget.core.Money
 import xyz.artenes.budget.core.TransactionType
+import xyz.artenes.budget.utils.Year
+import xyz.artenes.budget.utils.YearMonthDay
 import java.time.LocalDate
 import java.time.OffsetDateTime
 import java.util.UUID
@@ -53,7 +55,25 @@ interface TransactionDao {
                 "WHERE date LIKE :yearAndMonth " +
                 "ORDER BY transactions.date DESC"
     )
-    fun getAllWithCategoryByMonth(yearAndMonth: String): Flow<List<TransactionWithCategoryEntity>>
+    fun getByMonth(yearAndMonth: String): Flow<List<TransactionWithCategoryEntity>>
+
+    @Query(
+        "SELECT transactions.id, description, amount, date, transactions.type, color, icon, transactions.created_at " +
+                "FROM transactions " +
+                "INNER JOIN categories ON category_id = categories.id " +
+                "WHERE date = :yearMonthDay " +
+                "ORDER BY transactions.date DESC"
+    )
+    fun getByDay(yearMonthDay: LocalDate): Flow<List<TransactionWithCategoryEntity>>
+
+    @Query(
+        "SELECT transactions.id, description, amount, date, transactions.type, color, icon, transactions.created_at " +
+                "FROM transactions " +
+                "INNER JOIN categories ON category_id = categories.id " +
+                "WHERE date LIKE :year " +
+                "ORDER BY transactions.date DESC"
+    )
+    fun getByYear(year: String): Flow<List<TransactionWithCategoryEntity>>
 
     @Query("SELECT SUM(amount) FROM transactions WHERE date LIKE :yearAndMonth")
     fun totalAmountForMonthAsFlow(yearAndMonth: String): Flow<Int>

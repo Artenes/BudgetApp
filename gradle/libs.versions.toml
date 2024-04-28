@@ -19,6 +19,7 @@ timber = "5.0.1"
 ksp = "1.9.22-1.0.17"
 desugar = "2.0.3"
 faker = "1.0.2"
+datastore = "1.1.0"
 
 [libraries]
 androidx-core-ktx = { module = "androidx.core:core-ktx", version.ref = "androidxCore" }
@@ -37,6 +38,7 @@ androidx-compose-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-
 timber = { group = "com.jakewharton.timber", name = "timber", version.ref = "timber" }
 icons-extended = { group = "androidx.compose.material", name = "material-icons-extended"}
 faker = { group = "com.github.javafaker", name = "javafaker", version.ref= "faker" }
+datastore = { group = "androidx.datastore", name = "datastore-preferences", version.ref = "datastore" }
 
 # modules
 androidx-hilt-navigation-compose = { module = "androidx.hilt:hilt-navigation-compose", version.ref = "androidxHilt" }

@@ -42,7 +42,8 @@ fun InitialLoadScreen(
         ) {
 
             Column(
-                verticalArrangement = Arrangement.Center
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 CircularProgressIndicator(
                     color = MaterialTheme.colorScheme.onBackground

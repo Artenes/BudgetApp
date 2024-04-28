@@ -44,7 +44,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
@@ -77,13 +76,18 @@ fun TransactionsListScreen(
         /*
         State
          */
+        val scrollState = rememberLazyListState()
+        val loadingTransactions by viewModel.transactions.collectAsState()
+        val totalIncome by viewModel.incomeTotal.collectAsState()
+        val totalExpense by viewModel.expenseTotal.collectAsState()
+        val filters by viewModel.filters.collectAsState()
+        val filterValue by viewModel.filterValue.collectAsState()
+        val amountTransactions by viewModel.amountOfTransactions.collectAsState()
+
+
         var showFilter by remember {
             mutableStateOf(true)
         }
-        val coroutineScope = rememberCoroutineScope()
-        val scrollState = rememberLazyListState()
-        val loadingTransactions by viewModel.transactions.collectAsState()
-        val total by viewModel.total.collectAsState()
         val totalsPadding by animateDpAsState(
             targetValue = if (showFilter) 50.dp else 10.dp,
             label = "totalsPadding"
@@ -91,7 +95,7 @@ fun TransactionsListScreen(
 
         LaunchedEffect(scrollState) {
             snapshotFlow { scrollState.firstVisibleItemIndex }.collect { firstVisibleItemIndex ->
-                showFilter = firstVisibleItemIndex <= 1
+                showFilter = firstVisibleItemIndex <= 3
             }
         }
 
@@ -118,16 +122,26 @@ fun TransactionsListScreen(
                     Column {
                         SearchBox()
 
-                        Fitlers()
+                        Filters(
+                            viewModel = viewModel,
+                            filters = filters
+                        )
 
-                        SelectedFilter()
+                        SelectedFilter(
+                            viewModel = viewModel,
+                            value = filterValue
+                        )
                     }
 
                 }
 
-                Totals(totalsPadding)
+                Totals(
+                    padding = totalsPadding,
+                    income = totalIncome,
+                    expense = totalExpense
+                )
 
-                AmountOfTransaction()
+                AmountOfTransaction(value = amountTransactions)
 
             }
 
@@ -212,13 +226,13 @@ private fun Transactions(
 }
 
 @Composable
-private fun AmountOfTransaction() {
+private fun AmountOfTransaction(value: Int) {
     Text(
         modifier = Modifier
             .fillMaxWidth()
             .padding(bottom = 5.dp),
         textAlign = TextAlign.Center,
-        text = "34 transactions",
+        text = "$value transactions",
         color = CustomColorScheme.textColor(),
         textDecoration = TextDecoration.Underline,
         style = MaterialTheme.typography.labelSmall
@@ -226,7 +240,11 @@ private fun AmountOfTransaction() {
 }
 
 @Composable
-private fun Totals(padding: Dp) {
+private fun Totals(
+    padding: Dp,
+    income: String,
+    expense: String
+) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -243,7 +261,7 @@ private fun Totals(padding: Dp) {
                 tint = CustomColorScheme.textColor()
             )
             Text(
-                text = "+ $340.00",
+                text = "+ $income",
                 color = CustomColorScheme.textColor(),
                 style = MaterialTheme.typography.titleLarge
             )
@@ -259,7 +277,7 @@ private fun Totals(padding: Dp) {
                 tint = CustomColorScheme.textColor().copy(alpha = 0.7f)
             )
             Text(
-                text = "- $210.00",
+                text = "- $expense",
                 color = CustomColorScheme.textColor().copy(alpha = 0.7f),
                 style = MaterialTheme.typography.titleLarge
             )
@@ -269,95 +287,51 @@ private fun Totals(padding: Dp) {
 }
 
 @Composable
-private fun SelectedFilter() {
+private fun SelectedFilter(value: DateFilterValueItem, viewModel: TransactionsListViewModel) {
     Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
 
         InputChip(
             selected = false,
-            onClick = { /*TODO*/ },
-            label = { Text(text = "2024-04-23") },
+            onClick = { viewModel.setFilterValue(value) },
+            label = { Text(text = value.label) },
             trailingIcon = {
                 Icon(imageVector = Icons.Filled.Edit, contentDescription = "")
             },
             colors = CustomColorScheme.inputChipColor(),
-            border = CustomColorScheme.chipBorder(enabled = true, selected = false)
+            border = CustomColorScheme.chipBorder()
         )
 
     }
 }
 
 @Composable
-private fun Fitlers() {
+private fun Filters(
+    viewModel: TransactionsListViewModel,
+    filters: List<DateFilterItem>
+) {
     LazyRow {
 
-        item {
-            FilterChip(
-                modifier = Modifier.padding(end = 10.dp, start = 20.dp),
-                selected = false,
-                onClick = { /*TODO*/ },
-                label = { Text(text = "Day") },
-                colors = CustomColorScheme.filterChipColor(),
-                border = CustomColorScheme.chipBorder(
-                    enabled = true,
-                    selected = false
-                )
-            )
-        }
+        items(
+            count = filters.size,
+            key = { index -> filters[index].type }
+        ) { index ->
 
-        item {
-            FilterChip(
-                modifier = Modifier.padding(end = 10.dp),
-                selected = false,
-                onClick = { /*TODO*/ },
-                label = { Text(text = "Week") },
-                colors = CustomColorScheme.filterChipColor(),
-                border = CustomColorScheme.chipBorder(
-                    enabled = true,
-                    selected = false
-                )
-            )
-        }
+            val filter = filters[index]
 
-        item {
-            FilterChip(
-                modifier = Modifier.padding(end = 10.dp),
-                selected = false,
-                onClick = { /*TODO*/ },
-                label = { Text(text = "Month") },
-                colors = CustomColorScheme.filterChipColor(),
-                border = CustomColorScheme.chipBorder(
-                    enabled = true,
-                    selected = false
-                )
-            )
-        }
+            val startPadding = if (index == 0) 20.dp else 0.dp
 
-        item {
             FilterChip(
-                modifier = Modifier.padding(end = 10.dp),
-                selected = false,
-                onClick = { /*TODO*/ },
-                label = { Text(text = "Year") },
+                modifier = Modifier.padding(end = 10.dp, start = startPadding),
+                selected = filter.selected,
+                onClick = { viewModel.setFilter(filter) },
+                label = { Text(text = filter.label) },
                 colors = CustomColorScheme.filterChipColor(),
                 border = CustomColorScheme.chipBorder(
                     enabled = true,
-                    selected = false
+                    selected = filter.selected
                 )
             )
-        }
 
-        item {
-            FilterChip(
-                modifier = Modifier.padding(end = 10.dp),
-                selected = false,
-                onClick = { /*TODO*/ },
-                label = { Text(text = "Custom period") },
-                colors = CustomColorScheme.filterChipColor(),
-                border = CustomColorScheme.chipBorder(
-                    enabled = true,
-                    selected = false
-                )
-            )
         }
 
     }

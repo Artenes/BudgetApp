@@ -31,6 +31,18 @@ class LocaleFormatter @Inject constructor(private val messages: Messages) {
         return getMoneyFormat().format(money.toDouble)
     }
 
+    fun formatDate(date: LocalDate): String {
+        return date.format(DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT))
+    }
+
+    fun formatMonthAndYear(date: LocalDate): String {
+        return date.format(DateTimeFormatter.ofPattern("MMMM yyyy"))
+    }
+
+    fun formatYear(date: LocalDate): String {
+        return date.format(DateTimeFormatter.ofPattern("yyyy"))
+    }
+
     fun formatDateAsRelative(date: LocalDate): RelativeDate {
         val today = LocalDate.now()
         val daysBetween = ChronoUnit.DAYS.between(date, today)

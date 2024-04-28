@@ -124,6 +124,7 @@ dependencies {
     implementation(libs.androidx.compose.material3)
 
     implementation(libs.faker)
+    implementation(libs.datastore)
 
     // Tooling
     debugImplementation(libs.androidx.compose.ui.tooling)

@@ -3,9 +3,15 @@ package xyz.artenes.budget.app.transaction.list
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
+import xyz.artenes.budget.R
+import xyz.artenes.budget.android.Messages
+import xyz.artenes.budget.android.UserPreferences
 import xyz.artenes.budget.core.Money
 import xyz.artenes.budget.core.TransactionType
 import xyz.artenes.budget.data.AppRepository
@@ -13,7 +19,9 @@ import xyz.artenes.budget.data.TransactionGroup
 import xyz.artenes.budget.data.TransactionWithCategoryEntity
 import xyz.artenes.budget.utils.LoadingData
 import xyz.artenes.budget.utils.LocaleFormatter
-import xyz.artenes.budget.utils.YearAndMonth
+import xyz.artenes.budget.utils.Year
+import xyz.artenes.budget.utils.YearMonth
+import xyz.artenes.budget.utils.YearMonthDay
 import java.time.LocalDate
 import javax.inject.Inject
 
@@ -46,40 +54,151 @@ val myData: Flow<DataState<List<MyData>>> = flow {
 @HiltViewModel
 class TransactionsListViewModel @Inject constructor(
     repository: AppRepository,
-    private val formatter: LocaleFormatter
+    private val formatter: LocaleFormatter,
+    private val messages: Messages,
+    private val preferences: UserPreferences
 ) :
     ViewModel() {
+
+    /*
+    Date Filter
+     */
+    val filters = preferences.listen("filter", DateFilterType.MONTH.toString()).map {
+
+        val selected = enumValueOf<DateFilterType>(it)
+
+        listOf(
+            DateFilterItem(
+                DateFilterType.DAY,
+                messages.get(R.string.day),
+                selected == DateFilterType.DAY
+            ),
+            DateFilterItem(
+                DateFilterType.WEEK,
+                messages.get(R.string.week),
+                selected == DateFilterType.WEEK
+            ),
+            DateFilterItem(
+                DateFilterType.MONTH,
+                messages.get(R.string.month),
+                selected == DateFilterType.MONTH
+            ),
+            DateFilterItem(
+                DateFilterType.YEAR,
+                messages.get(R.string.year),
+                selected == DateFilterType.YEAR
+            ),
+            DateFilterItem(
+                DateFilterType.CUSTOM,
+                messages.get(R.string.custom_range),
+                selected == DateFilterType.CUSTOM
+            ),
+        )
+
+    }.stateIn(viewModelScope, SharingStarted.Lazily, emptyList())
+
+    /*
+    Date filter value
+     */
+    @OptIn(ExperimentalCoroutinesApi::class)
+    val filterValue = preferences.listen("filter", DateFilterType.MONTH.toString()).flatMapLatest {
+        val filter = enumValueOf<DateFilterType>(it)
+
+        val now = LocalDate.now()
+        val defaultValue = when (filter) {
+            DateFilterType.DAY -> YearMonthDay.fromLocalDate(now).toString()
+            DateFilterType.WEEK -> "2024-04-28 ~ 2024-04-28"
+            DateFilterType.MONTH -> YearMonth.fromLocalDate(now).toString()
+            DateFilterType.YEAR -> Year.fromLocalDate(now).toString()
+            DateFilterType.CUSTOM -> "2024-04-28 ~ 2024-04-28"
+        }
+
+        preferences.listen("${it}_VALUE", defaultValue)
+    }.map { value ->
+
+        val filter =
+            enumValueOf<DateFilterType>(preferences.get("filter", DateFilterType.MONTH.toString()))
+
+        val label = when (filter) {
+            DateFilterType.DAY -> {
+                formatter.formatDate(YearMonthDay.fromString(value).toLocalDate())
+            }
+
+            DateFilterType.WEEK -> {
+                "2024-04-28 ~ 2024-04-28"
+            }
+
+            DateFilterType.MONTH -> {
+                formatter.formatMonthAndYear(YearMonth.fromString(value).toLocalDate())
+            }
+
+            DateFilterType.YEAR -> {
+                formatter.formatYear(Year.fromString(value).toLocalDate())
+            }
+
+            DateFilterType.CUSTOM -> {
+                "2024-04-28 ~ 2024-04-28"
+            }
+        }
+
+        DateFilterValueItem(filter, value, label)
+
+    }.stateIn(
+        viewModelScope,
+        SharingStarted.Lazily,
+        DateFilterValueItem(
+            DateFilterType.MONTH,
+            YearMonth.now().toString(),
+            formatter.formatMonthAndYear(YearMonth.now().toLocalDate())
+        )
+    )
 
     /**
      * List of transactions to display
      */
-    val transactions =
-        //we get the values from DB
-        repository.getAllTransactionsWithCategoryByMonthGroupedByDate(
-            YearAndMonth.fromLocalDate(
-                LocalDate.now()
-            )
-        ).map { groups ->
-            //then format them for display
-            groups.map { group ->
-                groupToItem(group)
+    @OptIn(ExperimentalCoroutinesApi::class)
+    val transactions = filterValue.flatMapLatest {
+
+        when (it.type) {
+            DateFilterType.DAY -> {
+                repository.getByDay(YearMonthDay.fromString(it.value))
             }
-        }.map {
-            //then inform that loading is complete
-            LoadingData(false, it)
-        }.stateIn(viewModelScope, SharingStarted.Lazily, LoadingData(true, null))
+
+            DateFilterType.WEEK -> {
+                repository.getByMonth(YearMonth.now())
+            }
+
+            DateFilterType.MONTH -> {
+                repository.getByMonth(YearMonth.fromString(it.value))
+            }
+
+            DateFilterType.YEAR -> {
+                repository.getByYear(Year.fromString(it.value))
+            }
+
+            DateFilterType.CUSTOM -> {
+                repository.getByMonth(YearMonth.now())
+            }
+        }
+
+    }.map { groups ->
+        //then format them for display
+        groups.map { group ->
+            groupToItem(group)
+        }
+    }.map {
+        //then inform that loading is complete
+        LoadingData(false, it)
+    }.stateIn(viewModelScope, SharingStarted.Lazily, LoadingData(true, null))
 
     /**
      * This sum all amounts from the transactions returned from flow above
      * and reduce them to an integer
      */
-    val total = transactions.map { loadingData ->
-        //we have group of transactions, so we sum them first
+    val incomeTotal = transactions.map { loadingData ->
         val total = loadingData.data?.sumOf { group ->
-            //then for each group, we sum the value from each transaction
-            group.transactions.sumOf { transaction ->
-                //based on the type of transaction we either reduce or increase the value of the sum
-                transaction.amount.toSigned(transaction.type)
+            group.transactions.filter { it.type == TransactionType.INCOME }.sumOf { transaction ->
+                transaction.amount.value
             }
         } ?: 0
         //then we return the value as a formatted string
@@ -87,6 +206,41 @@ class TransactionsListViewModel @Inject constructor(
         val formattedValue = formatter.formatMoney(Money(total))
         "$currencySymbol $formattedValue"
     }.stateIn(viewModelScope, SharingStarted.Lazily, "")
+
+    val expenseTotal = transactions.map { loadingData ->
+        val total = loadingData.data?.sumOf { group ->
+            group.transactions.filter { it.type == TransactionType.EXPENSE }.sumOf { transaction ->
+                transaction.amount.value
+            }
+        } ?: 0
+        //then we return the value as a formatted string
+        val currencySymbol = formatter.getCurrencySymbol()
+        val formattedValue = formatter.formatMoney(Money(total))
+        "$currencySymbol $formattedValue"
+    }.stateIn(viewModelScope, SharingStarted.Lazily, "")
+
+    val amountOfTransactions = transactions.map { loadingData ->
+
+        loadingData.data?.sumOf { group ->
+            group.transactions.size
+        } ?: 0
+
+    }.stateIn(viewModelScope, SharingStarted.Lazily, 0)
+
+    /**
+     * Set the current filter
+     */
+    fun setFilter(item: DateFilterItem) {
+        viewModelScope.launch {
+            preferences.save("filter", item.type.toString())
+        }
+    }
+
+    fun setFilterValue(item: DateFilterValueItem) {
+        viewModelScope.launch {
+            preferences.save(item.key, item.value)
+        }
+    }
 
     /**
      * Format groups to be displayed by the UI

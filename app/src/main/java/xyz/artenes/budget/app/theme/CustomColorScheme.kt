@@ -21,12 +21,13 @@ object CustomColorScheme {
     )
 
     @Composable
-    fun chipBorder(enabled: Boolean, selected: Boolean) = FilterChipDefaults.filterChipBorder(
-        enabled = enabled,
-        selected = selected,
-    ).copy(
-        brush = SolidColor(MaterialTheme.colorScheme.onBackground.copy(alpha = 0.5f))
-    )
+    fun chipBorder(enabled: Boolean = true, selected: Boolean = false) =
+        FilterChipDefaults.filterChipBorder(
+            enabled = enabled,
+            selected = selected,
+        ).copy(
+            brush = SolidColor(MaterialTheme.colorScheme.onBackground.copy(alpha = 0.5f))
+        )
 
     @Composable
     fun surfaceColor() = MaterialTheme.colorScheme.background

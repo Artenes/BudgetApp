@@ -2,15 +2,15 @@ package xyz.artenes.budget.core
 
 import java.text.NumberFormat
 
-data class Money(val amount: Int) {
+data class Money(val value: Int) {
 
     val toDouble: Double
-        get() = amount / 100.0
+        get() = value / 100.0
 
     fun toSigned(type: TransactionType) = if (type == TransactionType.EXPENSE) {
-        -amount
+        -value
     } else {
-        amount
+        value
     }
 
     fun format(format: NumberFormat): String {
