@@ -22,15 +22,25 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import xyz.artenes.budget.app.load.InitialLoadScreen
 import xyz.artenes.budget.app.transaction.editor.TransactionEditorScreen
 import xyz.artenes.budget.app.transaction.list.TransactionsListScreen
-import xyz.artenes.budget.utils.LocaleFormatter
 
 @Composable
 fun MainNavigation() {
     val navController = rememberNavController()
 
-    NavHost(navController = navController, startDestination = "transactions") {
+    NavHost(navController = navController, startDestination = "load") {
+
+        composable("load") {
+            InitialLoadScreen(
+                goToTransactionsScreen = {
+                    navController.navigate("transactions") {
+                        popUpTo("load") { inclusive = true }
+                    }
+                }
+            )
+        }
 
         composable("transactions") {
             TransactionsListScreen(
