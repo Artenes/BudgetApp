@@ -1,5 +1,7 @@
 package xyz.artenes.budget.app.transaction.list
 
+import xyz.artenes.budget.utils.YearMonthDay
+
 data class DateFilterItem(
     val type: DateFilterType,
     val label: String,
@@ -13,6 +15,8 @@ data class DateFilterValueItem(
 ) {
 
     val key: String = "${type}_VALUE"
+
+    fun toLocalDate() = YearMonthDay.fromString(value).toLocalDate()
 
 }
 

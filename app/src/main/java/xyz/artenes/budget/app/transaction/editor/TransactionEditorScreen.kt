@@ -28,7 +28,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import xyz.artenes.budget.app.components.CustomDatePicker
+import xyz.artenes.budget.app.components.CustomDatePickerInput
 import xyz.artenes.budget.app.components.CustomSpinner
 import xyz.artenes.budget.app.components.CustomTextField
 import xyz.artenes.budget.core.TransactionType
@@ -135,7 +135,7 @@ fun TransactionEditorScreen(
                 keyboardType = KeyboardType.Number
             )
 
-            CustomDatePicker(
+            CustomDatePickerInput(
                 label = "Date",
                 value = date,
                 onDateSelected = { newDate ->

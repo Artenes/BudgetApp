@@ -17,6 +17,7 @@ import xyz.artenes.budget.core.TransactionType
 import xyz.artenes.budget.data.AppRepository
 import xyz.artenes.budget.data.TransactionGroup
 import xyz.artenes.budget.data.TransactionWithCategoryEntity
+import xyz.artenes.budget.utils.DateRangeInclusive
 import xyz.artenes.budget.utils.LoadingData
 import xyz.artenes.budget.utils.LocaleFormatter
 import xyz.artenes.budget.utils.Year
@@ -62,6 +63,7 @@ class TransactionsListViewModel @Inject constructor(
 
     /*
     Date Filter
+    @TODO date filter and its value should be MutableStates inside viewmodel instead of persisted in storage
      */
     val filters = preferences.listen("filter", DateFilterType.MONTH.toString()).map {
 
@@ -107,7 +109,7 @@ class TransactionsListViewModel @Inject constructor(
         val now = LocalDate.now()
         val defaultValue = when (filter) {
             DateFilterType.DAY -> YearMonthDay.fromLocalDate(now).toString()
-            DateFilterType.WEEK -> "2024-04-28 ~ 2024-04-28"
+            DateFilterType.WEEK -> DateRangeInclusive.now().toString()
             DateFilterType.MONTH -> YearMonth.fromLocalDate(now).toString()
             DateFilterType.YEAR -> Year.fromLocalDate(now).toString()
             DateFilterType.CUSTOM -> "2024-04-28 ~ 2024-04-28"
@@ -125,7 +127,7 @@ class TransactionsListViewModel @Inject constructor(
             }
 
             DateFilterType.WEEK -> {
-                "2024-04-28 ~ 2024-04-28"
+                formatter.formatRange(DateRangeInclusive.fromString(value))
             }
 
             DateFilterType.MONTH -> {
@@ -236,9 +238,15 @@ class TransactionsListViewModel @Inject constructor(
         }
     }
 
-    fun setFilterValue(item: DateFilterValueItem) {
+    fun setValueForDay(item: DateFilterValueItem, newValue: YearMonthDay) {
         viewModelScope.launch {
-            preferences.save(item.key, item.value)
+            preferences.save(item.key, newValue.toString())
+        }
+    }
+
+    fun setValueForWeek(item: DateFilterValueItem, newValue: DateRangeInclusive) {
+        viewModelScope.launch {
+            preferences.save(item.key, newValue.toString())
         }
     }
 

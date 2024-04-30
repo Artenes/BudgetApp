@@ -55,8 +55,12 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import xyz.artenes.budget.app.components.CustomDatePicker
+import xyz.artenes.budget.app.components.CustomWeekPicker
 import xyz.artenes.budget.app.theme.CustomColorScheme
+import xyz.artenes.budget.utils.DateRangeInclusive
 import xyz.artenes.budget.utils.LoadingData
+import xyz.artenes.budget.utils.YearMonthDay
 
 @Composable
 fun TransactionsListScreen(
@@ -288,11 +292,16 @@ private fun Totals(
 
 @Composable
 private fun SelectedFilter(value: DateFilterValueItem, viewModel: TransactionsListViewModel) {
+
+    var show by remember {
+        mutableStateOf(false)
+    }
+
     Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
 
         InputChip(
             selected = false,
-            onClick = { viewModel.setFilterValue(value) },
+            onClick = { show = true },
             label = { Text(text = value.label) },
             trailingIcon = {
                 Icon(imageVector = Icons.Filled.Edit, contentDescription = "")
@@ -302,6 +311,32 @@ private fun SelectedFilter(value: DateFilterValueItem, viewModel: TransactionsLi
         )
 
     }
+
+    if (value.type == DateFilterType.DAY) {
+        CustomDatePicker(
+            visible = show,
+            value = value.toLocalDate(),
+            onDateSelected = { newDate ->
+                viewModel.setValueForDay(
+                    value,
+                    YearMonthDay.fromLocalDate(newDate)
+                )
+            },
+            onDismiss = { show = false }
+        )
+    }
+
+    if (value.type == DateFilterType.WEEK) {
+        CustomWeekPicker(
+            visible = show,
+            value = DateRangeInclusive.now(),
+            onWeekSelected = { newWeek ->
+                viewModel.setValueForWeek(value, newWeek)
+            },
+            onDismiss = { show = false }
+        )
+    }
+
 }
 
 @Composable
@@ -348,7 +383,7 @@ private fun SearchBox() {
         colors = CustomColorScheme.outlineTextField(),
         placeholder = { Text(text = "Search transactions") },
         trailingIcon = {
-            IconButton(onClick = { /*TODO*/ }) {
+            IconButton(onClick = { }) {
                 Icon(imageVector = Icons.Filled.Close, contentDescription = "")
             }
         }

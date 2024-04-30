@@ -35,6 +35,11 @@ class LocaleFormatter @Inject constructor(private val messages: Messages) {
         return date.format(DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT))
     }
 
+    fun formatRange(range: DateRangeInclusive): String {
+        val format = DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT)
+        return "${range.start.format(format)} ~ ${range.end.format(format)}"
+    }
+
     fun formatMonthAndYear(date: LocalDate): String {
         return date.format(DateTimeFormatter.ofPattern("MMMM yyyy"))
     }
