@@ -20,10 +20,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import kotlinx.coroutines.launch
 import xyz.artenes.budget.utils.DateRangeInclusive
 import xyz.artenes.budget.utils.YearMonth
 import java.time.Month
@@ -40,27 +42,18 @@ fun CustomWeekPicker(
     onDismiss: () -> Unit,
 ) {
 
+    val coroutine = rememberCoroutineScope()
+
     var years by remember {
-        val middle = value.year
-        val start = middle - 5
-        val end = middle + 5
-        mutableStateOf((start..end).mapIndexed { index, value ->
-            YearItem(value, value == middle, index)
-        }.toList())
+        mutableStateOf(makeYears(value))
     }
 
     var months by remember {
-        val months = Month.entries.mapIndexed { index, month ->
-            val label = month.getDisplayName(TextStyle.FULL, Locale.getDefault())
-            val monthValue = month.value
-            MonthItem(monthValue, label, monthValue == value.month, index)
-        }
-        mutableStateOf(months)
+        mutableStateOf(makeMonths(value))
     }
 
     var weeks by remember {
-        val weeks = makeWeeks(value.toYearMonth(), value)
-        mutableStateOf(weeks)
+        mutableStateOf(makeWeeks(value.toYearMonth(), value))
     }
 
     val yearListState = rememberLazyListState(
@@ -72,7 +65,16 @@ fun CustomWeekPicker(
     )
 
     if (visible) {
-        BasicAlertDialog(onDismissRequest = onDismiss) {
+        BasicAlertDialog(onDismissRequest = {
+            years = makeYears(value)
+            months = makeMonths(value)
+            weeks = makeWeeks(value.toYearMonth(), value)
+            coroutine.launch {
+                yearListState.scrollToItem(years.first { it.selected }.position)
+                monthListState.scrollToItem(months.first { it.selected }.position)
+            }
+            onDismiss()
+        }) {
             Surface(
                 color = DatePickerDefaults.colors().containerColor,
                 shape = DatePickerDefaults.shape,
@@ -215,6 +217,24 @@ fun CustomWeekPicker(
         }
     }
 
+}
+
+private fun makeMonths(value: DateRangeInclusive): List<MonthItem> {
+    val months = Month.entries.mapIndexed { index, month ->
+        val label = month.getDisplayName(TextStyle.FULL, Locale.getDefault())
+        val monthValue = month.value
+        MonthItem(monthValue, label, monthValue == value.month, index)
+    }
+    return months
+}
+
+private fun makeYears(value: DateRangeInclusive): List<YearItem> {
+    val middle = value.year
+    val start = middle - 5
+    val end = middle + 5
+    return (start..end).mapIndexed { index, item ->
+        YearItem(item, item == middle, index)
+    }.toList()
 }
 
 private fun makeWeeks(yearMonth: YearMonth, value: DateRangeInclusive? = null): List<WeekItem> {
