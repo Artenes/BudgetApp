@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredWidth
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.BasicAlertDialog
@@ -90,73 +91,23 @@ fun CustomWeekPicker(
                     /*
                     Years
                      */
-                    LazyRow(
-                        state = yearListState
-                    ) {
-
-                        items(
-                            count = years.size,
-                            key = { index -> years[index].value }
-                        ) { index ->
-
-                            val yearItem = years[index]
-
-                            Surface(
-                                color = if (yearItem.selected) MaterialTheme.colorScheme.primary else DatePickerDefaults.colors().containerColor,
-                                onClick = {
-                                    years =
-                                        years.map { item -> item.copy(selected = yearItem == item) }
-                                            .toList()
-                                    val month = months.first { it.selected }.value
-                                    val year = yearItem.value
-                                    weeks = makeWeeks(LocalDate.of(year, month, 1))
-                                },
-                                shape = MaterialTheme.shapes.medium
-                            ) {
-                                Text(
-                                    modifier = Modifier.padding(10.dp),
-                                    text = yearItem.value.toString()
-                                )
-                            }
-
-                        }
-
+                    DateRow(state = yearListState, items = years) { yearItem ->
+                        years =
+                            years.map { item -> item.copy(selected = yearItem == item) }.toList()
+                        val month = months.first { it.selected }.value
+                        val year = yearItem.value
+                        weeks = makeWeeks(LocalDate.of(year, month, 1))
                     }
 
                     /*
                     Months
                      */
-                    LazyRow(
-                        state = monthListState
-                    ) {
-
-                        items(
-                            count = months.size,
-                            key = { index -> months[index].value }
-                        ) { index ->
-
-                            val monthItem = months[index]
-
-                            Surface(
-                                color = if (monthItem.selected) MaterialTheme.colorScheme.primary else DatePickerDefaults.colors().containerColor,
-                                onClick = {
-                                    months =
-                                        months.map { item -> item.copy(selected = monthItem == item) }
-                                            .toList()
-                                    val month = monthItem.value
-                                    val year = years.first { it.selected }.value
-                                    weeks = makeWeeks(LocalDate.of(year, month, 1))
-                                },
-                                shape = MaterialTheme.shapes.medium
-                            ) {
-                                Text(
-                                    modifier = Modifier.padding(10.dp),
-                                    text = monthItem.label
-                                )
-                            }
-
-                        }
-
+                    DateRow(state = monthListState, items = months) { monthItem ->
+                        months =
+                            months.map { item -> item.copy(selected = monthItem == item) }.toList()
+                        val month = monthItem.value
+                        val year = years.first { it.selected }.value
+                        weeks = makeWeeks(LocalDate.of(year, month, 1))
                     }
 
                     HorizontalDivider(modifier = Modifier.padding(vertical = 10.dp))
@@ -221,21 +172,21 @@ fun CustomWeekPicker(
 
 }
 
-private fun makeMonths(value: DateRangeInclusive): List<MonthItem> {
+private fun makeMonths(value: DateRangeInclusive): List<DateItem> {
     val months = Month.entries.mapIndexed { index, month ->
         val label = month.getDisplayName(TextStyle.FULL, Locale.getDefault())
         val monthValue = month.value
-        MonthItem(monthValue, label, monthValue == value.month, index)
+        DateItem(monthValue, monthValue == value.month, label, index)
     }
     return months
 }
 
-private fun makeYears(value: DateRangeInclusive): List<YearItem> {
+private fun makeYears(value: DateRangeInclusive): List<DateItem> {
     val middle = value.year
     val start = middle - 5
     val end = middle + 5
     return (start..end).mapIndexed { index, item ->
-        YearItem(item, item == middle, index)
+        DateItem(item, item == middle, item.toString(), index)
     }.toList()
 }
 
@@ -251,16 +202,10 @@ private fun makeWeeks(date: LocalDate, value: DateRangeInclusive? = null): List<
     }
 }
 
-private data class YearItem(
+private data class DateItem(
     val value: Int,
     val selected: Boolean,
-    val position: Int
-)
-
-private data class MonthItem(
-    val value: Int,
     val label: String,
-    val selected: Boolean,
     val position: Int
 )
 
@@ -270,3 +215,40 @@ private data class WeekItem(
     val selected: Boolean,
     val position: Int
 )
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun DateRow(
+    state: LazyListState,
+    items: List<DateItem>,
+    onClick: (DateItem) -> Unit
+) {
+
+    LazyRow(
+        state = state
+    ) {
+
+        items(
+            count = items.size,
+            key = { index -> items[index].value }
+        ) { index ->
+
+            val dateItem = items[index]
+
+            Surface(
+                color = if (dateItem.selected) MaterialTheme.colorScheme.primary else DatePickerDefaults.colors().containerColor,
+                onClick = {
+                    onClick(dateItem)
+                },
+                shape = MaterialTheme.shapes.medium
+            ) {
+                Text(
+                    modifier = Modifier.padding(10.dp),
+                    text = dateItem.value.toString()
+                )
+            }
+
+        }
+
+    }
+}
