@@ -17,6 +17,7 @@ import javax.inject.Singleton
 class LocaleFormatter @Inject constructor(private val messages: Messages) {
 
     private val dayOfWeekFormat = DateTimeFormatter.ofPattern("EEEE")
+    private val serializedDate = DateTimeFormatter.ofPattern("yyyy-MM-dd")
 
     fun getDateFormat() = DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT)
 
@@ -42,10 +43,6 @@ class LocaleFormatter @Inject constructor(private val messages: Messages) {
 
     fun formatMonthAndYear(date: LocalDate): String {
         return date.format(DateTimeFormatter.ofPattern("MMMM yyyy"))
-    }
-
-    fun formatYear(date: LocalDate): String {
-        return date.format(DateTimeFormatter.ofPattern("yyyy"))
     }
 
     fun formatDateAsRelative(date: LocalDate): RelativeDate {

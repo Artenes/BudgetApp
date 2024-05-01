@@ -1,13 +1,11 @@
 package xyz.artenes.budget.data
 
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
+import xyz.artenes.budget.core.DateSerializer
 import xyz.artenes.budget.core.TransactionType
 import xyz.artenes.budget.utils.DateRangeInclusive
-import xyz.artenes.budget.utils.Year
-import xyz.artenes.budget.utils.YearMonth
-import xyz.artenes.budget.utils.YearMonthDay
+import java.time.LocalDate
 import javax.inject.Inject
 import javax.inject.Singleton
 import kotlin.coroutines.CoroutineContext
@@ -15,7 +13,8 @@ import kotlin.coroutines.CoroutineContext
 @Singleton
 class AppRepository @Inject constructor(
     private val appDatabase: AppDatabase,
-    private val dispatcher: CoroutineContext
+    private val dispatcher: CoroutineContext,
+    private val dateSerializer: DateSerializer
 ) {
 
     fun getAllTransactions() = appDatabase.transactionsDao().getAll()
@@ -23,23 +22,24 @@ class AppRepository @Inject constructor(
     /**
      * This returns all transactions for a given month, grouped by date
      */
-    fun getByMonth(yearMonth: YearMonth) =
+    fun getByMonth(date: LocalDate) =
         appDatabase.transactionsDao()
-            .getByMonth("${yearMonth}%").map(this::groupTransactions)
+            .getByMonth("${dateSerializer.serializeYearAndMonth(date)}%")
+            .map(this::groupTransactions)
 
 
-    fun getByDay(yearMonthDay: YearMonthDay) =
+    fun getByDay(date: LocalDate) =
         appDatabase.transactionsDao()
-            .getByDay(yearMonthDay.toLocalDate()).map(this::groupTransactions)
+            .getByDay(date).map(this::groupTransactions)
 
     fun getByWeek(week: DateRangeInclusive) =
         appDatabase.transactionsDao()
             .getByWeek(
-                YearMonthDay.fromLocalDate(week.start).toString(),
-                YearMonthDay.fromLocalDate(week.end).toString()
+                week.start,
+                week.end
             ).map(this::groupTransactions)
 
-    fun getByYear(year: Year) =
+    fun getByYear(year: Int) =
         appDatabase.transactionsDao()
             .getByYear("$year%").map(this::groupTransactions)
 
@@ -48,9 +48,6 @@ class AppRepository @Inject constructor(
             appDatabase.transactionsDao().insert(transaction)
         }
     }
-
-    fun totalAmountForMonthAsFlow(yearMonth: YearMonth): Flow<Int> =
-        appDatabase.transactionsDao().totalAmountForMonthAsFlow("$yearMonth%")
 
     suspend fun getCategoriesByType(type: TransactionType): List<CategoryEntity> {
         return withContext(dispatcher) {

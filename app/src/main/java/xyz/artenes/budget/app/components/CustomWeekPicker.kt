@@ -27,7 +27,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
 import xyz.artenes.budget.utils.DateRangeInclusive
-import xyz.artenes.budget.utils.YearMonth
+import java.time.LocalDate
 import java.time.Month
 import java.time.format.DateTimeFormatter
 import java.time.format.TextStyle
@@ -53,7 +53,7 @@ fun CustomWeekPicker(
     }
 
     var weeks by remember {
-        mutableStateOf(makeWeeks(value.toYearMonth(), value))
+        mutableStateOf(makeWeeks(value.start, value))
     }
 
     val yearListState = rememberLazyListState(
@@ -68,7 +68,7 @@ fun CustomWeekPicker(
         BasicAlertDialog(onDismissRequest = {
             years = makeYears(value)
             months = makeMonths(value)
-            weeks = makeWeeks(value.toYearMonth(), value)
+            weeks = makeWeeks(value.start, value)
             coroutine.launch {
                 yearListState.scrollToItem(years.first { it.selected }.position)
                 monthListState.scrollToItem(months.first { it.selected }.position)
@@ -109,7 +109,7 @@ fun CustomWeekPicker(
                                             .toList()
                                     val month = months.first { it.selected }.value
                                     val year = yearItem.value
-                                    weeks = makeWeeks(YearMonth(year, month))
+                                    weeks = makeWeeks(LocalDate.of(year, month, 1))
                                 },
                                 shape = MaterialTheme.shapes.medium
                             ) {
@@ -145,7 +145,7 @@ fun CustomWeekPicker(
                                             .toList()
                                     val month = monthItem.value
                                     val year = years.first { it.selected }.value
-                                    weeks = makeWeeks(YearMonth(year, month))
+                                    weeks = makeWeeks(LocalDate.of(year, month, 1))
                                 },
                                 shape = MaterialTheme.shapes.medium
                             ) {
@@ -205,7 +205,9 @@ fun CustomWeekPicker(
                             onWeekSelected(weeks.first { it.selected }.value)
                             onDismiss()
                         },
-                        modifier = Modifier.fillMaxWidth().padding(top = 20.dp),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = 20.dp),
                         enabled = weeks.find { it.selected } != null
                     ) {
                         Text(text = "Select week")
@@ -237,9 +239,9 @@ private fun makeYears(value: DateRangeInclusive): List<YearItem> {
     }.toList()
 }
 
-private fun makeWeeks(yearMonth: YearMonth, value: DateRangeInclusive? = null): List<WeekItem> {
+private fun makeWeeks(date: LocalDate, value: DateRangeInclusive? = null): List<WeekItem> {
     val dayFormat = DateTimeFormatter.ofPattern("dd MMMM")
-    return DateRangeInclusive.weeksInYearMonth(yearMonth).mapIndexed { index, week ->
+    return DateRangeInclusive.weeksInYearMonth(date).mapIndexed { index, week ->
         WeekItem(
             week,
             "${week.start.format(dayFormat)} ~ ${week.end.format(dayFormat)}",

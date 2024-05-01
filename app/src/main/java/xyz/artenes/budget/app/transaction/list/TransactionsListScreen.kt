@@ -58,9 +58,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import xyz.artenes.budget.app.components.CustomDatePicker
 import xyz.artenes.budget.app.components.CustomWeekPicker
 import xyz.artenes.budget.app.theme.CustomColorScheme
-import xyz.artenes.budget.utils.DateRangeInclusive
 import xyz.artenes.budget.utils.LoadingData
-import xyz.artenes.budget.utils.YearMonthDay
 
 @Composable
 fun TransactionsListScreen(
@@ -319,7 +317,7 @@ private fun SelectedFilter(value: DateFilterValueItem, viewModel: TransactionsLi
             onDateSelected = { newDate ->
                 viewModel.setValueForDay(
                     value,
-                    YearMonthDay.fromLocalDate(newDate)
+                    newDate
                 )
             },
             onDismiss = { show = false }

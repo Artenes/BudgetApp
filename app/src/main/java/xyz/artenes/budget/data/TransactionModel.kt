@@ -10,8 +10,6 @@ import androidx.room.Query
 import kotlinx.coroutines.flow.Flow
 import xyz.artenes.budget.core.Money
 import xyz.artenes.budget.core.TransactionType
-import xyz.artenes.budget.utils.Year
-import xyz.artenes.budget.utils.YearMonthDay
 import java.time.LocalDate
 import java.time.OffsetDateTime
 import java.util.UUID
@@ -55,7 +53,7 @@ interface TransactionDao {
                 "WHERE date >= :startInclusive AND date <= :endInclusive " +
                 "ORDER BY transactions.date DESC"
     )
-    fun getByWeek(startInclusive: String, endInclusive: String): Flow<List<TransactionWithCategoryEntity>>
+    fun getByWeek(startInclusive: LocalDate, endInclusive: LocalDate): Flow<List<TransactionWithCategoryEntity>>
 
     @Query(
         "SELECT transactions.id, description, amount, date, transactions.type, color, icon, transactions.created_at " +

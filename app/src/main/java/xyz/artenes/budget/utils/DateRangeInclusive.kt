@@ -13,10 +13,6 @@ data class DateRangeInclusive(
     val month: Int
         get() = start.monthValue
 
-    fun toYearMonth(): YearMonth {
-        return YearMonth(year, month)
-    }
-
     override fun toString(): String {
         return "${start}_$end"
     }
@@ -55,13 +51,12 @@ data class DateRangeInclusive(
             return DateRangeInclusive(LocalDate.parse(parts[0]), LocalDate.parse(parts[1]))
         }
 
-        fun weeksInYearMonth(yearMonth: YearMonth): List<DateRangeInclusive> {
+        fun weeksInYearMonth(date: LocalDate): List<DateRangeInclusive> {
 
             val weeks = mutableListOf<DateRangeInclusive>()
 
-            val now = yearMonth.toLocalDate()
-            val firstDay = now.withDayOfMonth(1);
-            val lastDay = now.withDayOfMonth(now.lengthOfMonth())
+            val firstDay = date.withDayOfMonth(1);
+            val lastDay = date.withDayOfMonth(date.lengthOfMonth())
             val week = firstDay.dayOfWeek!!.value
 
             var start = if (week != 7) firstDay.minusDays(week.toLong()) else firstDay

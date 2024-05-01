@@ -12,6 +12,7 @@ import kotlinx.coroutines.launch
 import xyz.artenes.budget.R
 import xyz.artenes.budget.android.Messages
 import xyz.artenes.budget.android.UserPreferences
+import xyz.artenes.budget.core.DateSerializer
 import xyz.artenes.budget.core.Money
 import xyz.artenes.budget.core.TransactionType
 import xyz.artenes.budget.data.AppRepository
@@ -20,9 +21,6 @@ import xyz.artenes.budget.data.TransactionWithCategoryEntity
 import xyz.artenes.budget.utils.DateRangeInclusive
 import xyz.artenes.budget.utils.LoadingData
 import xyz.artenes.budget.utils.LocaleFormatter
-import xyz.artenes.budget.utils.Year
-import xyz.artenes.budget.utils.YearMonth
-import xyz.artenes.budget.utils.YearMonthDay
 import java.time.LocalDate
 import javax.inject.Inject
 
@@ -57,7 +55,8 @@ class TransactionsListViewModel @Inject constructor(
     repository: AppRepository,
     private val formatter: LocaleFormatter,
     private val messages: Messages,
-    private val preferences: UserPreferences
+    private val preferences: UserPreferences,
+    private val dateSerializer: DateSerializer
 ) :
     ViewModel() {
 
@@ -108,10 +107,10 @@ class TransactionsListViewModel @Inject constructor(
 
         val now = LocalDate.now()
         val defaultValue = when (filter) {
-            DateFilterType.DAY -> YearMonthDay.fromLocalDate(now).toString()
+            DateFilterType.DAY -> dateSerializer.serializeDate(now)
             DateFilterType.WEEK -> DateRangeInclusive.now().toString()
-            DateFilterType.MONTH -> YearMonth.fromLocalDate(now).toString()
-            DateFilterType.YEAR -> Year.fromLocalDate(now).toString()
+            DateFilterType.MONTH -> dateSerializer.serializeYearAndMonth(now)
+            DateFilterType.YEAR -> now.year.toString()
             DateFilterType.CUSTOM -> "2024-04-28 ~ 2024-04-28"
         }
 
@@ -123,7 +122,7 @@ class TransactionsListViewModel @Inject constructor(
 
         val label = when (filter) {
             DateFilterType.DAY -> {
-                formatter.formatDate(YearMonthDay.fromString(value).toLocalDate())
+                formatter.formatDate(LocalDate.parse(value))
             }
 
             DateFilterType.WEEK -> {
@@ -131,11 +130,11 @@ class TransactionsListViewModel @Inject constructor(
             }
 
             DateFilterType.MONTH -> {
-                formatter.formatMonthAndYear(YearMonth.fromString(value).toLocalDate())
+                formatter.formatMonthAndYear(dateSerializer.deserializeYearAndMonth(value))
             }
 
             DateFilterType.YEAR -> {
-                formatter.formatYear(Year.fromString(value).toLocalDate())
+                value
             }
 
             DateFilterType.CUSTOM -> {
@@ -150,8 +149,8 @@ class TransactionsListViewModel @Inject constructor(
         SharingStarted.Lazily,
         DateFilterValueItem(
             DateFilterType.MONTH,
-            YearMonth.now().toString(),
-            formatter.formatMonthAndYear(YearMonth.now().toLocalDate())
+            dateSerializer.serializeYearAndMonth(LocalDate.now()),
+            formatter.formatMonthAndYear(LocalDate.now())
         )
     )
 
@@ -163,7 +162,7 @@ class TransactionsListViewModel @Inject constructor(
 
         when (it.type) {
             DateFilterType.DAY -> {
-                repository.getByDay(YearMonthDay.fromString(it.value))
+                repository.getByDay(LocalDate.parse(it.value))
             }
 
             DateFilterType.WEEK -> {
@@ -171,15 +170,17 @@ class TransactionsListViewModel @Inject constructor(
             }
 
             DateFilterType.MONTH -> {
-                repository.getByMonth(YearMonth.fromString(it.value))
+                val date = dateSerializer.deserializeYearAndMonth(it.value)
+                repository.getByMonth(date)
             }
 
             DateFilterType.YEAR -> {
-                repository.getByYear(Year.fromString(it.value))
+                repository.getByYear(it.value.toInt())
             }
 
             DateFilterType.CUSTOM -> {
-                repository.getByMonth(YearMonth.now())
+                val date = dateSerializer.deserializeYearAndMonth(it.value)
+                repository.getByMonth(date)
             }
         }
 
@@ -238,9 +239,9 @@ class TransactionsListViewModel @Inject constructor(
         }
     }
 
-    fun setValueForDay(item: DateFilterValueItem, newValue: YearMonthDay) {
+    fun setValueForDay(item: DateFilterValueItem, newValue: LocalDate) {
         viewModelScope.launch {
-            preferences.save(item.key, newValue.toString())
+            preferences.save(item.key, dateSerializer.serializeDate(newValue))
         }
     }
 

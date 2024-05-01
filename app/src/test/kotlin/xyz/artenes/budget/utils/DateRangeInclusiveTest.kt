@@ -2,6 +2,7 @@ package xyz.artenes.budget.utils
 
 import org.junit.Assert.assertEquals
 import org.junit.Test
+import java.time.LocalDate
 import java.time.format.TextStyle
 import java.util.Locale
 
@@ -26,9 +27,8 @@ class DateRangeInclusiveTest {
     }
 
     private fun validateNumberOfWeeks(month: Int, numberOfWeeks: Int) {
-        val yearMonth = YearMonth(2024, month)
-        val monthName =
-            yearMonth.toLocalDate().month.getDisplayName(TextStyle.FULL, Locale.getDefault())
+        val yearMonth = LocalDate.of(2024, month, 1)
+        val monthName = yearMonth.month.getDisplayName(TextStyle.FULL, Locale.getDefault())
         val weeks = DateRangeInclusive.weeksInYearMonth(yearMonth)
         assertEquals("$monthName has wrong number of weeks $weeks", numberOfWeeks, weeks.size)
     }
