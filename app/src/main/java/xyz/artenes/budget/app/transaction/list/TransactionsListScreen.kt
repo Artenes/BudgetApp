@@ -329,7 +329,7 @@ private fun SelectedFilter(value: DateFilterValueItem, viewModel: TransactionsLi
     if (value.type == DateFilterType.WEEK) {
         CustomWeekPicker(
             visible = show,
-            value = DateRangeInclusive.now(),
+            value = value.toWeek(),
             onWeekSelected = { newWeek ->
                 viewModel.setValueForWeek(value, newWeek)
             },

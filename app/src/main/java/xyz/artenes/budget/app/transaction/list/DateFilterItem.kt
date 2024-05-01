@@ -1,5 +1,6 @@
 package xyz.artenes.budget.app.transaction.list
 
+import xyz.artenes.budget.utils.DateRangeInclusive
 import xyz.artenes.budget.utils.YearMonthDay
 
 data class DateFilterItem(
@@ -17,6 +18,8 @@ data class DateFilterValueItem(
     val key: String = "${type}_VALUE"
 
     fun toLocalDate() = YearMonthDay.fromString(value).toLocalDate()
+
+    fun toWeek() = DateRangeInclusive.fromString(value)
 
 }
 
