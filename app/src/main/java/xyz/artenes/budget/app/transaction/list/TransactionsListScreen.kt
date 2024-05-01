@@ -1,40 +1,26 @@
 package xyz.artenes.budget.app.transaction.list
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.animateDpAsState
-import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
-import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.ArrowDownward
-import androidx.compose.material.icons.filled.ArrowUpward
-import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.InputChip
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -50,17 +36,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextDecoration
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import xyz.artenes.budget.app.components.CustomDatePicker
-import xyz.artenes.budget.app.components.CustomWeekPicker
 import xyz.artenes.budget.app.theme.CustomColorScheme
+import xyz.artenes.budget.data.TransactionsData
 import xyz.artenes.budget.utils.DataState
-import xyz.artenes.budget.utils.LocalDateRange
-import java.time.LocalDate
 
 @Composable
 fun TransactionsListScreen(
@@ -68,11 +49,11 @@ fun TransactionsListScreen(
     viewModel: TransactionsListViewModel = hiltViewModel()
 ) {
 
-    val loading by viewModel.loading.collectAsState()
+    val transactionsDataState by viewModel.transactionsData.collectAsState()
 
     Scaffold(
         floatingActionButton = {
-            if (!loading) {
+            if (transactionsDataState is DataState.Success) {
                 FloatingActionButton(onClick = navigateToTransactionEditScreen) {
                     Icon(imageVector = Icons.Filled.Add, contentDescription = "")
                 }
@@ -81,7 +62,7 @@ fun TransactionsListScreen(
 
     ) {
 
-        if (loading) {
+        if (transactionsDataState is DataState.Loading) {
             Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                 CircularProgressIndicator(
                     color = MaterialTheme.colorScheme.onBackground
@@ -90,23 +71,12 @@ fun TransactionsListScreen(
             return@Scaffold
         }
 
-        val transactionsDataState by viewModel.transactionsData.collectAsState()
-        val filtersState by viewModel.filters.collectAsState()
-        val filterValueState by viewModel.filterValue.collectAsState()
-        val query by viewModel.query.collectAsState()
-
         val transactionsData = (transactionsDataState as DataState.Success).data
-        val filters = (filtersState as DataState.Success).data
-        val filterValue = (filterValueState as DataState.Success).data
 
         val scrollState = rememberLazyListState()
         var showFilter by remember {
             mutableStateOf(true)
         }
-        val totalsPadding by animateDpAsState(
-            targetValue = if (showFilter) 50.dp else 10.dp,
-            label = "totalsPadding"
-        )
 
         LaunchedEffect(scrollState) {
             snapshotFlow { scrollState.firstVisibleItemIndex }.collect { firstVisibleItemIndex ->
@@ -118,50 +88,9 @@ fun TransactionsListScreen(
             modifier = Modifier.padding(it)
         ) {
 
-
-            Column(
-                Modifier.background(MaterialTheme.colorScheme.tertiaryContainer)
-            ) {
-
-                AnimatedVisibility(visible = showFilter) {
-
-                    Column {
-                        SearchBox(
-                            value = query,
-                            onValueChange = { newValue ->
-                                viewModel.search(newValue)
-                            },
-                            onClearClick = {
-                                viewModel.search("")
-                            }
-                        )
-
-                        Filters(
-                            viewModel = viewModel,
-                            filters = filters
-                        )
-
-                        SelectedFilter(
-                            viewModel = viewModel,
-                            filterValue = filterValue
-                        )
-                    }
-
-                }
-
-                Totals(
-                    padding = totalsPadding,
-                    income = transactionsData.formattedTotalIncome,
-                    expense = transactionsData.formattedTotalExpenses
-                )
-
-                AmountOfTransaction(value = transactionsData.totalTransactions)
-
-            }
-
             Transactions(
                 scrollState = scrollState,
-                groups = transactionsData.groups
+                data = transactionsData
             )
 
         }
@@ -173,17 +102,46 @@ fun TransactionsListScreen(
 @Composable
 private fun Transactions(
     scrollState: LazyListState,
-    groups: List<TransactionGroupItem>
+    data: TransactionsData
 ) {
     LazyColumn(
         state = scrollState
     ) {
 
         item {
-            Box(modifier = Modifier.height(20.dp))
+
+            Column(
+                modifier = Modifier.padding(start = 20.dp, top = 120.dp, bottom = 120.dp)
+            ) {
+
+                Text(
+                    text = "You've spent this month",
+                    color = CustomColorScheme.textColor(),
+                    style = MaterialTheme.typography.labelSmall
+                )
+                Text(
+                    text = data.formattedTotalExpenses,
+                    color = CustomColorScheme.textColor().copy(alpha = 0.7f),
+                    style = MaterialTheme.typography.headlineLarge.copy(fontSize = 50.sp),
+                    modifier = Modifier.padding(bottom = 30.dp)
+                )
+                Text(
+                    text = "Earned: ${data.formattedTotalIncome}",
+                    color = CustomColorScheme.textColor().copy(alpha = 0.9f),
+                    style = MaterialTheme.typography.titleSmall,
+                    modifier = Modifier.padding(bottom = 10.dp)
+                )
+                Text(
+                    text = "Balance: ${data.formattedBalance}",
+                    color = CustomColorScheme.textColor().copy(alpha = 0.6f),
+                    style = MaterialTheme.typography.titleSmall
+                )
+
+            }
+
         }
 
-        groups.forEach { group ->
+        data.groups.forEach { group ->
 
             /*
             Date
@@ -237,168 +195,6 @@ private fun Transactions(
         }
 
     }
-}
-
-@Composable
-private fun AmountOfTransaction(value: Int) {
-    Text(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(bottom = 5.dp),
-        textAlign = TextAlign.Center,
-        text = "$value transactions",
-        color = CustomColorScheme.textColor(),
-        textDecoration = TextDecoration.Underline,
-        style = MaterialTheme.typography.labelSmall
-    )
-}
-
-@Composable
-private fun Totals(
-    padding: Dp,
-    income: String,
-    expense: String
-) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = padding),
-    ) {
-
-        Row(
-            modifier = Modifier.weight(1f),
-            horizontalArrangement = Arrangement.Center
-        ) {
-            Icon(
-                imageVector = Icons.Filled.ArrowDownward,
-                contentDescription = "",
-                tint = CustomColorScheme.textColor()
-            )
-            Text(
-                text = "+ $income",
-                color = CustomColorScheme.textColor(),
-                style = MaterialTheme.typography.titleLarge
-            )
-        }
-
-        Row(
-            modifier = Modifier.weight(1f),
-            horizontalArrangement = Arrangement.Center
-        ) {
-            Icon(
-                imageVector = Icons.Filled.ArrowUpward,
-                contentDescription = "",
-                tint = CustomColorScheme.textColor().copy(alpha = 0.7f)
-            )
-            Text(
-                text = "- $expense",
-                color = CustomColorScheme.textColor().copy(alpha = 0.7f),
-                style = MaterialTheme.typography.titleLarge
-            )
-        }
-
-    }
-}
-
-@Composable
-private fun SelectedFilter(filterValue: DateFilterValueItem, viewModel: TransactionsListViewModel) {
-
-    var show by remember {
-        mutableStateOf(false)
-    }
-
-    Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
-
-        InputChip(
-            selected = false,
-            onClick = { show = true },
-            label = { Text(text = filterValue.label) },
-            trailingIcon = {
-                Icon(imageVector = Icons.Filled.Edit, contentDescription = "")
-            },
-            colors = CustomColorScheme.inputChipColor(),
-            border = CustomColorScheme.chipBorder()
-        )
-
-    }
-
-    if (filterValue.type == DateFilterType.DAY) {
-        CustomDatePicker(
-            visible = show,
-            value = filterValue.value as LocalDate,
-            onDateSelected = { newDate ->
-                viewModel.setValueForDay(
-                    newDate
-                )
-            },
-            onDismiss = { show = false }
-        )
-    }
-
-    if (filterValue.type == DateFilterType.WEEK) {
-        CustomWeekPicker(
-            visible = show,
-            value = filterValue.value as LocalDateRange,
-            onWeekSelected = { newWeek ->
-                viewModel.setValueForWeek(newWeek)
-            },
-            onDismiss = { show = false }
-        )
-    }
-
-}
-
-@Composable
-private fun Filters(
-    viewModel: TransactionsListViewModel,
-    filters: List<DateFilterItem>
-) {
-    LazyRow {
-
-        items(
-            count = filters.size,
-            key = { index -> filters[index].type }
-        ) { index ->
-
-            val filter = filters[index]
-
-            val startPadding = if (index == 0) 20.dp else 0.dp
-
-            FilterChip(
-                modifier = Modifier.padding(end = 10.dp, start = startPadding),
-                selected = filter.selected,
-                onClick = { viewModel.setFilterType(filter) },
-                label = { Text(text = filter.label) },
-                colors = CustomColorScheme.filterChipColor(),
-                border = CustomColorScheme.chipBorder(
-                    enabled = true,
-                    selected = filter.selected
-                )
-            )
-
-        }
-
-    }
-}
-
-@Composable
-private fun SearchBox(value: String, onValueChange: (String) -> Unit, onClearClick: () -> Unit) {
-    OutlinedTextField(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(start = 20.dp, end = 20.dp, top = 20.dp),
-        value = value,
-        onValueChange = onValueChange,
-        colors = CustomColorScheme.outlineTextField(),
-        placeholder = { Text(text = "Search transactions") },
-        trailingIcon = {
-            if (value.isNotEmpty()) {
-                IconButton(onClick = onClearClick) {
-                    Icon(imageVector = Icons.Filled.Close, contentDescription = "")
-                }
-            }
-        }
-    )
 }
 
 @Composable

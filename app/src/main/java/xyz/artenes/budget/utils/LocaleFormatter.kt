@@ -32,6 +32,10 @@ class LocaleFormatter @Inject constructor(private val messages: Messages) {
         return getMoneyFormat().format(money.toDouble)
     }
 
+    fun formatMoneyWithCurrency(money: Money): String {
+        return "${getCurrencySymbol()} ${getMoneyFormat().format(money.toDouble)}"
+    }
+
     fun formatDate(date: LocalDate): String {
         return date.format(DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT))
     }
