@@ -64,7 +64,7 @@ data class DateRangeInclusive(
             val lastDay = now.withDayOfMonth(now.lengthOfMonth())
             val week = firstDay.dayOfWeek!!.value
 
-            var start = firstDay.minusDays(week.toLong())
+            var start = if (week != 7) firstDay.minusDays(week.toLong()) else firstDay
             var end = start.plusDays(6)
 
             while (start <= lastDay) {
