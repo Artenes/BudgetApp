@@ -1,6 +1,7 @@
 package xyz.artenes.budget.app.transaction.list
 
 import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -11,8 +12,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyListState
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -25,13 +24,8 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
-import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -73,15 +67,25 @@ fun TransactionsListScreen(
 
         val transactionsData = (transactionsDataState as DataState.Success).data
 
-        val scrollState = rememberLazyListState()
-        var showFilter by remember {
-            mutableStateOf(true)
-        }
-
-        LaunchedEffect(scrollState) {
-            snapshotFlow { scrollState.firstVisibleItemIndex }.collect { firstVisibleItemIndex ->
-                showFilter = firstVisibleItemIndex <= 3
+        if (transactionsData.groups.isEmpty()) {
+            Column(
+                modifier = Modifier.fillMaxSize(),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally,
+            ) {
+                Text(
+                    text = "No transactions",
+                    color = CustomColorScheme.textColor(),
+                    style = MaterialTheme.typography.titleLarge,
+                    modifier = Modifier.padding(bottom = 10.dp)
+                )
+                Text(
+                    text = "Tap the '+' button to add your first expense",
+                    color = CustomColorScheme.textColor(),
+                    style = MaterialTheme.typography.bodySmall
+                )
             }
+            return@Scaffold
         }
 
         Column(
@@ -89,7 +93,6 @@ fun TransactionsListScreen(
         ) {
 
             Transactions(
-                scrollState = scrollState,
                 data = transactionsData
             )
 
@@ -101,12 +104,9 @@ fun TransactionsListScreen(
 
 @Composable
 private fun Transactions(
-    scrollState: LazyListState,
     data: TransactionsData
 ) {
-    LazyColumn(
-        state = scrollState
-    ) {
+    LazyColumn {
 
         item {
 
@@ -115,7 +115,7 @@ private fun Transactions(
             ) {
 
                 Text(
-                    text = "You've spent this month",
+                    text = "You've spent this month (${data.formattedCurrentMonth})",
                     color = CustomColorScheme.textColor(),
                     style = MaterialTheme.typography.labelSmall
                 )

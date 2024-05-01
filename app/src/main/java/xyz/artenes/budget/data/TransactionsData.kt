@@ -4,6 +4,7 @@ import xyz.artenes.budget.app.transaction.list.TransactionGroupItem
 import xyz.artenes.budget.core.Money
 
 data class TransactionsData(
+    val formattedCurrentMonth: String,
     val totalExpenses: Money,
     val formattedTotalExpenses: String,
     val totalIncome: Money,
