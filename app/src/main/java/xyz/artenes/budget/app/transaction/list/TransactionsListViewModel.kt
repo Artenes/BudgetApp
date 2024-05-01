@@ -167,7 +167,7 @@ class TransactionsListViewModel @Inject constructor(
             }
 
             DateFilterType.WEEK -> {
-                repository.getByMonth(YearMonth.now())
+                repository.getByWeek(DateRangeInclusive.fromString(it.value))
             }
 
             DateFilterType.MONTH -> {

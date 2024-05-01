@@ -52,6 +52,15 @@ interface TransactionDao {
         "SELECT transactions.id, description, amount, date, transactions.type, color, icon, transactions.created_at " +
                 "FROM transactions " +
                 "INNER JOIN categories ON category_id = categories.id " +
+                "WHERE date >= :startInclusive AND date <= :endInclusive " +
+                "ORDER BY transactions.date DESC"
+    )
+    fun getByWeek(startInclusive: String, endInclusive: String): Flow<List<TransactionWithCategoryEntity>>
+
+    @Query(
+        "SELECT transactions.id, description, amount, date, transactions.type, color, icon, transactions.created_at " +
+                "FROM transactions " +
+                "INNER JOIN categories ON category_id = categories.id " +
                 "WHERE date LIKE :yearAndMonth " +
                 "ORDER BY transactions.date DESC"
     )

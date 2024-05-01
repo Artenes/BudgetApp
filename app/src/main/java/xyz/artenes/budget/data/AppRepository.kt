@@ -4,6 +4,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 import xyz.artenes.budget.core.TransactionType
+import xyz.artenes.budget.utils.DateRangeInclusive
 import xyz.artenes.budget.utils.Year
 import xyz.artenes.budget.utils.YearMonth
 import xyz.artenes.budget.utils.YearMonthDay
@@ -30,6 +31,13 @@ class AppRepository @Inject constructor(
     fun getByDay(yearMonthDay: YearMonthDay) =
         appDatabase.transactionsDao()
             .getByDay(yearMonthDay.toLocalDate()).map(this::groupTransactions)
+
+    fun getByWeek(week: DateRangeInclusive) =
+        appDatabase.transactionsDao()
+            .getByWeek(
+                YearMonthDay.fromLocalDate(week.start).toString(),
+                YearMonthDay.fromLocalDate(week.end).toString()
+            ).map(this::groupTransactions)
 
     fun getByYear(year: Year) =
         appDatabase.transactionsDao()
