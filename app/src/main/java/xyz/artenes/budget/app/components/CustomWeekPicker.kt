@@ -84,7 +84,7 @@ fun CustomWeekPicker(
             ) {
 
                 Column(
-                    modifier = Modifier.padding(10.dp)
+                    modifier = Modifier.padding(30.dp)
                 ) {
 
                     /*
@@ -159,7 +159,7 @@ fun CustomWeekPicker(
 
                     }
 
-                    HorizontalDivider()
+                    HorizontalDivider(modifier = Modifier.padding(vertical = 10.dp))
 
                     /*
                     Weeks
@@ -205,7 +205,7 @@ fun CustomWeekPicker(
                             onWeekSelected(weeks.first { it.selected }.value)
                             onDismiss()
                         },
-                        modifier = Modifier.fillMaxWidth(),
+                        modifier = Modifier.fillMaxWidth().padding(top = 20.dp),
                         enabled = weeks.find { it.selected } != null
                     ) {
                         Text(text = "Select week")
