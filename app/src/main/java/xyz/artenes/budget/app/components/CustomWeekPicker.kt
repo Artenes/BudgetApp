@@ -244,7 +244,7 @@ private fun DateRow(
             ) {
                 Text(
                     modifier = Modifier.padding(10.dp),
-                    text = dateItem.value.toString()
+                    text = dateItem.label
                 )
             }
 
