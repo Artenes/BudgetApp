@@ -4,7 +4,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 import xyz.artenes.budget.core.DateSerializer
 import xyz.artenes.budget.core.TransactionType
-import xyz.artenes.budget.utils.DateRangeInclusive
+import xyz.artenes.budget.utils.LocalDateRange
 import java.time.LocalDate
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -28,15 +28,15 @@ class AppRepository @Inject constructor(
             .map(this::groupTransactions)
 
 
-    fun getByDay(date: LocalDate) =
+    fun getByDay(date: LocalDate, query: String) =
         appDatabase.transactionsDao()
-            .getByDay(date).map(this::groupTransactions)
+            .getByDay(date, "%$query%").map(this::groupTransactions)
 
-    fun getByWeek(week: DateRangeInclusive) =
+    fun getByRange(week: LocalDateRange) =
         appDatabase.transactionsDao()
-            .getByWeek(
-                week.start,
-                week.end
+            .getByRange(
+                week.startInclusive,
+                week.endInclusive
             ).map(this::groupTransactions)
 
     fun getByYear(year: Int) =

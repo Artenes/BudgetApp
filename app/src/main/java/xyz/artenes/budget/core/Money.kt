@@ -7,10 +7,8 @@ data class Money(val value: Int) {
     val toDouble: Double
         get() = value / 100.0
 
-    fun toSigned(type: TransactionType) = if (type == TransactionType.EXPENSE) {
-        -value
-    } else {
-        value
+    fun minus(other: Money): Money {
+        return Money(value - other.value)
     }
 
     fun format(format: NumberFormat): String {

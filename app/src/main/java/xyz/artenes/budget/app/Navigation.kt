@@ -30,17 +30,7 @@ import xyz.artenes.budget.app.transaction.list.TransactionsListScreen
 fun MainNavigation() {
     val navController = rememberNavController()
 
-    NavHost(navController = navController, startDestination = "load") {
-
-        composable("load") {
-            InitialLoadScreen(
-                goToTransactionsScreen = {
-                    navController.navigate("transactions") {
-                        popUpTo("load") { inclusive = true }
-                    }
-                }
-            )
-        }
+    NavHost(navController = navController, startDestination = "transactions") {
 
         composable("transactions") {
             TransactionsListScreen(

@@ -1,8 +1,5 @@
 package xyz.artenes.budget.app.transaction.list
 
-import xyz.artenes.budget.utils.DateRangeInclusive
-import java.time.LocalDate
-
 data class DateFilterItem(
     val type: DateFilterType,
     val label: String,
@@ -11,17 +8,9 @@ data class DateFilterItem(
 
 data class DateFilterValueItem(
     val type: DateFilterType,
-    val value: String,
-    val label: String
-) {
-
-    val key: String = "${type}_VALUE"
-
-    fun toLocalDate() = LocalDate.parse(value)
-
-    fun toWeek() = DateRangeInclusive.fromString(value)
-
-}
+    val label: String,
+    val value: Any
+)
 
 enum class DateFilterType {
     DAY,

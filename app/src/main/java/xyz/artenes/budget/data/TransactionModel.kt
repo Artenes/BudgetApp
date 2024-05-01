@@ -53,7 +53,7 @@ interface TransactionDao {
                 "WHERE date >= :startInclusive AND date <= :endInclusive " +
                 "ORDER BY transactions.date DESC"
     )
-    fun getByWeek(startInclusive: LocalDate, endInclusive: LocalDate): Flow<List<TransactionWithCategoryEntity>>
+    fun getByRange(startInclusive: LocalDate, endInclusive: LocalDate): Flow<List<TransactionWithCategoryEntity>>
 
     @Query(
         "SELECT transactions.id, description, amount, date, transactions.type, color, icon, transactions.created_at " +
@@ -69,9 +69,10 @@ interface TransactionDao {
                 "FROM transactions " +
                 "INNER JOIN categories ON category_id = categories.id " +
                 "WHERE date = :yearMonthDay " +
+                "AND description LIKE :query " +
                 "ORDER BY transactions.date DESC"
     )
-    fun getByDay(yearMonthDay: LocalDate): Flow<List<TransactionWithCategoryEntity>>
+    fun getByDay(yearMonthDay: LocalDate, query: String): Flow<List<TransactionWithCategoryEntity>>
 
     @Query(
         "SELECT transactions.id, description, amount, date, transactions.type, color, icon, transactions.created_at " +

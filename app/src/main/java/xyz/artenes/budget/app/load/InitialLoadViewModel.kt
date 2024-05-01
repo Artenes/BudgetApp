@@ -19,7 +19,7 @@ class InitialLoadViewModel @Inject constructor(private val seeder: DatabaseSeede
 
     init {
         viewModelScope.launch {
-            if (BuildConfig.DEBUG) {
+            if (BuildConfig.LOAD_DATA) {
                 seeder.seedTest()
             } else {
                 seeder.seed()

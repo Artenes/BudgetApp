@@ -37,6 +37,8 @@ android {
             useSupportLibrary = true
         }
 
+        buildConfigField("Boolean", "LOAD_DATA", secrets["loadData"] as String)
+
         // Enable room auto-migrations
         ksp {
             arg("room.schemaLocation", "$projectDir/schemas")

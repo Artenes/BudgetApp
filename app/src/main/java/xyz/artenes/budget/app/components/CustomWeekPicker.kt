@@ -27,7 +27,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
-import xyz.artenes.budget.utils.DateRangeInclusive
+import xyz.artenes.budget.utils.LocalDateRange
 import java.time.LocalDate
 import java.time.Month
 import java.time.format.DateTimeFormatter
@@ -38,8 +38,8 @@ import java.util.Locale
 @Composable
 fun CustomWeekPicker(
     visible: Boolean,
-    value: DateRangeInclusive,
-    onWeekSelected: (DateRangeInclusive) -> Unit,
+    value: LocalDateRange,
+    onWeekSelected: (LocalDateRange) -> Unit,
     onDismiss: () -> Unit,
 ) {
 
@@ -54,7 +54,7 @@ fun CustomWeekPicker(
     }
 
     var weeks by remember {
-        mutableStateOf(makeWeeks(value.start, value))
+        mutableStateOf(makeWeeks(value.startInclusive, value))
     }
 
     val yearListState = rememberLazyListState(
@@ -69,7 +69,7 @@ fun CustomWeekPicker(
         BasicAlertDialog(onDismissRequest = {
             years = makeYears(value)
             months = makeMonths(value)
-            weeks = makeWeeks(value.start, value)
+            weeks = makeWeeks(value.startInclusive, value)
             coroutine.launch {
                 yearListState.scrollToItem(years.first { it.selected }.position)
                 monthListState.scrollToItem(months.first { it.selected }.position)
@@ -172,7 +172,7 @@ fun CustomWeekPicker(
 
 }
 
-private fun makeMonths(value: DateRangeInclusive): List<DateItem> {
+private fun makeMonths(value: LocalDateRange): List<DateItem> {
     val months = Month.entries.mapIndexed { index, month ->
         val label = month.getDisplayName(TextStyle.FULL, Locale.getDefault())
         val monthValue = month.value
@@ -181,7 +181,7 @@ private fun makeMonths(value: DateRangeInclusive): List<DateItem> {
     return months
 }
 
-private fun makeYears(value: DateRangeInclusive): List<DateItem> {
+private fun makeYears(value: LocalDateRange): List<DateItem> {
     val middle = value.year
     val start = middle - 5
     val end = middle + 5
@@ -190,12 +190,12 @@ private fun makeYears(value: DateRangeInclusive): List<DateItem> {
     }.toList()
 }
 
-private fun makeWeeks(date: LocalDate, value: DateRangeInclusive? = null): List<WeekItem> {
+private fun makeWeeks(date: LocalDate, value: LocalDateRange? = null): List<WeekItem> {
     val dayFormat = DateTimeFormatter.ofPattern("dd MMMM")
-    return DateRangeInclusive.weeksInYearMonth(date).mapIndexed { index, week ->
+    return LocalDateRange.weeksInYearMonth(date).mapIndexed { index, week ->
         WeekItem(
             week,
-            "${week.start.format(dayFormat)} ~ ${week.end.format(dayFormat)}",
+            "${week.startInclusive.format(dayFormat)} ~ ${week.endInclusive.format(dayFormat)}",
             week == value,
             index
         )
@@ -210,7 +210,7 @@ private data class DateItem(
 )
 
 private data class WeekItem(
-    val value: DateRangeInclusive,
+    val value: LocalDateRange,
     val label: String,
     val selected: Boolean,
     val position: Int

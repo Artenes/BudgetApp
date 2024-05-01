@@ -58,7 +58,9 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import xyz.artenes.budget.app.components.CustomDatePicker
 import xyz.artenes.budget.app.components.CustomWeekPicker
 import xyz.artenes.budget.app.theme.CustomColorScheme
-import xyz.artenes.budget.utils.LoadingData
+import xyz.artenes.budget.utils.DataState
+import xyz.artenes.budget.utils.LocalDateRange
+import java.time.LocalDate
 
 @Composable
 fun TransactionsListScreen(
@@ -66,27 +68,38 @@ fun TransactionsListScreen(
     viewModel: TransactionsListViewModel = hiltViewModel()
 ) {
 
+    val loading by viewModel.loading.collectAsState()
+
     Scaffold(
         floatingActionButton = {
-            FloatingActionButton(onClick = navigateToTransactionEditScreen) {
-                Icon(imageVector = Icons.Filled.Add, contentDescription = "")
+            if (!loading) {
+                FloatingActionButton(onClick = navigateToTransactionEditScreen) {
+                    Icon(imageVector = Icons.Filled.Add, contentDescription = "")
+                }
             }
         }
 
     ) {
 
-        /*
-        State
-         */
+        if (loading) {
+            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                CircularProgressIndicator(
+                    color = MaterialTheme.colorScheme.onBackground
+                )
+            }
+            return@Scaffold
+        }
+
+        val transactionsDataState by viewModel.transactionsData.collectAsState()
+        val filtersState by viewModel.filters.collectAsState()
+        val filterValueState by viewModel.filterValue.collectAsState()
+        val query by viewModel.query.collectAsState()
+
+        val transactionsData = (transactionsDataState as DataState.Success).data
+        val filters = (filtersState as DataState.Success).data
+        val filterValue = (filterValueState as DataState.Success).data
+
         val scrollState = rememberLazyListState()
-        val loadingTransactions by viewModel.transactions.collectAsState()
-        val totalIncome by viewModel.incomeTotal.collectAsState()
-        val totalExpense by viewModel.expenseTotal.collectAsState()
-        val filters by viewModel.filters.collectAsState()
-        val filterValue by viewModel.filterValue.collectAsState()
-        val amountTransactions by viewModel.amountOfTransactions.collectAsState()
-
-
         var showFilter by remember {
             mutableStateOf(true)
         }
@@ -101,15 +114,6 @@ fun TransactionsListScreen(
             }
         }
 
-        if (loadingTransactions.loading) {
-            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                CircularProgressIndicator(
-                    color = MaterialTheme.colorScheme.onBackground
-                )
-            }
-            return@Scaffold
-        }
-
         Column(
             modifier = Modifier.padding(it)
         ) {
@@ -122,7 +126,15 @@ fun TransactionsListScreen(
                 AnimatedVisibility(visible = showFilter) {
 
                     Column {
-                        SearchBox()
+                        SearchBox(
+                            value = query,
+                            onValueChange = { newValue ->
+                                viewModel.search(newValue)
+                            },
+                            onClearClick = {
+                                viewModel.search("")
+                            }
+                        )
 
                         Filters(
                             viewModel = viewModel,
@@ -131,7 +143,7 @@ fun TransactionsListScreen(
 
                         SelectedFilter(
                             viewModel = viewModel,
-                            value = filterValue
+                            filterValue = filterValue
                         )
                     }
 
@@ -139,17 +151,17 @@ fun TransactionsListScreen(
 
                 Totals(
                     padding = totalsPadding,
-                    income = totalIncome,
-                    expense = totalExpense
+                    income = transactionsData.formattedTotalIncome,
+                    expense = transactionsData.formattedTotalExpenses
                 )
 
-                AmountOfTransaction(value = amountTransactions)
+                AmountOfTransaction(value = transactionsData.totalTransactions)
 
             }
 
             Transactions(
                 scrollState = scrollState,
-                loadingTransactions = loadingTransactions
+                groups = transactionsData.groups
             )
 
         }
@@ -161,7 +173,7 @@ fun TransactionsListScreen(
 @Composable
 private fun Transactions(
     scrollState: LazyListState,
-    loadingTransactions: LoadingData<out List<TransactionGroupItem>>
+    groups: List<TransactionGroupItem>
 ) {
     LazyColumn(
         state = scrollState
@@ -171,7 +183,7 @@ private fun Transactions(
             Box(modifier = Modifier.height(20.dp))
         }
 
-        loadingTransactions.data!!.forEach { group ->
+        groups.forEach { group ->
 
             /*
             Date
@@ -289,7 +301,7 @@ private fun Totals(
 }
 
 @Composable
-private fun SelectedFilter(value: DateFilterValueItem?, viewModel: TransactionsListViewModel) {
+private fun SelectedFilter(filterValue: DateFilterValueItem, viewModel: TransactionsListViewModel) {
 
     var show by remember {
         mutableStateOf(false)
@@ -300,7 +312,7 @@ private fun SelectedFilter(value: DateFilterValueItem?, viewModel: TransactionsL
         InputChip(
             selected = false,
             onClick = { show = true },
-            label = { Text(text = value?.label ?: "") },
+            label = { Text(text = filterValue.label) },
             trailingIcon = {
                 Icon(imageVector = Icons.Filled.Edit, contentDescription = "")
             },
@@ -310,13 +322,12 @@ private fun SelectedFilter(value: DateFilterValueItem?, viewModel: TransactionsL
 
     }
 
-    if (value?.type == DateFilterType.DAY) {
+    if (filterValue.type == DateFilterType.DAY) {
         CustomDatePicker(
             visible = show,
-            value = value.toLocalDate(),
+            value = filterValue.value as LocalDate,
             onDateSelected = { newDate ->
                 viewModel.setValueForDay(
-                    value,
                     newDate
                 )
             },
@@ -324,12 +335,12 @@ private fun SelectedFilter(value: DateFilterValueItem?, viewModel: TransactionsL
         )
     }
 
-    if (value?.type == DateFilterType.WEEK) {
+    if (filterValue.type == DateFilterType.WEEK) {
         CustomWeekPicker(
             visible = show,
-            value = value.toWeek(),
+            value = filterValue.value as LocalDateRange,
             onWeekSelected = { newWeek ->
-                viewModel.setValueForWeek(value, newWeek)
+                viewModel.setValueForWeek(newWeek)
             },
             onDismiss = { show = false }
         )
@@ -356,7 +367,7 @@ private fun Filters(
             FilterChip(
                 modifier = Modifier.padding(end = 10.dp, start = startPadding),
                 selected = filter.selected,
-                onClick = { viewModel.setFilter(filter) },
+                onClick = { viewModel.setFilterType(filter) },
                 label = { Text(text = filter.label) },
                 colors = CustomColorScheme.filterChipColor(),
                 border = CustomColorScheme.chipBorder(
@@ -371,18 +382,20 @@ private fun Filters(
 }
 
 @Composable
-private fun SearchBox() {
+private fun SearchBox(value: String, onValueChange: (String) -> Unit, onClearClick: () -> Unit) {
     OutlinedTextField(
         modifier = Modifier
             .fillMaxWidth()
             .padding(start = 20.dp, end = 20.dp, top = 20.dp),
-        value = "",
-        onValueChange = {},
+        value = value,
+        onValueChange = onValueChange,
         colors = CustomColorScheme.outlineTextField(),
         placeholder = { Text(text = "Search transactions") },
         trailingIcon = {
-            IconButton(onClick = { }) {
-                Icon(imageVector = Icons.Filled.Close, contentDescription = "")
+            if (value.isNotEmpty()) {
+                IconButton(onClick = onClearClick) {
+                    Icon(imageVector = Icons.Filled.Close, contentDescription = "")
+                }
             }
         }
     )
