@@ -6,9 +6,11 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import xyz.artenes.budget.R
 import xyz.artenes.budget.android.Messages
 import xyz.artenes.budget.android.UserPreferences
@@ -147,11 +149,7 @@ class TransactionsListViewModel @Inject constructor(
     }.stateIn(
         viewModelScope,
         SharingStarted.Lazily,
-        DateFilterValueItem(
-            DateFilterType.MONTH,
-            dateSerializer.serializeYearAndMonth(LocalDate.now()),
-            formatter.formatMonthAndYear(LocalDate.now())
-        )
+        null
     )
 
     /**
@@ -160,6 +158,11 @@ class TransactionsListViewModel @Inject constructor(
     @OptIn(ExperimentalCoroutinesApi::class)
     val transactions = filterValue.flatMapLatest {
 
+        if (it == null) {
+            return@flatMapLatest flowOf(emptyList<TransactionGroup>())
+        }
+
+        Timber.d("Loading transactions ${it.value}")
         when (it.type) {
             DateFilterType.DAY -> {
                 repository.getByDay(LocalDate.parse(it.value))
@@ -185,6 +188,7 @@ class TransactionsListViewModel @Inject constructor(
         }
 
     }.map { groups ->
+        Timber.d("Loaded ${groups.size} groups")
         //then format them for display
         groups.map { group ->
             groupToItem(group)

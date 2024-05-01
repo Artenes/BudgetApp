@@ -289,7 +289,7 @@ private fun Totals(
 }
 
 @Composable
-private fun SelectedFilter(value: DateFilterValueItem, viewModel: TransactionsListViewModel) {
+private fun SelectedFilter(value: DateFilterValueItem?, viewModel: TransactionsListViewModel) {
 
     var show by remember {
         mutableStateOf(false)
@@ -300,7 +300,7 @@ private fun SelectedFilter(value: DateFilterValueItem, viewModel: TransactionsLi
         InputChip(
             selected = false,
             onClick = { show = true },
-            label = { Text(text = value.label) },
+            label = { Text(text = value?.label ?: "") },
             trailingIcon = {
                 Icon(imageVector = Icons.Filled.Edit, contentDescription = "")
             },
@@ -310,7 +310,7 @@ private fun SelectedFilter(value: DateFilterValueItem, viewModel: TransactionsLi
 
     }
 
-    if (value.type == DateFilterType.DAY) {
+    if (value?.type == DateFilterType.DAY) {
         CustomDatePicker(
             visible = show,
             value = value.toLocalDate(),
@@ -324,7 +324,7 @@ private fun SelectedFilter(value: DateFilterValueItem, viewModel: TransactionsLi
         )
     }
 
-    if (value.type == DateFilterType.WEEK) {
+    if (value?.type == DateFilterType.WEEK) {
         CustomWeekPicker(
             visible = show,
             value = value.toWeek(),
