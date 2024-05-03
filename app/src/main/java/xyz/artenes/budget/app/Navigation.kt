@@ -22,9 +22,9 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import xyz.artenes.budget.app.load.InitialLoadScreen
 import xyz.artenes.budget.app.transaction.editor.TransactionEditorScreen
 import xyz.artenes.budget.app.transaction.list.TransactionsListScreen
+import xyz.artenes.budget.app.transaction.search.SearchScreen
 
 @Composable
 fun MainNavigation() {
@@ -36,6 +36,9 @@ fun MainNavigation() {
             TransactionsListScreen(
                 navigateToTransactionEditScreen = {
                     navController.navigate("transactionEditor")
+                },
+                navigateToSearchScreen = {
+                    navController.navigate("search")
                 }
             )
         }
@@ -58,6 +61,26 @@ fun MainNavigation() {
                     navController.popBackStack()
                 }
             )
+        }
+
+        composable(
+            "search",
+            enterTransition = {
+                slideIntoContainer(
+                    AnimatedContentTransitionScope.SlideDirection.Up, tween(400)
+                )
+            },
+            exitTransition = {
+                slideOutOfContainer(
+                    AnimatedContentTransitionScope.SlideDirection.Down, tween(400)
+                )
+            },
+        ) {
+
+            SearchScreen(back = {
+                navController.popBackStack()
+            })
+
         }
 
     }

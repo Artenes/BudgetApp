@@ -1,6 +1,5 @@
 package xyz.artenes.budget.app.transaction.list
 
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -9,43 +8,62 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import xyz.artenes.budget.app.components.Transaction
 import xyz.artenes.budget.app.theme.CustomColorScheme
 import xyz.artenes.budget.data.TransactionsData
 import xyz.artenes.budget.utils.DataState
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TransactionsListScreen(
     navigateToTransactionEditScreen: () -> Unit,
+    navigateToSearchScreen: () -> Unit,
     viewModel: TransactionsListViewModel = hiltViewModel()
 ) {
 
     val transactionsDataState by viewModel.transactionsData.collectAsState()
 
     Scaffold(
+        topBar = {
+            TopAppBar(
+                colors = TopAppBarDefaults.topAppBarColors()
+                    .copy(containerColor = MaterialTheme.colorScheme.background),
+                title = { /*TODO*/ },
+                actions = {
+                    if (transactionsDataState is DataState.Success) {
+                        IconButton(onClick = navigateToSearchScreen) {
+                            Icon(
+                                imageVector = Icons.Filled.Search,
+                                contentDescription = "Search",
+                                tint = MaterialTheme.colorScheme.onBackground
+                            )
+                        }
+                    }
+                },
+            )
+        },
         floatingActionButton = {
             if (transactionsDataState is DataState.Success) {
                 FloatingActionButton(onClick = navigateToTransactionEditScreen) {
@@ -195,71 +213,4 @@ private fun Transactions(
         }
 
     }
-}
-
-@Composable
-private fun Transaction(
-    transaction: TransactionItem
-) {
-
-    Surface(
-        color = Color.Transparent,
-        onClick = { }
-    ) {
-
-        Column {
-
-            Row(
-                modifier = Modifier.padding(20.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-
-                Box(
-                    modifier = Modifier
-                        .size(40.dp)
-                        .clip(CircleShape)
-                        .border(
-                            1.dp,
-                            MaterialTheme.colorScheme.onBackground.copy(alpha = 0.5f),
-                            CircleShape
-                        ),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Icon(
-                        imageVector = transaction.icon,
-                        contentDescription = "",
-                        tint = MaterialTheme.colorScheme.onBackground
-                    )
-                }
-
-                Spacer(modifier = Modifier.width(10.dp))
-
-                Text(
-                    color = MaterialTheme.colorScheme.onBackground,
-                    text = transaction.description,
-                    style = MaterialTheme.typography.titleLarge
-                )
-
-                Spacer(modifier = Modifier.weight(1f))
-
-                /*
-                Amount
-                 */
-                Text(
-                    color = MaterialTheme.colorScheme.onBackground.copy(alpha = transaction.colorAlpha),
-                    text = transaction.formattedAmount,
-                    style = MaterialTheme.typography.titleLarge
-                )
-
-            }
-
-            HorizontalDivider(
-                thickness = 2.dp,
-                color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.2f)
-            )
-
-        }
-
-    }
-
 }

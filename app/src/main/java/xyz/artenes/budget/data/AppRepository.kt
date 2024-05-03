@@ -1,5 +1,6 @@
 package xyz.artenes.budget.data
 
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 import xyz.artenes.budget.core.DateSerializer
@@ -22,11 +23,16 @@ class AppRepository @Inject constructor(
     /**
      * This returns all transactions for a given month, grouped by date
      */
-    fun getByMonth(date: LocalDate) =
+    fun getGroupsByMonth(date: LocalDate) =
         appDatabase.transactionsDao()
             .getByMonth("${dateSerializer.serializeYearAndMonth(date)}%")
             .map(this::groupTransactions)
 
+    fun getByMonth(date: LocalDate) = getGroupsByMonth(date).map { groups ->
+        groups.flatMap { group ->
+            group.transactions
+        }
+    }
 
     fun getByDay(date: LocalDate, query: String) =
         appDatabase.transactionsDao()

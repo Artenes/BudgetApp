@@ -45,7 +45,7 @@ class TransactionsListViewModel @Inject constructor(
             }
 
             val now = LocalDate.now()
-            emitAll(repository.getByMonth(now).map { groups ->
+            emitAll(repository.getGroupsByMonth(now).map { groups ->
 
                 val transactions = groups.flatMap { it.transactions }
                 val totalIncome =
