@@ -169,13 +169,7 @@ fun SearchScreen(
                             style = MaterialTheme.typography.labelSmall,
                             textAlign = TextAlign.Center
                         )
-                        Text(
-                            modifier = Modifier.fillMaxWidth(),
-                            text = "+ $ 100.000,00",
-                            color = CustomColorScheme.textColor(),
-                            style = MaterialTheme.typography.titleMedium,
-                            textAlign = TextAlign.Center
-                        )
+                        Income(dataState = transactionsDataState)
                     }
 
                     Column(
@@ -188,13 +182,7 @@ fun SearchScreen(
                             style = MaterialTheme.typography.labelSmall,
                             textAlign = TextAlign.Center
                         )
-                        Text(
-                            modifier = Modifier.fillMaxWidth(),
-                            text = "+ $ 100.000,00",
-                            color = CustomColorScheme.textColor(),
-                            style = MaterialTheme.typography.titleMedium,
-                            textAlign = TextAlign.Center
-                        )
+                        Expenses(dataState = transactionsDataState)
                     }
 
                 }
@@ -212,13 +200,7 @@ fun SearchScreen(
                             textAlign = TextAlign.Center
                         )
 
-                        Text(
-                            modifier = Modifier.fillMaxWidth(),
-                            text = "+ $ 100.000,00",
-                            color = CustomColorScheme.textColor(),
-                            style = MaterialTheme.typography.titleMedium,
-                            textAlign = TextAlign.Center
-                        )
+                        Balance(dataState = transactionsDataState)
 
                         TransactionsAmount(
                             dataState = transactionsDataState,
@@ -260,6 +242,65 @@ private fun TransactionsAmount(
         )
 
     }
+
+}
+
+@Composable
+private fun Balance(
+    dataState: DataState<SearchResultsData>,
+) {
+
+    if (dataState !is DataState.Success) {
+        Loading(modifier = Modifier.fillMaxWidth(), size = 15.dp)
+        return
+    }
+
+    Text(
+        modifier = Modifier.fillMaxWidth(),
+        text = "+ $ 100.000,00",
+        color = CustomColorScheme.textColor(),
+        style = MaterialTheme.typography.titleMedium,
+        textAlign = TextAlign.Center
+    )
+
+}
+
+@Composable
+fun Expenses(
+    dataState: DataState<SearchResultsData>,
+) {
+
+    if (dataState !is DataState.Success) {
+        Loading(modifier = Modifier.fillMaxWidth(), size = 15.dp)
+        return
+    }
+
+    Text(
+        modifier = Modifier.fillMaxWidth(),
+        text = "+ $ 100.000,00",
+        color = CustomColorScheme.textColor(),
+        style = MaterialTheme.typography.titleMedium,
+        textAlign = TextAlign.Center
+    )
+}
+
+@Composable
+fun Income(
+    dataState: DataState<SearchResultsData>
+) {
+
+    if (dataState !is DataState.Success) {
+        Loading(modifier = Modifier.fillMaxWidth(), size = 15.dp)
+        return
+    }
+
+    Text(
+        modifier = Modifier.fillMaxWidth(),
+        text = "+ $ 100.000,00",
+        color = CustomColorScheme.textColor(),
+        style = MaterialTheme.typography.titleMedium,
+        textAlign = TextAlign.Center
+    )
 
 }
 
