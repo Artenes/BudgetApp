@@ -37,6 +37,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import xyz.artenes.budget.R
 import xyz.artenes.budget.app.theme.CustomColorScheme
+import xyz.artenes.budget.app.transaction.search.DateFilterItem
 import xyz.artenes.budget.utils.LocalDateRange
 import java.time.Instant
 import java.time.LocalDate
@@ -44,7 +45,7 @@ import java.time.ZoneId
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CustomAdvancedDatePicker() {
+fun CustomAdvancedDatePicker(value: DateFilterItem, onChange: (DateFilterItem) -> Unit) {
 
     val focusManager = LocalFocusManager.current
     var showDialog by remember {
@@ -69,7 +70,7 @@ fun CustomAdvancedDatePicker() {
     val rangeState = rememberDateRangePickerState()
 
     OutlinedTextField(
-        value = "",
+        value = value.label,
         onValueChange = { },
         modifier = Modifier
             .fillMaxWidth()

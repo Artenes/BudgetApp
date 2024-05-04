@@ -3,7 +3,9 @@ package xyz.artenes.budget.app.transaction.search
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import xyz.artenes.budget.app.transaction.list.TransactionItem
@@ -13,6 +15,7 @@ import xyz.artenes.budget.data.AppRepository
 import xyz.artenes.budget.data.SearchResultsData
 import xyz.artenes.budget.data.TransactionWithCategoryEntity
 import xyz.artenes.budget.utils.DataState
+import xyz.artenes.budget.utils.LocalDateRange
 import xyz.artenes.budget.utils.LocaleFormatter
 import java.time.LocalDate
 import javax.inject.Inject
@@ -22,6 +25,15 @@ class SearchViewModel @Inject constructor(
     database: AppRepository,
     private val formatter: LocaleFormatter
 ) : ViewModel() {
+
+    private val _dateFilter = MutableStateFlow(
+        DateFilterItem(
+            DateFilterType.MONTH,
+            formatter.formatMonth(LocalDate.now()),
+            LocalDateRange.now()
+        )
+    )
+    val dateFilter: StateFlow<DateFilterItem> = _dateFilter
 
     val transactions = database.getByMonth(LocalDate.now())
         .map { items ->

@@ -53,6 +53,7 @@ fun SearchScreen(
 ) {
 
     val transactionsDataState by viewModel.transactions.collectAsState()
+    val dateFilter by viewModel.dateFilter.collectAsState()
     val scrollState = rememberLazyListState()
     var showFilters by remember {
         mutableStateOf(true)
@@ -111,8 +112,10 @@ fun SearchScreen(
                         modifier = Modifier.padding(horizontal = 20.dp)
                     ) {
 
-
-                        CustomAdvancedDatePicker()
+                        CustomAdvancedDatePicker(
+                            value = dateFilter,
+                            onChange = { newFilter -> }
+                        )
 
                         OutlinedTextField(
                             value = "",
