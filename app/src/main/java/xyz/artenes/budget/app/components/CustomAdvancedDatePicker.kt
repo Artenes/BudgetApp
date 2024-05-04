@@ -34,6 +34,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import xyz.artenes.budget.R
 import xyz.artenes.budget.app.theme.CustomColorScheme
+import xyz.artenes.budget.utils.LocalDateRange
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
@@ -47,6 +48,9 @@ fun CustomAdvancedDatePicker() {
         mutableStateOf(false)
     }
     var showDayDialog by remember {
+        mutableStateOf(false)
+    }
+    var showWeekDialog by remember {
         mutableStateOf(false)
     }
     val dayState = rememberDatePickerState()
@@ -79,7 +83,8 @@ fun CustomAdvancedDatePicker() {
     DateTypeDialog(
         show = showDialog,
         onDismiss = { showDialog = false },
-        onDaySelected = { showDayDialog = true }
+        onDaySelected = { showDayDialog = true },
+        onWeekSelected = { showWeekDialog = true }
     )
 
     DayDialog(
@@ -89,11 +94,23 @@ fun CustomAdvancedDatePicker() {
         onDateSelected = { date -> }
     )
 
+    CustomWeekPicker(
+        visible = showWeekDialog,
+        value = LocalDateRange.now(),
+        onWeekSelected = { newWeek -> },
+        onDismiss = { showWeekDialog = false }
+    )
+
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun DateTypeDialog(show: Boolean, onDismiss: () -> Unit, onDaySelected: () -> Unit) {
+private fun DateTypeDialog(
+    show: Boolean,
+    onDismiss: () -> Unit,
+    onDaySelected: () -> Unit,
+    onWeekSelected: () -> Unit
+) {
 
     if (!show) {
         return
@@ -123,7 +140,10 @@ private fun DateTypeDialog(show: Boolean, onDismiss: () -> Unit, onDaySelected: 
 
                 DateTypeItem(
                     label = stringResource(id = R.string.filter_by_week),
-                    onClick = {},
+                    onClick = {
+                        onWeekSelected()
+                        onDismiss()
+                    },
                     modifier = Modifier.padding(top = 10.dp)
                 )
 
