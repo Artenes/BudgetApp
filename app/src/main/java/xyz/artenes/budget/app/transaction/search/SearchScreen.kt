@@ -36,10 +36,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import xyz.artenes.budget.R
 import xyz.artenes.budget.app.components.CustomAdvancedDatePicker
 import xyz.artenes.budget.app.components.Transaction
 import xyz.artenes.budget.app.theme.CustomColorScheme
@@ -95,11 +97,11 @@ fun SearchScreen(
                 )
             }
         }
-    ) {
+    ) { paddings ->
 
         Column(
             modifier = Modifier
-                .padding(it)
+                .padding(paddings)
         ) {
 
             //general container
@@ -169,7 +171,9 @@ fun SearchScreen(
                             style = MaterialTheme.typography.labelSmall,
                             textAlign = TextAlign.Center
                         )
-                        Income(dataState = transactionsDataState)
+                        TotalText(dataState = transactionsDataState) { resultsData ->
+                            resultsData.formattedTotalIncome
+                        }
                     }
 
                     Column(
@@ -182,7 +186,9 @@ fun SearchScreen(
                             style = MaterialTheme.typography.labelSmall,
                             textAlign = TextAlign.Center
                         )
-                        Expenses(dataState = transactionsDataState)
+                        TotalText(dataState = transactionsDataState) { resultsData ->
+                            resultsData.formattedTotalExpenses
+                        }
                     }
 
                 }
@@ -200,7 +206,9 @@ fun SearchScreen(
                             textAlign = TextAlign.Center
                         )
 
-                        Balance(dataState = transactionsDataState)
+                        TotalText(dataState = transactionsDataState) { resultsData ->
+                            resultsData.formattedBalance
+                        }
 
                         TransactionsAmount(
                             dataState = transactionsDataState,
@@ -221,6 +229,27 @@ fun SearchScreen(
 }
 
 @Composable
+private fun TotalText(
+    dataState: DataState<SearchResultsData>,
+    value: (SearchResultsData) -> String
+) {
+
+    if (dataState !is DataState.Success) {
+        Loading(modifier = Modifier.fillMaxWidth(), size = 15.dp)
+        return
+    }
+
+    Text(
+        modifier = Modifier.fillMaxWidth(),
+        text = value(dataState.data),
+        color = CustomColorScheme.textColor(),
+        style = MaterialTheme.typography.titleMedium,
+        textAlign = TextAlign.Center
+    )
+
+}
+
+@Composable
 private fun TransactionsAmount(
     dataState: DataState<SearchResultsData>,
     padding: Dp
@@ -235,72 +264,13 @@ private fun TransactionsAmount(
 
         Text(
             modifier = Modifier.fillMaxWidth(),
-            text = "340 transactions",
+            text = stringResource(R.string.transactions_count, dataState.data.totalTransactions),
             color = CustomColorScheme.textColor(),
             style = MaterialTheme.typography.labelSmall,
             textAlign = TextAlign.Center
         )
 
     }
-
-}
-
-@Composable
-private fun Balance(
-    dataState: DataState<SearchResultsData>,
-) {
-
-    if (dataState !is DataState.Success) {
-        Loading(modifier = Modifier.fillMaxWidth(), size = 15.dp)
-        return
-    }
-
-    Text(
-        modifier = Modifier.fillMaxWidth(),
-        text = "+ $ 100.000,00",
-        color = CustomColorScheme.textColor(),
-        style = MaterialTheme.typography.titleMedium,
-        textAlign = TextAlign.Center
-    )
-
-}
-
-@Composable
-fun Expenses(
-    dataState: DataState<SearchResultsData>,
-) {
-
-    if (dataState !is DataState.Success) {
-        Loading(modifier = Modifier.fillMaxWidth(), size = 15.dp)
-        return
-    }
-
-    Text(
-        modifier = Modifier.fillMaxWidth(),
-        text = "+ $ 100.000,00",
-        color = CustomColorScheme.textColor(),
-        style = MaterialTheme.typography.titleMedium,
-        textAlign = TextAlign.Center
-    )
-}
-
-@Composable
-fun Income(
-    dataState: DataState<SearchResultsData>
-) {
-
-    if (dataState !is DataState.Success) {
-        Loading(modifier = Modifier.fillMaxWidth(), size = 15.dp)
-        return
-    }
-
-    Text(
-        modifier = Modifier.fillMaxWidth(),
-        text = "+ $ 100.000,00",
-        color = CustomColorScheme.textColor(),
-        style = MaterialTheme.typography.titleMedium,
-        textAlign = TextAlign.Center
-    )
 
 }
 

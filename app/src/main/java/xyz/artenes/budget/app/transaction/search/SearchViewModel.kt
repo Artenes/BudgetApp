@@ -48,11 +48,15 @@ class SearchViewModel @Inject constructor(
             DataState.Success(
                 SearchResultsData(
                     totalExpenses = totalExpense,
-                    formattedTotalExpenses = formatter.formatMoney(totalExpense),
+                    formattedTotalExpenses = "- ${formatter.formatMoneyWithCurrency(totalExpense)}",
                     totalIncome = totalIncome,
-                    formattedTotalIncome = formatter.formatMoney(totalIncome),
+                    formattedTotalIncome = "+ ${formatter.formatMoneyWithCurrency(totalIncome)}",
                     balance = balance,
-                    formattedBalance = formatter.formatMoney(balance),
+                    formattedBalance = "${if (balance.value >= 0) "+" else "-"} ${
+                        formatter.formatMoneyWithCurrency(
+                            balance.absolute()
+                        )
+                    }",
                     totalTransactions = count,
                     transactions = transactions
                 )

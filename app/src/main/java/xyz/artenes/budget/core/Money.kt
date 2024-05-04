@@ -1,6 +1,6 @@
 package xyz.artenes.budget.core
 
-import java.text.NumberFormat
+import kotlin.math.abs
 
 data class Money(val value: Int) {
 
@@ -11,8 +11,8 @@ data class Money(val value: Int) {
         return Money(value - other.value)
     }
 
-    fun format(format: NumberFormat): String {
-        return format.format(toDouble)
+    fun absolute(): Money {
+        return Money(abs(value))
     }
 
     override fun toString(): String {
