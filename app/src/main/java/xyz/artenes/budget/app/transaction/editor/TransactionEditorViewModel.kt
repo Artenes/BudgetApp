@@ -11,6 +11,7 @@ import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import xyz.artenes.budget.core.Money
 import xyz.artenes.budget.core.TransactionType
 import xyz.artenes.budget.data.AppRepository
@@ -58,6 +59,8 @@ class TransactionEditorViewModel @Inject constructor(private val repository: App
     private val category = MutableStateFlow<CategoryEntity?>(null)
     val categories = type.map { type ->
 
+        Timber.d("Type changed to $type")
+
         if (type == null) {
             return@map emptyList<CategoryEntity>()
         }
@@ -66,6 +69,9 @@ class TransactionEditorViewModel @Inject constructor(private val repository: App
         repository.getCategoriesByType(type)
 
     }.combine(category) { categories, selectedCategory ->
+
+        Timber.d("Categories has now ${categories.size} items")
+        Timber.d("Selected category: $selectedCategory")
 
         if (category.value == null && categories.isNotEmpty()) {
             category.value = categories[0]
