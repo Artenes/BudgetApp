@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -36,6 +37,7 @@ import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import xyz.artenes.budget.app.components.CustomAdvancedDatePicker
@@ -100,7 +102,7 @@ fun SearchScreen(
                 .padding(it)
         ) {
 
-            //geral container
+            //general container
             Column(
                 modifier = Modifier.background(MaterialTheme.colorScheme.tertiaryContainer)
             ) {
@@ -217,23 +219,45 @@ fun SearchScreen(
                             style = MaterialTheme.typography.titleMedium,
                             textAlign = TextAlign.Center
                         )
+
+                        TransactionsAmount(
+                            dataState = transactionsDataState,
+                            padding = totalsPadding
+                        )
                     }
+
                 }
 
-                Text(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = totalsPadding),
-                    text = "340 transactions",
-                    color = CustomColorScheme.textColor(),
-                    style = MaterialTheme.typography.labelSmall,
-                    textAlign = TextAlign.Center
-                )
             }
 
             TransactionList(dataState = transactionsDataState, state = scrollState)
 
         } //container
+
+    }
+
+}
+
+@Composable
+private fun TransactionsAmount(
+    dataState: DataState<SearchResultsData>,
+    padding: Dp
+) {
+
+    Box(modifier = Modifier.padding(top = padding)) {
+
+        if (dataState !is DataState.Success) {
+            Loading(modifier = Modifier.fillMaxWidth(), size = 15.dp)
+            return
+        }
+
+        Text(
+            modifier = Modifier.fillMaxWidth(),
+            text = "340 transactions",
+            color = CustomColorScheme.textColor(),
+            style = MaterialTheme.typography.labelSmall,
+            textAlign = TextAlign.Center
+        )
 
     }
 
@@ -246,7 +270,7 @@ private fun TransactionList(
 ) {
 
     if (dataState !is DataState.Success) {
-        Loading()
+        Loading(modifier = Modifier.fillMaxSize())
         return
     }
 
@@ -271,11 +295,12 @@ private fun TransactionList(
 }
 
 @Composable
-private fun Loading() {
+private fun Loading(modifier: Modifier = Modifier, size: Dp = 40.dp) {
 
-    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+    Box(modifier = modifier, contentAlignment = Alignment.Center) {
         CircularProgressIndicator(
-            color = MaterialTheme.colorScheme.onBackground
+            modifier = Modifier.size(size),
+            color = MaterialTheme.colorScheme.onBackground,
         )
     }
 
