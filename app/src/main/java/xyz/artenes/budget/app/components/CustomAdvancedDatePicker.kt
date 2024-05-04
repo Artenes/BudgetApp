@@ -1,0 +1,151 @@
+package xyz.artenes.budget.app.components
+
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.requiredWidth
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.CalendarMonth
+import androidx.compose.material3.BasicAlertDialog
+import androidx.compose.material3.DatePickerDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.onFocusEvent
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
+import xyz.artenes.budget.R
+import xyz.artenes.budget.app.theme.CustomColorScheme
+
+@Composable
+fun CustomAdvancedDatePicker() {
+
+    val focusManager = LocalFocusManager.current
+    var showDialog by remember {
+        mutableStateOf(false)
+    }
+
+    OutlinedTextField(
+        value = "",
+        onValueChange = { },
+        modifier = Modifier
+            .fillMaxWidth()
+            .onFocusEvent {
+                if (it.isFocused) {
+                    showDialog = true
+                    focusManager.clearFocus(force = true)
+                }
+            },
+        colors = CustomColorScheme.outlineTextField(),
+        label = {
+            Text(stringResource(R.string.filter_by_date))
+        },
+        trailingIcon = {
+            Icon(
+                imageVector = Icons.Filled.CalendarMonth,
+                contentDescription = "",
+                tint = MaterialTheme.colorScheme.onBackground
+            )
+        },
+        readOnly = true
+    )
+
+    DateTypeDialog(
+        show = showDialog,
+        onDismiss = { showDialog = false }
+    )
+
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun DateTypeDialog(show: Boolean, onDismiss: () -> Unit) {
+
+    if (!show) {
+        return
+    }
+
+    BasicAlertDialog(onDismissRequest = onDismiss) {
+
+        Surface(
+            color = DatePickerDefaults.colors().containerColor,
+            shape = DatePickerDefaults.shape,
+            modifier = Modifier
+                .heightIn(max = 580.dp)
+                .requiredWidth(360.dp)
+        ) {
+
+            Column(
+                modifier = Modifier.padding(20.dp)
+            ) {
+
+                DateTypeItem(
+                    label = stringResource(id = R.string.filter_by_day),
+                    onClick = {},
+                )
+
+                DateTypeItem(
+                    label = stringResource(id = R.string.filter_by_week),
+                    onClick = {},
+                    modifier = Modifier.padding(top = 10.dp)
+                )
+
+                DateTypeItem(
+                    label = stringResource(id = R.string.filter_by_month),
+                    onClick = {},
+                    modifier = Modifier.padding(top = 10.dp)
+                )
+
+                DateTypeItem(
+                    label = stringResource(id = R.string.filter_by_year),
+                    onClick = {},
+                    modifier = Modifier.padding(top = 10.dp)
+                )
+
+                DateTypeItem(
+                    label = stringResource(id = R.string.filter_by_custom_range),
+                    onClick = {},
+                    modifier = Modifier.padding(top = 10.dp)
+                )
+
+            }
+
+        }
+
+    }
+
+}
+
+@Composable
+private fun DateTypeItem(label: String, onClick: () -> Unit, modifier: Modifier = Modifier) {
+
+    Surface(
+        modifier = Modifier.fillMaxWidth().then(modifier),
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f)),
+        shape = MaterialTheme.shapes.medium,
+        onClick = onClick
+    ) {
+
+        Text(
+            modifier = Modifier.fillMaxWidth().padding(10.dp),
+            text = label,
+            textAlign = TextAlign.Center,
+            color = CustomColorScheme.textColor()
+        )
+
+    }
+
+}

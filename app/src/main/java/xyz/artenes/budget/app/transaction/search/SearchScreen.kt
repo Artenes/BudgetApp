@@ -39,6 +39,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import xyz.artenes.budget.app.components.CustomAdvancedDatePicker
 import xyz.artenes.budget.app.components.Transaction
 import xyz.artenes.budget.app.theme.CustomColorScheme
 import xyz.artenes.budget.data.SearchResultsData
@@ -109,41 +110,9 @@ fun SearchScreen(
                     Column(
                         modifier = Modifier.padding(horizontal = 20.dp)
                     ) {
-                        OutlinedTextField(
-                            value = "",
-                            onValueChange = { },
-                            modifier = Modifier.fillMaxWidth(),
-                            colors = CustomColorScheme.outlineTextField(),
-                            label = {
-                                Text("Filter by date")
-                            },
-                            trailingIcon = {
-                                Icon(
-                                    imageVector = Icons.Filled.CalendarMonth,
-                                    contentDescription = "",
-                                    tint = MaterialTheme.colorScheme.onBackground
-                                )
-                            },
-                            readOnly = true
-                        )
 
-                        OutlinedTextField(
-                            value = "",
-                            onValueChange = { },
-                            modifier = Modifier.fillMaxWidth(),
-                            colors = CustomColorScheme.outlineTextField(),
-                            label = {
-                                Text("Filter by category")
-                            },
-                            trailingIcon = {
-                                Icon(
-                                    imageVector = Icons.Filled.ArrowDropDown,
-                                    contentDescription = "",
-                                    tint = MaterialTheme.colorScheme.onBackground
-                                )
-                            },
-                            readOnly = true
-                        )
+
+                        CustomAdvancedDatePicker()
 
                         OutlinedTextField(
                             value = "",

@@ -34,4 +34,12 @@
     <string name="category_home">Home</string>
     <string name="category_others">Others</string>
     <string name="category_paycheck">Paycheck</string>
+
+    <string name="filter_by_day">Select day</string>
+    <string name="filter_by_week">Select week</string>
+    <string name="filter_by_month">Select month</string>
+    <string name="filter_by_year">Select year</string>
+    <string name="filter_by_custom_range">Select custom range</string>
+    <string name="filter_by_date">Filter by date</string>
+
 </resources>
