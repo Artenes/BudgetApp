@@ -130,7 +130,14 @@ fun CustomAdvancedDatePicker(value: DateFilterItem, onChange: (DateFilter) -> Un
     CustomMonthPicker(
         visible = showMonthDialog,
         value = LocalDate.now(),
-        onMonthSelected = { newMonth -> },
+        onMonthSelected = { newMonth ->
+            onChange(
+                DateFilter(
+                    DateFilterType.MONTH,
+                    LocalDateRange(newMonth, newMonth)
+                )
+            )
+        },
         onDismiss = { showMonthDialog = false }
     )
 
