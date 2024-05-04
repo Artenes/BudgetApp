@@ -47,6 +47,8 @@ import xyz.artenes.budget.utils.LocalDateRange
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
+import java.time.temporal.TemporalAdjuster
+import java.time.temporal.TemporalAdjusters
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -136,7 +138,7 @@ fun CustomAdvancedDatePicker(value: DateFilterItem, onChange: (DateFilter) -> Un
             onChange(
                 DateFilter(
                     DateFilterType.MONTH,
-                    LocalDateRange(newMonth, newMonth)
+                    LocalDateRange(newMonth.withDayOfMonth(1), newMonth.with(TemporalAdjusters.lastDayOfMonth()))
                 )
             )
         },
@@ -147,7 +149,7 @@ fun CustomAdvancedDatePicker(value: DateFilterItem, onChange: (DateFilter) -> Un
         visible = showYearDialog,
         onYearSelected = { newYear ->
             val date = LocalDate.of(newYear, 1, 1)
-            val range = LocalDateRange(date, date)
+            val range = LocalDateRange(date, date.with(TemporalAdjusters.lastDayOfYear()))
             onChange(DateFilter(DateFilterType.YEAR, range))
         },
         onDismiss = { showYearDialog = false }
