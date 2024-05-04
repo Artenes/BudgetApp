@@ -17,6 +17,7 @@ import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.DatePickerState
 import androidx.compose.material3.DateRangePicker
 import androidx.compose.material3.DateRangePickerState
+import androidx.compose.material3.DisplayMode
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -320,9 +321,37 @@ private fun RangeDialog(
         return
     }
 
+    val dismissDialog = {
+        state.displayedMonthMillis = Instant.now().toEpochMilli()
+        state.setSelection(null, null)
+        onDismiss()
+    }
+
+    val save = {
+        val start = Instant.ofEpochMilli(state.selectedStartDateMillis!!)
+            .atZone(ZoneId.of("UTC")).toLocalDate()
+        val end =
+            Instant.ofEpochMilli(state.selectedEndDateMillis!!).atZone(ZoneId.of("UTC"))
+                .toLocalDate()
+        onDateSelected(LocalDateRange(start, end))
+        dismissDialog()
+    }
+
+    val saveEnabled = state.selectedStartDateMillis != null && state.selectedEndDateMillis != null
+
     DatePickerDialog(
-        onDismissRequest = onDismiss,
-        confirmButton = {}
+        onDismissRequest = dismissDialog,
+        confirmButton = {
+            Button(
+                enabled = saveEnabled,
+                onClick = { save() },
+            ) {
+                Text(
+                    text = stringResource(R.string.select),
+                    color = CustomColorScheme.textColor()
+                )
+            }
+        }
     ) {
         Box {
             DateRangePicker(
@@ -333,28 +362,21 @@ private fun RangeDialog(
                         modifier = Modifier.padding(10.dp),
                         text = stringResource(id = R.string.select_range)
                     )
-                },
-                showModeToggle = false
+                }
             )
-            Button(
-                enabled = state.selectedStartDateMillis != null && state.selectedEndDateMillis != null,
-                onClick = {
-                    val start = Instant.ofEpochMilli(state.selectedStartDateMillis!!)
-                        .atZone(ZoneId.of("UTC")).toLocalDate()
-                    val end =
-                        Instant.ofEpochMilli(state.selectedEndDateMillis!!).atZone(ZoneId.of("UTC"))
-                            .toLocalDate()
-                    onDateSelected(LocalDateRange(start, end))
-                    onDismiss()
-                },
-                modifier = Modifier
-                    .align(Alignment.BottomEnd)
-                    .padding(end = 16.dp, bottom = 16.dp)
-            ) {
-                Text(
-                    text = stringResource(R.string.select),
-                    color = CustomColorScheme.textColor()
-                )
+            if (state.displayMode == DisplayMode.Picker) {
+                Button(
+                    enabled = saveEnabled,
+                    onClick = { save() },
+                    modifier = Modifier
+                        .align(Alignment.BottomEnd)
+                        .padding(end = 16.dp, bottom = 16.dp)
+                ) {
+                    Text(
+                        text = stringResource(R.string.select),
+                        color = CustomColorScheme.textColor()
+                    )
+                }
             }
         }
     }
