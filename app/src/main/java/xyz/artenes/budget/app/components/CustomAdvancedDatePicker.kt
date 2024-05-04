@@ -9,13 +9,18 @@ import androidx.compose.foundation.layout.requiredWidth
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CalendarMonth
 import androidx.compose.material3.BasicAlertDialog
+import androidx.compose.material3.Button
+import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDefaults
+import androidx.compose.material3.DatePickerDialog
+import androidx.compose.material3.DatePickerState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -29,7 +34,11 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import xyz.artenes.budget.R
 import xyz.artenes.budget.app.theme.CustomColorScheme
+import java.time.Instant
+import java.time.LocalDate
+import java.time.ZoneId
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CustomAdvancedDatePicker() {
 
@@ -37,6 +46,10 @@ fun CustomAdvancedDatePicker() {
     var showDialog by remember {
         mutableStateOf(false)
     }
+    var showDayDialog by remember {
+        mutableStateOf(false)
+    }
+    val dayState = rememberDatePickerState()
 
     OutlinedTextField(
         value = "",
@@ -65,14 +78,22 @@ fun CustomAdvancedDatePicker() {
 
     DateTypeDialog(
         show = showDialog,
-        onDismiss = { showDialog = false }
+        onDismiss = { showDialog = false },
+        onDaySelected = { showDayDialog = true }
+    )
+
+    DayDialog(
+        show = showDayDialog,
+        onDismiss = { showDayDialog = false },
+        state = dayState,
+        onDateSelected = { date -> }
     )
 
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun DateTypeDialog(show: Boolean, onDismiss: () -> Unit) {
+private fun DateTypeDialog(show: Boolean, onDismiss: () -> Unit, onDaySelected: () -> Unit) {
 
     if (!show) {
         return
@@ -94,7 +115,10 @@ private fun DateTypeDialog(show: Boolean, onDismiss: () -> Unit) {
 
                 DateTypeItem(
                     label = stringResource(id = R.string.filter_by_day),
-                    onClick = {},
+                    onClick = {
+                        onDaySelected()
+                        onDismiss()
+                    },
                 )
 
                 DateTypeItem(
@@ -133,19 +157,59 @@ private fun DateTypeDialog(show: Boolean, onDismiss: () -> Unit) {
 private fun DateTypeItem(label: String, onClick: () -> Unit, modifier: Modifier = Modifier) {
 
     Surface(
-        modifier = Modifier.fillMaxWidth().then(modifier),
+        modifier = Modifier
+            .fillMaxWidth()
+            .then(modifier),
         border = BorderStroke(1.dp, MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f)),
         shape = MaterialTheme.shapes.medium,
         onClick = onClick
     ) {
 
         Text(
-            modifier = Modifier.fillMaxWidth().padding(10.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(10.dp),
             text = label,
             textAlign = TextAlign.Center,
             color = CustomColorScheme.textColor()
         )
 
+    }
+
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun DayDialog(
+    show: Boolean,
+    onDismiss: () -> Unit,
+    state: DatePickerState,
+    onDateSelected: (LocalDate) -> Unit
+) {
+
+    if (!show) {
+        return
+    }
+
+    DatePickerDialog(
+        onDismissRequest = onDismiss,
+        confirmButton = {
+            Button(
+                onClick = {
+                    state.selectedDateMillis?.let {
+                        onDateSelected(
+                            Instant.ofEpochMilli(it).atZone(ZoneId.of("UTC"))
+                                .toLocalDate()
+                        )
+                    }
+                    onDismiss()
+                },
+            ) {
+                Text(text = "Select date")
+            }
+        },
+    ) {
+        DatePicker(state = state)
     }
 
 }
