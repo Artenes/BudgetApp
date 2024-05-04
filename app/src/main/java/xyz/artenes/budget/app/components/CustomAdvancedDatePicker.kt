@@ -14,6 +14,8 @@ import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDefaults
 import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.DatePickerState
+import androidx.compose.material3.DateRangePicker
+import androidx.compose.material3.DateRangePickerState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -21,6 +23,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberDatePickerState
+import androidx.compose.material3.rememberDateRangePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -59,7 +62,11 @@ fun CustomAdvancedDatePicker() {
     var showYearDialog by remember {
         mutableStateOf(false)
     }
+    var showRangeDialog by remember {
+        mutableStateOf(false)
+    }
     val dayState = rememberDatePickerState()
+    val rangeState = rememberDateRangePickerState()
 
     OutlinedTextField(
         value = "",
@@ -93,6 +100,7 @@ fun CustomAdvancedDatePicker() {
         onWeekSelected = { showWeekDialog = true },
         onMonthSelected = { showMonthDialog = true },
         onYearSelected = { showYearDialog = true },
+        onRangeSelected = { showRangeDialog = true },
     )
 
     DayDialog(
@@ -123,6 +131,13 @@ fun CustomAdvancedDatePicker() {
         onDismiss = { showYearDialog = false }
     )
 
+    RangeDialog(
+        show = showRangeDialog,
+        onDismiss = { showRangeDialog = false },
+        state = rangeState,
+        onDateSelected = { newRange -> }
+    )
+
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -133,7 +148,8 @@ private fun DateTypeDialog(
     onDaySelected: () -> Unit,
     onWeekSelected: () -> Unit,
     onMonthSelected: () -> Unit,
-    onYearSelected: () -> Unit
+    onYearSelected: () -> Unit,
+    onRangeSelected: () -> Unit
 ) {
 
     if (!show) {
@@ -191,7 +207,10 @@ private fun DateTypeDialog(
 
                 DateTypeItem(
                     label = stringResource(id = R.string.filter_by_custom_range),
-                    onClick = {},
+                    onClick = {
+                        onRangeSelected()
+                        onDismiss()
+                    },
                     modifier = Modifier.padding(top = 10.dp)
                 )
 
@@ -260,6 +279,43 @@ private fun DayDialog(
         },
     ) {
         DatePicker(state = state)
+    }
+
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun RangeDialog(
+    show: Boolean,
+    onDismiss: () -> Unit,
+    state: DateRangePickerState,
+    onDateSelected: (LocalDateRange) -> Unit
+) {
+
+    if (!show) {
+        return
+    }
+
+    DatePickerDialog(
+        onDismissRequest = onDismiss,
+        confirmButton = {
+            Button(
+                enabled = state.selectedStartDateMillis != null && state.selectedEndDateMillis != null,
+                onClick = {
+                    val start = Instant.ofEpochMilli(state.selectedStartDateMillis!!)
+                        .atZone(ZoneId.of("UTC")).toLocalDate()
+                    val end =
+                        Instant.ofEpochMilli(state.selectedEndDateMillis!!).atZone(ZoneId.of("UTC"))
+                            .toLocalDate()
+                    onDateSelected(LocalDateRange(start, end))
+                    onDismiss()
+                },
+            ) {
+                Text(text = stringResource(R.string.select_range))
+            }
+        },
+    ) {
+        DateRangePicker(state = state)
     }
 
 }
