@@ -26,6 +26,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.material3.rememberDateRangePickerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -70,6 +71,7 @@ fun CustomAdvancedDatePicker(value: DateFilterItem, onChange: (DateFilter) -> Un
     var showRangeDialog by remember {
         mutableStateOf(false)
     }
+
     val dayState = rememberDatePickerState()
     val rangeState = rememberDateRangePickerState()
 
@@ -295,6 +297,8 @@ private fun DayDialog(
                                 .toLocalDate()
                         )
                     }
+                    state.selectedDateMillis = null
+                    state.displayedMonthMillis = Instant.now().toEpochMilli()
                     onDismiss()
                 },
             ) {
