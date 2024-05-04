@@ -26,7 +26,6 @@ import xyz.artenes.budget.utils.ValueAndLabel
 @Composable
 fun <T> CustomSpinner(
     label: String,
-    value: ValueAndLabel<T>,
     options: List<ValueAndLabel<T>>,
     onOptionSelected: (ValueAndLabel<T>) -> Unit
 ) {
@@ -37,7 +36,7 @@ fun <T> CustomSpinner(
 
     ExposedDropdownMenuBox(expanded = expanded, onExpandedChange = { expanded = !expanded }) {
         OutlinedTextField(
-            value = value.label,
+            value = options.firstOrNull { it.selected }?.label ?: "",
             onValueChange = {},
             modifier = Modifier
                 .menuAnchor()

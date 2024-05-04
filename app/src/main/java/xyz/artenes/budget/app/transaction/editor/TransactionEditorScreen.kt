@@ -31,8 +31,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import xyz.artenes.budget.app.components.CustomDatePickerInput
 import xyz.artenes.budget.app.components.CustomSpinner
 import xyz.artenes.budget.app.components.CustomTextField
-import xyz.artenes.budget.core.TransactionType
-import xyz.artenes.budget.utils.ValueAndLabel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -92,21 +90,17 @@ fun TransactionEditorScreen(
             val focusManager = LocalFocusManager.current
             val description by viewModel.description.collectAsState()
             val amount by viewModel.amount.collectAsState()
-            val type by viewModel.type.collectAsState()
             val date by viewModel.date.collectAsState()
             val categories by viewModel.categories.collectAsState()
+            val types by viewModel.types.collectAsState()
 
             Spacer(modifier = Modifier.height(80.dp))
 
             CustomSpinner(
                 label = "Type",
-                value = typeToItem(type),
-                options = listOf(
-                    typeToItem(TransactionType.EXPENSE),
-                    typeToItem(TransactionType.INCOME),
-                ),
+                options = types,
                 onOptionSelected = { item ->
-                    viewModel.setType(item.value!!)
+                    viewModel.setType(item.value)
                 }
             )
 
@@ -147,15 +141,9 @@ fun TransactionEditorScreen(
 
             CustomSpinner(
                 label = "Category",
-                value = ValueAndLabel(
-                    categories.value,
-                    categories.value?.name ?: ""
-                ),
-                options = categories.list.map { category ->
-                    ValueAndLabel(category, category.name)
-                },
+                options = categories,
                 onOptionSelected = { item ->
-                    viewModel.setCategory(item.value!!)
+                    viewModel.setCategory(item)
                 }
             )
 
@@ -163,9 +151,4 @@ fun TransactionEditorScreen(
 
     }
 
-}
-
-private fun typeToItem(type: TransactionType) = when (type) {
-    TransactionType.EXPENSE -> ValueAndLabel(type, "Expense")
-    else -> ValueAndLabel(type, "Income")
 }

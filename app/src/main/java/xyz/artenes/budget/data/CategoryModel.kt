@@ -7,6 +7,7 @@ import androidx.room.Entity
 import androidx.room.Insert
 import androidx.room.PrimaryKey
 import androidx.room.Query
+import kotlinx.coroutines.flow.Flow
 import xyz.artenes.budget.core.TransactionType
 import java.time.OffsetDateTime
 import java.util.UUID

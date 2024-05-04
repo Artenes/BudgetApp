@@ -1,6 +1,6 @@
 package xyz.artenes.budget.data
 
-import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 import xyz.artenes.budget.core.DateSerializer

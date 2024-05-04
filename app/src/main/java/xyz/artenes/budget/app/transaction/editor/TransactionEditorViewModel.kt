@@ -4,7 +4,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import xyz.artenes.budget.core.Money
 import xyz.artenes.budget.core.TransactionType
@@ -12,7 +17,7 @@ import xyz.artenes.budget.data.AppRepository
 import xyz.artenes.budget.data.CategoryEntity
 import xyz.artenes.budget.data.TransactionEntity
 import xyz.artenes.budget.utils.Event
-import xyz.artenes.budget.utils.ListWithValue
+import xyz.artenes.budget.utils.ValueAndLabel
 import xyz.artenes.budget.utils.ValueWithError
 import java.time.LocalDate
 import java.time.OffsetDateTime
@@ -29,23 +34,51 @@ class TransactionEditorViewModel @Inject constructor(private val repository: App
     private val _amount = MutableStateFlow(ValueWithError())
     val amount: StateFlow<ValueWithError> = _amount
 
-    private val _type = MutableStateFlow(TransactionType.EXPENSE)
-    val type: StateFlow<TransactionType> = _type
-
     private val _date = MutableStateFlow(LocalDate.now())
     val date: StateFlow<LocalDate> = _date
 
-    private val _categories = MutableStateFlow(ListWithValue<CategoryEntity>())
-    val categories: StateFlow<ListWithValue<CategoryEntity>> = _categories
+    private val type = MutableStateFlow<TransactionType?>(null)
+    val types =
+        flowOf(TransactionType.entries.toTypedArray()).combine(type) { types, selectedType ->
+
+            if (selectedType == null) {
+                type.value = types[0]
+            }
+
+            category.value = null
+
+            types.map { type ->
+
+                ValueAndLabel(type, type.name, type == selectedType)
+
+            }
+
+        }.stateIn(viewModelScope, SharingStarted.Lazily, emptyList())
+
+    private val category = MutableStateFlow<CategoryEntity?>(null)
+    val categories = type.map { type ->
+
+        if (type == null) {
+            return@map emptyList<CategoryEntity>()
+        }
+
+        category.value = null
+        repository.getCategoriesByType(type)
+
+    }.combine(category) { categories, selectedCategory ->
+
+        if (category.value == null && categories.isNotEmpty()) {
+            category.value = categories[0]
+        }
+
+        categories.map { category ->
+            ValueAndLabel(category, category.name, category == selectedCategory)
+        }
+
+    }.stateIn(viewModelScope, SharingStarted.Lazily, emptyList())
 
     private val _event = MutableStateFlow(Event())
     val event: StateFlow<Event> = _event
-
-    init {
-        viewModelScope.launch {
-            refreshCategories()
-        }
-    }
 
     fun setDescription(value: String) {
         _description.value = ValueWithError(value)
@@ -56,14 +89,11 @@ class TransactionEditorViewModel @Inject constructor(private val repository: App
     }
 
     fun setType(value: TransactionType) {
-        _type.value = value
-        viewModelScope.launch {
-            refreshCategories()
-        }
+        type.value = value
     }
 
-    fun setCategory(value: CategoryEntity) {
-        _categories.value = _categories.value.copy(value = value)
+    fun setCategory(value: ValueAndLabel<CategoryEntity>) {
+        category.value = value.value
     }
 
     fun setDate(value: LocalDate) {
@@ -74,7 +104,7 @@ class TransactionEditorViewModel @Inject constructor(private val repository: App
 
         val description = _description.value
         val amount = _amount.value
-        val category = _categories.value.value
+        val category = categories.value.firstOrNull { it.selected }?.value
 
         if (description.value.isEmpty()) {
             _description.value = description.copy(error = "Required")
@@ -98,18 +128,13 @@ class TransactionEditorViewModel @Inject constructor(private val repository: App
                     description.value,
                     Money(amount.value.toInt()),
                     _date.value,
-                    _type.value,
+                    type.value!!,
                     category!!.id,
                     OffsetDateTime.now()
                 )
             )
             _event.value = Event("finish")
         }
-    }
-
-    private suspend fun refreshCategories() {
-        val categories = repository.getCategoriesByType(_type.value)
-        _categories.value = ListWithValue(categories.first(), categories)
     }
 
 }
