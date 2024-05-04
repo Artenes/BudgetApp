@@ -66,6 +66,7 @@ class SearchViewModel @Inject constructor(
             DateFilterType.DAY -> formatter.formatDate(filter.value.startInclusive)
             DateFilterType.WEEK -> formatter.formatRange(filter.value)
             DateFilterType.MONTH -> formatter.formatMonthAndYear(filter.value.startInclusive)
+            DateFilterType.YEAR -> filter.value.startInclusive.year.toString()
             else -> ""
         }
         _dateFilter.value = DateFilterItem(label, filter)

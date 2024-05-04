@@ -144,7 +144,11 @@ fun CustomAdvancedDatePicker(value: DateFilterItem, onChange: (DateFilter) -> Un
     CustomYearPicker(
         visible = showYearDialog,
         value = LocalDate.now().year,
-        onYearSelected = { newYear -> },
+        onYearSelected = { newYear ->
+            val date = LocalDate.of(newYear, 1, 1)
+            val range = LocalDateRange(date, date)
+            onChange(DateFilter(DateFilterType.YEAR, range))
+        },
         onDismiss = { showYearDialog = false }
     )
 
