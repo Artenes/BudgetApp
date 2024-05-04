@@ -28,9 +28,8 @@ class SearchViewModel @Inject constructor(
 
     private val _dateFilter = MutableStateFlow(
         DateFilterItem(
-            DateFilterType.MONTH,
             formatter.formatMonth(LocalDate.now()),
-            LocalDateRange.now()
+            DateFilter(DateFilterType.MONTH, LocalDateRange.now())
         )
     )
     val dateFilter: StateFlow<DateFilterItem> = _dateFilter
@@ -61,6 +60,14 @@ class SearchViewModel @Inject constructor(
 
         }
         .stateIn(viewModelScope, SharingStarted.Lazily, DataState.Loading)
+
+    fun setDateFilter(filter: DateFilter) {
+        val label = when (filter.type) {
+            DateFilterType.DAY -> formatter.formatDate(filter.value.startInclusive)
+            else -> ""
+        }
+        _dateFilter.value = DateFilterItem(label, filter)
+    }
 
     /**
      * Format transactions to be displayed by the UI

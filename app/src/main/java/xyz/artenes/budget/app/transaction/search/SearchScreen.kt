@@ -15,7 +15,6 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowDropDown
-import androidx.compose.material.icons.filled.CalendarMonth
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -114,7 +113,7 @@ fun SearchScreen(
 
                         CustomAdvancedDatePicker(
                             value = dateFilter,
-                            onChange = { newFilter -> }
+                            onChange = { newFilter -> viewModel.setDateFilter(newFilter) }
                         )
 
                         OutlinedTextField(

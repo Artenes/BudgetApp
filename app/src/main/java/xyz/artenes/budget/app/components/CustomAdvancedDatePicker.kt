@@ -37,7 +37,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import xyz.artenes.budget.R
 import xyz.artenes.budget.app.theme.CustomColorScheme
+import xyz.artenes.budget.app.transaction.search.DateFilter
 import xyz.artenes.budget.app.transaction.search.DateFilterItem
+import xyz.artenes.budget.app.transaction.search.DateFilterType
 import xyz.artenes.budget.utils.LocalDateRange
 import java.time.Instant
 import java.time.LocalDate
@@ -45,7 +47,7 @@ import java.time.ZoneId
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CustomAdvancedDatePicker(value: DateFilterItem, onChange: (DateFilterItem) -> Unit) {
+fun CustomAdvancedDatePicker(value: DateFilterItem, onChange: (DateFilter) -> Unit) {
 
     val focusManager = LocalFocusManager.current
     var showDialog by remember {
@@ -108,7 +110,14 @@ fun CustomAdvancedDatePicker(value: DateFilterItem, onChange: (DateFilterItem) -
         show = showDayDialog,
         onDismiss = { showDayDialog = false },
         state = dayState,
-        onDateSelected = { date -> }
+        onDateSelected = { date ->
+            onChange(
+                DateFilter(
+                    DateFilterType.DAY,
+                    LocalDateRange(date, date)
+                )
+            )
+        }
     )
 
     CustomWeekPicker(
@@ -265,6 +274,7 @@ private fun DayDialog(
         onDismissRequest = onDismiss,
         confirmButton = {
             Button(
+                enabled = state.selectedDateMillis != null,
                 onClick = {
                     state.selectedDateMillis?.let {
                         onDateSelected(
@@ -275,7 +285,7 @@ private fun DayDialog(
                     onDismiss()
                 },
             ) {
-                Text(text = "Select date")
+                Text(text = stringResource(R.string.select_date))
             }
         },
     ) {
