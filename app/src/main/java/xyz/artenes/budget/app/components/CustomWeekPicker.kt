@@ -38,7 +38,7 @@ import java.util.Locale
 @Composable
 fun CustomWeekPicker(
     visible: Boolean,
-    value: LocalDateRange,
+    value: LocalDateRange? = null,
     onWeekSelected: (LocalDateRange) -> Unit,
     onDismiss: () -> Unit,
 ) {
@@ -54,7 +54,7 @@ fun CustomWeekPicker(
     }
 
     var weeks by remember {
-        mutableStateOf(makeWeeks(value.startInclusive, value))
+        mutableStateOf(makeWeeks(value?.startInclusive, value))
     }
 
     val yearListState = rememberLazyListState(
@@ -65,17 +65,19 @@ fun CustomWeekPicker(
         initialFirstVisibleItemIndex = months.first { it.selected }.position
     )
 
+    val dismissDialog = {
+        years = makeYears(value)
+        months = makeMonths(value)
+        weeks = makeWeeks(value?.startInclusive, value)
+        coroutine.launch {
+            yearListState.scrollToItem(years.first { it.selected }.position)
+            monthListState.scrollToItem(months.first { it.selected }.position)
+        }
+        onDismiss()
+    }
+
     if (visible) {
-        BasicAlertDialog(onDismissRequest = {
-            years = makeYears(value)
-            months = makeMonths(value)
-            weeks = makeWeeks(value.startInclusive, value)
-            coroutine.launch {
-                yearListState.scrollToItem(years.first { it.selected }.position)
-                monthListState.scrollToItem(months.first { it.selected }.position)
-            }
-            onDismiss()
-        }) {
+        BasicAlertDialog(onDismissRequest = dismissDialog) {
             Surface(
                 color = DatePickerDefaults.colors().containerColor,
                 shape = DatePickerDefaults.shape,
@@ -154,7 +156,7 @@ fun CustomWeekPicker(
                     Button(
                         onClick = {
                             onWeekSelected(weeks.first { it.selected }.value)
-                            onDismiss()
+                            dismissDialog()
                         },
                         modifier = Modifier
                             .fillMaxWidth()
@@ -172,17 +174,19 @@ fun CustomWeekPicker(
 
 }
 
-private fun makeMonths(value: LocalDateRange): List<DateItem> {
+private fun makeMonths(value: LocalDateRange?): List<DateItem> {
+    val realValue = value ?: LocalDateRange.now()
     val months = Month.entries.mapIndexed { index, month ->
         val label = month.getDisplayName(TextStyle.FULL, Locale.getDefault())
         val monthValue = month.value
-        DateItem(monthValue, monthValue == value.month, label, index)
+        DateItem(monthValue, monthValue == realValue.month, label, index)
     }
     return months
 }
 
-private fun makeYears(value: LocalDateRange): List<DateItem> {
-    val middle = value.year
+private fun makeYears(value: LocalDateRange?): List<DateItem> {
+    val realValue = value ?: LocalDateRange.now()
+    val middle = realValue.year
     val start = middle - 5
     val end = middle + 5
     return (start..end).mapIndexed { index, item ->
@@ -190,9 +194,10 @@ private fun makeYears(value: LocalDateRange): List<DateItem> {
     }.toList()
 }
 
-private fun makeWeeks(date: LocalDate, value: LocalDateRange? = null): List<WeekItem> {
+private fun makeWeeks(date: LocalDate?, value: LocalDateRange? = null): List<WeekItem> {
+    val realDate = date ?: LocalDate.now()
     val dayFormat = DateTimeFormatter.ofPattern("dd MMMM")
-    return LocalDateRange.weeksInYearMonth(date).mapIndexed { index, week ->
+    return LocalDateRange.weeksInYearMonth(realDate).mapIndexed { index, week ->
         WeekItem(
             week,
             "${week.startInclusive.format(dayFormat)} ~ ${week.endInclusive.format(dayFormat)}",

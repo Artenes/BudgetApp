@@ -40,10 +40,7 @@ data class LocalDateRange(
 
         fun now(): LocalDateRange {
             val now = LocalDate.now()
-            val week = now.dayOfWeek!!.value
-            val start = now.minusDays(week.toLong())
-            val end = start.plusDays(6)
-            return LocalDateRange(start, end)
+            return LocalDateRange(now, now)
         }
 
         fun fromString(value: String): LocalDateRange {

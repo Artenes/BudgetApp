@@ -126,7 +126,6 @@ fun CustomAdvancedDatePicker(value: DateFilterItem, onChange: (DateFilter) -> Un
 
     CustomWeekPicker(
         visible = showWeekDialog,
-        value = LocalDateRange.now(),
         onWeekSelected = { newWeek -> onChange(DateFilter(DateFilterType.WEEK, newWeek)) },
         onDismiss = { showWeekDialog = false }
     )
