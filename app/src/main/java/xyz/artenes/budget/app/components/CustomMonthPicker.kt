@@ -35,7 +35,7 @@ import java.util.Locale
 @Composable
 fun CustomMonthPicker(
     visible: Boolean,
-    value: LocalDate,
+    value: LocalDate? = null,
     onMonthSelected: (LocalDate) -> Unit,
     onDismiss: () -> Unit,
 ) {
@@ -51,23 +51,25 @@ fun CustomMonthPicker(
     }
 
     val yearListState = rememberLazyListState(
-        initialFirstVisibleItemIndex = years.first { it.selected }.position
+        initialFirstVisibleItemIndex = calculateInitialIndex(years.first { it.selected })
     )
 
     val monthListState = rememberLazyListState(
-        initialFirstVisibleItemIndex = months.first { it.selected }.position
+        initialFirstVisibleItemIndex = calculateInitialIndex(months.first { it.value == LocalDate.now().monthValue })
     )
 
+    val dismissDialog = {
+        years = makeYears(value)
+        months = makeMonths(value)
+        coroutine.launch {
+            yearListState.scrollToItem(calculateInitialIndex(years.first { it.selected }))
+            monthListState.scrollToItem(calculateInitialIndex(months.first { it.value == LocalDate.now().monthValue }))
+        }
+        onDismiss()
+    }
+
     if (visible) {
-        BasicAlertDialog(onDismissRequest = {
-            years = makeYears(value)
-            months = makeMonths(value)
-            coroutine.launch {
-                yearListState.scrollToItem(years.first { it.selected }.position)
-                monthListState.scrollToItem(months.first { it.selected }.position)
-            }
-            onDismiss()
-        }) {
+        BasicAlertDialog(onDismissRequest = dismissDialog) {
             Surface(
                 color = DatePickerDefaults.colors().containerColor,
                 shape = DatePickerDefaults.shape,
@@ -101,7 +103,7 @@ fun CustomMonthPicker(
                             val year = years.first { it.selected }.value
                             val month = months.first { it.selected }.value
                             onMonthSelected(LocalDate.of(year, month, 1))
-                            onDismiss()
+                            dismissDialog()
                         },
                         modifier = Modifier
                             .fillMaxWidth()
@@ -119,17 +121,27 @@ fun CustomMonthPicker(
 
 }
 
-private fun makeMonths(value: LocalDate): List<DateItem> {
+private fun calculateInitialIndex(item: DateItem): Int {
+    val intendedPosition = item.position - 2
+    return if (intendedPosition >= 0) {
+        intendedPosition
+    } else {
+        0
+    }
+}
+
+private fun makeMonths(value: LocalDate?): List<DateItem> {
     val months = Month.entries.mapIndexed { index, month ->
         val label = month.getDisplayName(TextStyle.FULL, Locale.getDefault())
         val monthValue = month.value
-        DateItem(monthValue, monthValue == value.month.value, label, index)
+        DateItem(monthValue, monthValue == value?.month?.value, label, index)
     }
     return months
 }
 
-private fun makeYears(value: LocalDate): List<DateItem> {
-    val middle = value.year
+private fun makeYears(value: LocalDate?): List<DateItem> {
+    val realValue = value ?: LocalDate.now()
+    val middle = realValue.year
     val start = middle - 5
     val end = middle + 5
     return (start..end).mapIndexed { index, item ->
