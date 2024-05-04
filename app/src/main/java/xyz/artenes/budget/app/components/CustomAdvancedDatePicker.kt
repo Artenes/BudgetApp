@@ -56,6 +56,9 @@ fun CustomAdvancedDatePicker() {
     var showMonthDialog by remember {
         mutableStateOf(false)
     }
+    var showYearDialog by remember {
+        mutableStateOf(false)
+    }
     val dayState = rememberDatePickerState()
 
     OutlinedTextField(
@@ -88,7 +91,8 @@ fun CustomAdvancedDatePicker() {
         onDismiss = { showDialog = false },
         onDaySelected = { showDayDialog = true },
         onWeekSelected = { showWeekDialog = true },
-        onMonthSelected = { showMonthDialog = true }
+        onMonthSelected = { showMonthDialog = true },
+        onYearSelected = { showYearDialog = true },
     )
 
     DayDialog(
@@ -112,6 +116,13 @@ fun CustomAdvancedDatePicker() {
         onDismiss = { showMonthDialog = false }
     )
 
+    CustomYearPicker(
+        visible = showYearDialog,
+        value = LocalDate.now().year,
+        onYearSelected = { newYear -> },
+        onDismiss = { showYearDialog = false }
+    )
+
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -122,6 +133,7 @@ private fun DateTypeDialog(
     onDaySelected: () -> Unit,
     onWeekSelected: () -> Unit,
     onMonthSelected: () -> Unit,
+    onYearSelected: () -> Unit
 ) {
 
     if (!show) {
@@ -170,7 +182,10 @@ private fun DateTypeDialog(
 
                 DateTypeItem(
                     label = stringResource(id = R.string.filter_by_year),
-                    onClick = {},
+                    onClick = {
+                        onYearSelected()
+                        onDismiss()
+                    },
                     modifier = Modifier.padding(top = 10.dp)
                 )
 

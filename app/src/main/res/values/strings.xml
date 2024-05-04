@@ -42,5 +42,6 @@
     <string name="filter_by_custom_range">Select custom range</string>
     <string name="filter_by_date">Filter by date</string>
     <string name="select_month">Select month</string>
+    <string name="select_year">Select Year</string>
 
 </resources>
