@@ -1,6 +1,7 @@
 package xyz.artenes.budget.app.components
 
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
@@ -29,6 +30,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusEvent
 import androidx.compose.ui.platform.LocalFocusManager
@@ -156,7 +158,7 @@ fun CustomAdvancedDatePicker(value: DateFilterItem, onChange: (DateFilter) -> Un
         show = showRangeDialog,
         onDismiss = { showRangeDialog = false },
         state = rangeState,
-        onDateSelected = { newRange -> }
+        onDateSelected = { newRange -> onChange(DateFilter(DateFilterType.CUSTOM, newRange)) }
     )
 
 }
@@ -320,7 +322,20 @@ private fun RangeDialog(
 
     DatePickerDialog(
         onDismissRequest = onDismiss,
-        confirmButton = {
+        confirmButton = {}
+    ) {
+        Box {
+            DateRangePicker(
+                state = state,
+                title = { },
+                headline = {
+                    Text(
+                        modifier = Modifier.padding(10.dp),
+                        text = stringResource(id = R.string.select_range)
+                    )
+                },
+                showModeToggle = false
+            )
             Button(
                 enabled = state.selectedStartDateMillis != null && state.selectedEndDateMillis != null,
                 onClick = {
@@ -332,12 +347,16 @@ private fun RangeDialog(
                     onDateSelected(LocalDateRange(start, end))
                     onDismiss()
                 },
+                modifier = Modifier
+                    .align(Alignment.BottomEnd)
+                    .padding(end = 16.dp, bottom = 16.dp)
             ) {
-                Text(text = stringResource(R.string.select_range))
+                Text(
+                    text = stringResource(R.string.select),
+                    color = CustomColorScheme.textColor()
+                )
             }
-        },
-    ) {
-        DateRangePicker(state = state)
+        }
     }
 
 }
