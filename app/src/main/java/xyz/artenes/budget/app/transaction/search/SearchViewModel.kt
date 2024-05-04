@@ -64,6 +64,7 @@ class SearchViewModel @Inject constructor(
     fun setDateFilter(filter: DateFilter) {
         val label = when (filter.type) {
             DateFilterType.DAY -> formatter.formatDate(filter.value.startInclusive)
+            DateFilterType.WEEK -> formatter.formatRange(filter.value)
             else -> ""
         }
         _dateFilter.value = DateFilterItem(label, filter)
