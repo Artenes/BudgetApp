@@ -7,6 +7,8 @@ import androidx.room.Entity
 import androidx.room.Insert
 import androidx.room.PrimaryKey
 import androidx.room.Query
+import androidx.room.RawQuery
+import androidx.sqlite.db.SupportSQLiteQuery
 import kotlinx.coroutines.flow.Flow
 import xyz.artenes.budget.core.Money
 import xyz.artenes.budget.core.TransactionType
@@ -45,6 +47,9 @@ interface TransactionDao {
 
     @Query("SELECT * FROM transactions ORDER BY created_at DESC")
     fun getAll(): Flow<List<TransactionEntity>>
+
+    @RawQuery
+    fun search(query: SupportSQLiteQuery): List<TransactionWithCategoryEntity>
 
     @Query(
         "SELECT transactions.id, description, amount, date, transactions.type, color, icon, transactions.created_at " +

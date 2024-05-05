@@ -4,11 +4,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.launch
 import xyz.artenes.budget.app.transaction.list.TransactionItem
 import xyz.artenes.budget.core.Money
@@ -16,13 +14,13 @@ import xyz.artenes.budget.core.TransactionType
 import xyz.artenes.budget.data.AppRepository
 import xyz.artenes.budget.data.CategoryEntity
 import xyz.artenes.budget.data.SearchResultsData
+import xyz.artenes.budget.data.SearchSortType
 import xyz.artenes.budget.data.TransactionWithCategoryEntity
 import xyz.artenes.budget.utils.DataState
 import xyz.artenes.budget.utils.DatePresenter
 import xyz.artenes.budget.utils.LabelPresenter
 import xyz.artenes.budget.utils.LocalDateRange
 import xyz.artenes.budget.utils.ValueAndLabel
-import java.time.LocalDate
 import javax.inject.Inject
 
 @HiltViewModel
@@ -85,73 +83,53 @@ class SearchViewModel @Inject constructor(
     )
     val sorts: StateFlow<List<ValueAndLabel<SearchSortType>>> = _sorts
 
-    private val _categories = MutableStateFlow<List<ValueAndLabel<CategoryEntity>>>(emptyList())
-    val categories: StateFlow<List<ValueAndLabel<CategoryEntity>>> = _categories
+    private val _categories = MutableStateFlow<List<ValueAndLabel<CategoryParam>>>(emptyList())
+    val categories: StateFlow<List<ValueAndLabel<CategoryParam>>> = _categories
 
-    val transactions = repository.getByMonth(LocalDate.now())
-        .map { items ->
-
-            val transactions = items.map(this::transactionToItem)
-            val totalIncome = Money(transactions.filter { it.type == TransactionType.INCOME }
-                .sumOf { it.amount.value })
-            val totalExpense = Money(transactions.filter { it.type == TransactionType.EXPENSE }
-                .sumOf { it.amount.value })
-            val balance = totalIncome.minus(totalExpense)
-            val count = transactions.size
-
-            DataState.Success(
-                SearchResultsData(
-                    totalExpenses = totalExpense,
-                    formattedTotalExpenses = "- ${datePresenter.formatMoneyWithCurrency(totalExpense)}",
-                    totalIncome = totalIncome,
-                    formattedTotalIncome = "+ ${datePresenter.formatMoneyWithCurrency(totalIncome)}",
-                    balance = balance,
-                    formattedBalance = "${if (balance.value >= 0) "+" else "-"} ${
-                        datePresenter.formatMoneyWithCurrency(
-                            balance.absolute()
-                        )
-                    }",
-                    totalTransactions = count,
-                    transactions = transactions
-                )
-            )
-
-        }
-        .stateIn(viewModelScope, SharingStarted.Lazily, DataState.Loading)
+    private val _transactions = MutableStateFlow<DataState<SearchResultsData>>(DataState.Loading)
+    val transactions: StateFlow<DataState<SearchResultsData>> = _transactions
 
     init {
         viewModelScope.launch {
+            listenForDateChanges()
             listenForTypeChange()
+            listenForCategoryChange()
+            listenForSortChanges()
+            loadCategories()
+            loadTransactions()
         }
     }
 
-    private suspend fun listenForTypeChange() {
-        _types.collectLatest { types ->
-
-            val selectedType = types.first { it.selected }
-
-            val categories = if (selectedType.value == DisplayType.ALL) {
-                repository.getAllCategories()
-            } else {
-                val transactionType = when (selectedType.value) {
-                    DisplayType.EXPENSE -> TransactionType.EXPENSE
-                    DisplayType.INCOME -> TransactionType.INCOME
-                    else -> throw RuntimeException("Can't parse DisplayType to TransactionType")
-                }
-                repository.getCategoriesByType(transactionType)
+    private fun listenForTypeChange() {
+        viewModelScope.launch {
+            _types.drop(1).collectLatest {
+                loadCategories()
+                loadTransactions()
             }
+        }
+    }
 
-            _categories.value = categories.mapIndexed { index, category ->
-
-                val label = if (selectedType.value == DisplayType.ALL) {
-                    labelPresenter.presentWithDetail(category)
-                } else {
-                    category.name
-                }
-
-                ValueAndLabel(category, label, index == 0)
+    private fun listenForCategoryChange() {
+        viewModelScope.launch {
+            _categories.drop(1).collectLatest {
+                loadTransactions()
             }
+        }
+    }
 
+    private fun listenForDateChanges() {
+        viewModelScope.launch {
+            _dateFilter.drop(1).collectLatest {
+                loadTransactions()
+            }
+        }
+    }
+
+    private fun listenForSortChanges() {
+        viewModelScope.launch {
+            _sorts.drop(1).collectLatest {
+                loadTransactions()
+            }
         }
     }
 
@@ -170,12 +148,89 @@ class SearchViewModel @Inject constructor(
         _types.value = _types.value.map { it.copy(selected = it == type) }
     }
 
-    fun setCategory(category: ValueAndLabel<CategoryEntity>) {
+    fun setCategory(category: ValueAndLabel<CategoryParam>) {
         _categories.value = _categories.value.map { it.copy(selected = it == category) }
     }
 
     fun setSort(sort: ValueAndLabel<SearchSortType>) {
         _sorts.value = _sorts.value.map { it.copy(selected = it == sort) }
+    }
+
+    private suspend fun loadCategories() {
+        val types = _types.value
+        val selectedType = types.first { it.selected }
+
+        val categories = if (selectedType.value == DisplayType.ALL) {
+            repository.getAllCategories()
+        } else {
+            val transactionType = when (selectedType.value) {
+                DisplayType.EXPENSE -> TransactionType.EXPENSE
+                DisplayType.INCOME -> TransactionType.INCOME
+                else -> throw RuntimeException("Can't parse DisplayType to TransactionType")
+            }
+            repository.getCategoriesByType(transactionType)
+        }
+
+        val items = categories.map { category ->
+
+            val label = if (selectedType.value == DisplayType.ALL) {
+                labelPresenter.presentWithDetail(category)
+            } else {
+                category.name
+            }
+
+            ValueAndLabel(CategoryParam(category), label, false)
+        }.toMutableList()
+
+        val allCategory = CategoryParam()
+        items.add(0, ValueAndLabel(allCategory, labelPresenter.present(allCategory), true))
+
+        _categories.value = items
+    }
+
+    private suspend fun loadTransactions() {
+
+        val date = _dateFilter.value.value.value
+        val type = _types.value.first { it.selected }.value
+        val category = _categories.value.firstOrNull { it.selected }?.value?.value
+        val sort = _sorts.value.first { it.selected }.value
+
+        val items = repository.search(
+            range = date,
+            sort = sort,
+            category = category,
+            type = when (type) {
+                DisplayType.ALL -> null
+                DisplayType.INCOME -> TransactionType.INCOME
+                DisplayType.EXPENSE -> TransactionType.EXPENSE
+            }
+        )
+        val transactions = items.map(this::transactionToItem)
+        val totalIncome = Money(transactions.filter { it.type == TransactionType.INCOME }
+            .sumOf { it.amount.value })
+        val totalExpense = Money(transactions.filter { it.type == TransactionType.EXPENSE }
+            .sumOf { it.amount.value })
+        val balance = totalIncome.minus(totalExpense)
+        val count = transactions.size
+
+        _transactions.value = DataState.Success(
+            SearchResultsData(
+                totalExpenses = totalExpense,
+                formattedTotalExpenses = "- ${datePresenter.formatMoneyWithCurrency(totalExpense)}",
+                totalIncome = totalIncome,
+                formattedTotalIncome = "+ ${datePresenter.formatMoneyWithCurrency(totalIncome)}",
+                balance = balance,
+                formattedBalance = "${if (balance.value >= 0) "+" else "-"} ${
+                    datePresenter.formatMoneyWithCurrency(
+                        balance.absolute()
+                    )
+                }",
+                totalTransactions = count,
+                transactions = transactions
+            )
+        )
+
+
     }
 
     /**
@@ -214,13 +269,6 @@ class SearchViewModel @Inject constructor(
         ALL
     }
 
-    enum class SearchSortType {
-        DATE_DESC,
-        DATE_ASC,
-        NAME_ASC,
-        NAME_DESC,
-        VALUE_DESC,
-        VALUE_ASC
-    }
+    data class CategoryParam(val value: CategoryEntity? = null)
 
 }
