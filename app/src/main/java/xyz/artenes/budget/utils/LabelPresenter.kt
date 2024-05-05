@@ -26,6 +26,17 @@ class LabelPresenter @Inject constructor(private val messages: Messages) {
         }
     }
 
+    fun present(sort: SearchViewModel.SearchSortType): String {
+        return when(sort) {
+            SearchViewModel.SearchSortType.DATE_ASC -> messages.get(R.string.sort_date_asc)
+            SearchViewModel.SearchSortType.DATE_DESC -> messages.get(R.string.sort_date_desc)
+            SearchViewModel.SearchSortType.NAME_ASC -> messages.get(R.string.sort_name_asc)
+            SearchViewModel.SearchSortType.NAME_DESC -> messages.get(R.string.sort_name_desc)
+            SearchViewModel.SearchSortType.VALUE_ASC -> messages.get(R.string.sort_value_asc)
+            SearchViewModel.SearchSortType.VALUE_DESC -> messages.get(R.string.sort_value_desc)
+        }
+    }
+
     fun presentWithDetail(categoryEntity: CategoryEntity): String {
         return "${categoryEntity.name} (${present(categoryEntity.type)})"
     }

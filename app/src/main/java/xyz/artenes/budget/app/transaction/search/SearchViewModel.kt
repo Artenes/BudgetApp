@@ -49,6 +49,42 @@ class SearchViewModel @Inject constructor(
     )
     val types: StateFlow<List<ValueAndLabel<DisplayType>>> = _types
 
+    private val _sorts = MutableStateFlow(
+        listOf(
+            ValueAndLabel(
+                SearchSortType.DATE_DESC,
+                labelPresenter.present(SearchSortType.DATE_DESC),
+                true
+            ),
+            ValueAndLabel(
+                SearchSortType.DATE_ASC,
+                labelPresenter.present(SearchSortType.DATE_ASC),
+                false
+            ),
+            ValueAndLabel(
+                SearchSortType.VALUE_ASC,
+                labelPresenter.present(SearchSortType.VALUE_ASC),
+                false
+            ),
+            ValueAndLabel(
+                SearchSortType.VALUE_DESC,
+                labelPresenter.present(SearchSortType.VALUE_DESC),
+                false
+            ),
+            ValueAndLabel(
+                SearchSortType.NAME_ASC,
+                labelPresenter.present(SearchSortType.NAME_ASC),
+                false
+            ),
+            ValueAndLabel(
+                SearchSortType.NAME_DESC,
+                labelPresenter.present(SearchSortType.NAME_DESC),
+                false
+            ),
+        )
+    )
+    val sorts: StateFlow<List<ValueAndLabel<SearchSortType>>> = _sorts
+
     private val _categories = MutableStateFlow<List<ValueAndLabel<CategoryEntity>>>(emptyList())
     val categories: StateFlow<List<ValueAndLabel<CategoryEntity>>> = _categories
 
@@ -138,6 +174,10 @@ class SearchViewModel @Inject constructor(
         _categories.value = _categories.value.map { it.copy(selected = it == category) }
     }
 
+    fun setSort(sort: ValueAndLabel<SearchSortType>) {
+        _sorts.value = _sorts.value.map { it.copy(selected = it == sort) }
+    }
+
     /**
      * Format transactions to be displayed by the UI
      */
@@ -172,6 +212,15 @@ class SearchViewModel @Inject constructor(
         EXPENSE,
         INCOME,
         ALL
+    }
+
+    enum class SearchSortType {
+        DATE_DESC,
+        DATE_ASC,
+        NAME_ASC,
+        NAME_DESC,
+        VALUE_DESC,
+        VALUE_ASC
     }
 
 }

@@ -15,7 +15,6 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -60,6 +59,7 @@ fun SearchScreen(
     val dateFilter by viewModel.dateFilter.collectAsState()
     val types by viewModel.types.collectAsState()
     val categories by viewModel.categories.collectAsState()
+    val sorts by viewModel.sorts.collectAsState()
     val scrollState = rememberLazyListState()
     var showFilters by remember {
         mutableStateOf(true)
@@ -139,22 +139,12 @@ fun SearchScreen(
                             }
                         )
 
-                        OutlinedTextField(
-                            value = "",
-                            onValueChange = { },
-                            modifier = Modifier.fillMaxWidth(),
-                            colors = CustomColorScheme.outlineTextField(),
-                            label = {
-                                Text("Sort by")
-                            },
-                            trailingIcon = {
-                                Icon(
-                                    imageVector = Icons.Filled.ArrowDropDown,
-                                    contentDescription = "",
-                                    tint = MaterialTheme.colorScheme.onBackground
-                                )
-                            },
-                            readOnly = true
+                        CustomSpinner(
+                            label = stringResource(id = R.string.sort_by),
+                            options = sorts,
+                            onOptionSelected = { newSort ->
+                                viewModel.setSort(newSort)
+                            }
                         )
                     }
                 }

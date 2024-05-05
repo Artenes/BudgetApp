@@ -54,4 +54,12 @@
     <string name="income">Income</string>
     <string name="all">All</string>
 
+    <string name="sort_date_asc">By date (oldest first)</string>
+    <string name="sort_date_desc">By date (newest first)</string>
+    <string name="sort_name_asc">By name</string>
+    <string name="sort_name_desc">By name (reverse)</string>
+    <string name="sort_value_desc">By value (high to low)</string>
+    <string name="sort_value_asc">By value (low to high)</string>
+    <string name="sort_by">Sort by</string>
+
 </resources>
