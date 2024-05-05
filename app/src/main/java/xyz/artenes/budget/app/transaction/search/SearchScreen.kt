@@ -59,6 +59,7 @@ fun SearchScreen(
     val transactionsDataState by viewModel.transactions.collectAsState()
     val dateFilter by viewModel.dateFilter.collectAsState()
     val types by viewModel.types.collectAsState()
+    val categories by viewModel.categories.collectAsState()
     val scrollState = rememberLazyListState()
     var showFilters by remember {
         mutableStateOf(true)
@@ -130,22 +131,12 @@ fun SearchScreen(
                             }
                         )
 
-                        OutlinedTextField(
-                            value = "",
-                            onValueChange = { },
-                            modifier = Modifier.fillMaxWidth(),
-                            colors = CustomColorScheme.outlineTextField(),
-                            label = {
-                                Text("Filter by type")
-                            },
-                            trailingIcon = {
-                                Icon(
-                                    imageVector = Icons.Filled.ArrowDropDown,
-                                    contentDescription = "",
-                                    tint = MaterialTheme.colorScheme.onBackground
-                                )
-                            },
-                            readOnly = true
+                        CustomSpinner(
+                            label = stringResource(id = R.string.filter_by_category),
+                            options = categories,
+                            onOptionSelected = { newCategory ->
+                                viewModel.setCategory(newCategory)
+                            }
                         )
 
                         OutlinedTextField(

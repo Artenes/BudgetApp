@@ -4,6 +4,7 @@ import xyz.artenes.budget.R
 import xyz.artenes.budget.android.Messages
 import xyz.artenes.budget.app.transaction.search.SearchViewModel
 import xyz.artenes.budget.core.TransactionType
+import xyz.artenes.budget.data.CategoryEntity
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -23,6 +24,10 @@ class LabelPresenter @Inject constructor(private val messages: Messages) {
             SearchViewModel.DisplayType.INCOME -> messages.get(R.string.income)
             SearchViewModel.DisplayType.ALL -> messages.get(R.string.all)
         }
+    }
+
+    fun presentWithDetail(categoryEntity: CategoryEntity): String {
+        return "${categoryEntity.name} (${present(categoryEntity.type)})"
     }
 
 }

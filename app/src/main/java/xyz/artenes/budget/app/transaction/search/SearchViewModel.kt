@@ -6,12 +6,15 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 import xyz.artenes.budget.app.transaction.list.TransactionItem
 import xyz.artenes.budget.core.Money
 import xyz.artenes.budget.core.TransactionType
 import xyz.artenes.budget.data.AppRepository
+import xyz.artenes.budget.data.CategoryEntity
 import xyz.artenes.budget.data.SearchResultsData
 import xyz.artenes.budget.data.TransactionWithCategoryEntity
 import xyz.artenes.budget.utils.DataState
@@ -24,7 +27,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SearchViewModel @Inject constructor(
-    database: AppRepository,
+    private val repository: AppRepository,
     private val datePresenter: DatePresenter,
     private val labelPresenter: LabelPresenter
 ) : ViewModel() {
@@ -46,7 +49,10 @@ class SearchViewModel @Inject constructor(
     )
     val types: StateFlow<List<ValueAndLabel<DisplayType>>> = _types
 
-    val transactions = database.getByMonth(LocalDate.now())
+    private val _categories = MutableStateFlow<List<ValueAndLabel<CategoryEntity>>>(emptyList())
+    val categories: StateFlow<List<ValueAndLabel<CategoryEntity>>> = _categories
+
+    val transactions = repository.getByMonth(LocalDate.now())
         .map { items ->
 
             val transactions = items.map(this::transactionToItem)
@@ -77,6 +83,42 @@ class SearchViewModel @Inject constructor(
         }
         .stateIn(viewModelScope, SharingStarted.Lazily, DataState.Loading)
 
+    init {
+        viewModelScope.launch {
+            listenForTypeChange()
+        }
+    }
+
+    private suspend fun listenForTypeChange() {
+        _types.collectLatest { types ->
+
+            val selectedType = types.first { it.selected }
+
+            val categories = if (selectedType.value == DisplayType.ALL) {
+                repository.getAllCategories()
+            } else {
+                val transactionType = when (selectedType.value) {
+                    DisplayType.EXPENSE -> TransactionType.EXPENSE
+                    DisplayType.INCOME -> TransactionType.INCOME
+                    else -> throw RuntimeException("Can't parse DisplayType to TransactionType")
+                }
+                repository.getCategoriesByType(transactionType)
+            }
+
+            _categories.value = categories.mapIndexed { index, category ->
+
+                val label = if (selectedType.value == DisplayType.ALL) {
+                    labelPresenter.presentWithDetail(category)
+                } else {
+                    category.name
+                }
+
+                ValueAndLabel(category, label, index == 0)
+            }
+
+        }
+    }
+
     fun setDateFilter(filter: DateFilter) {
         val label = when (filter.type) {
             DateFilterType.DAY -> datePresenter.formatDate(filter.value.startInclusive)
@@ -90,6 +132,10 @@ class SearchViewModel @Inject constructor(
 
     fun setType(type: ValueAndLabel<DisplayType>) {
         _types.value = _types.value.map { it.copy(selected = it == type) }
+    }
+
+    fun setCategory(category: ValueAndLabel<CategoryEntity>) {
+        _categories.value = _categories.value.map { it.copy(selected = it == category) }
     }
 
     /**

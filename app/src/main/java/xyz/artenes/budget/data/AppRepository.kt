@@ -61,6 +61,12 @@ class AppRepository @Inject constructor(
         }
     }
 
+    suspend fun getAllCategories(): List<CategoryEntity> {
+        return withContext(dispatcher) {
+            appDatabase.categoryDao().getAllNotDeleted()
+        }
+    }
+
     private fun groupTransactions(transactions: List<TransactionWithCategoryEntity>) =
         transactions.groupBy { transaction -> transaction.date }
             .entries.map { entry ->
