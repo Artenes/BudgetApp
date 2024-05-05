@@ -43,6 +43,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import xyz.artenes.budget.R
 import xyz.artenes.budget.app.components.CustomAdvancedDatePicker
+import xyz.artenes.budget.app.components.CustomSpinner
 import xyz.artenes.budget.app.components.Transaction
 import xyz.artenes.budget.app.theme.CustomColorScheme
 import xyz.artenes.budget.data.SearchResultsData
@@ -57,6 +58,7 @@ fun SearchScreen(
 
     val transactionsDataState by viewModel.transactions.collectAsState()
     val dateFilter by viewModel.dateFilter.collectAsState()
+    val types by viewModel.types.collectAsState()
     val scrollState = rememberLazyListState()
     var showFilters by remember {
         mutableStateOf(true)
@@ -118,6 +120,14 @@ fun SearchScreen(
                         CustomAdvancedDatePicker(
                             value = dateFilter,
                             onChange = { newFilter -> viewModel.setDateFilter(newFilter) }
+                        )
+
+                        CustomSpinner(
+                            label = stringResource(id = R.string.filter_by_type),
+                            options = types,
+                            onOptionSelected = { newType ->
+                                viewModel.setType(newType)
+                            }
                         )
 
                         OutlinedTextField(

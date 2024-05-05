@@ -40,6 +40,7 @@
     <string name="filter_by_month">Select month</string>
     <string name="filter_by_year">Select year</string>
     <string name="filter_by_custom_range">Select custom range</string>
+    <string name="filter_by_type">Filter by type</string>
     <string name="filter_by_date">Filter by date</string>
     <string name="select_month">Select month</string>
     <string name="select_year">Select Year</string>
@@ -47,5 +48,9 @@
     <string name="select_date">Select date</string>
     <string name="select">Select</string>
     <string name="transactions_count">%d transactions</string>
+
+    <string name="expense">Expense</string>
+    <string name="income">Income</string>
+    <string name="all">All</string>
 
 </resources>

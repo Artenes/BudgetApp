@@ -15,24 +15,36 @@ import xyz.artenes.budget.data.AppRepository
 import xyz.artenes.budget.data.SearchResultsData
 import xyz.artenes.budget.data.TransactionWithCategoryEntity
 import xyz.artenes.budget.utils.DataState
+import xyz.artenes.budget.utils.DatePresenter
+import xyz.artenes.budget.utils.LabelPresenter
 import xyz.artenes.budget.utils.LocalDateRange
-import xyz.artenes.budget.utils.LocaleFormatter
+import xyz.artenes.budget.utils.ValueAndLabel
 import java.time.LocalDate
 import javax.inject.Inject
 
 @HiltViewModel
 class SearchViewModel @Inject constructor(
     database: AppRepository,
-    private val formatter: LocaleFormatter
+    private val datePresenter: DatePresenter,
+    private val labelPresenter: LabelPresenter
 ) : ViewModel() {
 
     private val _dateFilter = MutableStateFlow(
         DateFilterItem(
-            formatter.formatMonthAndYear(LocalDateRange.now().startInclusive),
+            datePresenter.formatMonthAndYear(LocalDateRange.now().startInclusive),
             DateFilter(DateFilterType.MONTH, LocalDateRange.now())
         )
     )
     val dateFilter: StateFlow<DateFilterItem> = _dateFilter
+
+    private val _types = MutableStateFlow(
+        listOf(
+            ValueAndLabel(DisplayType.ALL, labelPresenter.present(DisplayType.ALL), true),
+            ValueAndLabel(DisplayType.EXPENSE, labelPresenter.present(DisplayType.EXPENSE), false),
+            ValueAndLabel(DisplayType.INCOME, labelPresenter.present(DisplayType.INCOME), false)
+        )
+    )
+    val types: StateFlow<List<ValueAndLabel<DisplayType>>> = _types
 
     val transactions = database.getByMonth(LocalDate.now())
         .map { items ->
@@ -48,12 +60,12 @@ class SearchViewModel @Inject constructor(
             DataState.Success(
                 SearchResultsData(
                     totalExpenses = totalExpense,
-                    formattedTotalExpenses = "- ${formatter.formatMoneyWithCurrency(totalExpense)}",
+                    formattedTotalExpenses = "- ${datePresenter.formatMoneyWithCurrency(totalExpense)}",
                     totalIncome = totalIncome,
-                    formattedTotalIncome = "+ ${formatter.formatMoneyWithCurrency(totalIncome)}",
+                    formattedTotalIncome = "+ ${datePresenter.formatMoneyWithCurrency(totalIncome)}",
                     balance = balance,
                     formattedBalance = "${if (balance.value >= 0) "+" else "-"} ${
-                        formatter.formatMoneyWithCurrency(
+                        datePresenter.formatMoneyWithCurrency(
                             balance.absolute()
                         )
                     }",
@@ -67,13 +79,17 @@ class SearchViewModel @Inject constructor(
 
     fun setDateFilter(filter: DateFilter) {
         val label = when (filter.type) {
-            DateFilterType.DAY -> formatter.formatDate(filter.value.startInclusive)
-            DateFilterType.WEEK -> formatter.formatRange(filter.value)
-            DateFilterType.MONTH -> formatter.formatMonthAndYear(filter.value.startInclusive)
+            DateFilterType.DAY -> datePresenter.formatDate(filter.value.startInclusive)
+            DateFilterType.WEEK -> datePresenter.formatRange(filter.value)
+            DateFilterType.MONTH -> datePresenter.formatMonthAndYear(filter.value.startInclusive)
             DateFilterType.YEAR -> filter.value.startInclusive.year.toString()
-            DateFilterType.CUSTOM -> formatter.formatRange(filter.value)
+            DateFilterType.CUSTOM -> datePresenter.formatRange(filter.value)
         }
         _dateFilter.value = DateFilterItem(label, filter)
+    }
+
+    fun setType(type: ValueAndLabel<DisplayType>) {
+        _types.value = _types.value.map { it.copy(selected = it == type) }
     }
 
     /**
@@ -92,8 +108,8 @@ class SearchViewModel @Inject constructor(
             1.0f
         }
 
-        val currencySymbol = formatter.getCurrencySymbol()
-        val formattedValue = formatter.formatMoney(transaction.amount)
+        val currencySymbol = datePresenter.getCurrencySymbol()
+        val formattedValue = datePresenter.formatMoney(transaction.amount)
 
         return TransactionItem(
             id = transaction.id,
@@ -104,6 +120,12 @@ class SearchViewModel @Inject constructor(
             amount = transaction.amount,
             type = transaction.type
         )
+    }
+
+    enum class DisplayType {
+        EXPENSE,
+        INCOME,
+        ALL
     }
 
 }

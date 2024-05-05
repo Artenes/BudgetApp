@@ -14,7 +14,7 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class LocaleFormatter @Inject constructor(private val messages: Messages) {
+class DatePresenter @Inject constructor(private val messages: Messages) {
 
     private val dayOfWeekFormat = DateTimeFormatter.ofPattern("EEEE")
     private val serializedDate = DateTimeFormatter.ofPattern("yyyy-MM-dd")

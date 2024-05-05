@@ -19,7 +19,7 @@ import xyz.artenes.budget.data.TransactionGroup
 import xyz.artenes.budget.data.TransactionWithCategoryEntity
 import xyz.artenes.budget.data.TransactionsData
 import xyz.artenes.budget.utils.DataState
-import xyz.artenes.budget.utils.LocaleFormatter
+import xyz.artenes.budget.utils.DatePresenter
 import java.time.LocalDate
 import javax.inject.Inject
 
@@ -28,7 +28,7 @@ import javax.inject.Inject
 class TransactionsListViewModel @Inject constructor(
     private val seeder: DatabaseSeeder,
     private val repository: AppRepository,
-    private val formatter: LocaleFormatter,
+    private val formatter: DatePresenter,
     private val messages: Messages
 ) :
     ViewModel() {

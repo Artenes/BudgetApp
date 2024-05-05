@@ -21,8 +21,6 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import dagger.hilt.android.AndroidEntryPoint
 import xyz.artenes.budget.app.theme.MyApplicationTheme
-import xyz.artenes.budget.utils.LocaleFormatter
-import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
