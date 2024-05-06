@@ -69,9 +69,13 @@ fun SearchScreen(
         label = "totalsPadding"
     )
 
+    LaunchedEffect(transactionsDataState) {
+        scrollState.scrollToItem(0)
+    }
+
     LaunchedEffect(scrollState) {
         snapshotFlow { scrollState.firstVisibleItemIndex }.collect { firstVisibleItemIndex ->
-            showFilters = firstVisibleItemIndex <= 0
+            //showFilters = firstVisibleItemIndex <= 0
         }
     }
 

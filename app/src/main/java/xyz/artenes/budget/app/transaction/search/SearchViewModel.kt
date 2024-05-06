@@ -32,8 +32,8 @@ class SearchViewModel @Inject constructor(
 
     private val _dateFilter = MutableStateFlow(
         DateFilterItem(
-            datePresenter.formatMonthAndYear(LocalDateRange.now().startInclusive),
-            DateFilter(DateFilterType.MONTH, LocalDateRange.now())
+            datePresenter.formatMonthAndYear(LocalDateRange.today().startInclusive),
+            DateFilter(DateFilterType.MONTH, LocalDateRange.currentMonth())
         )
     )
     val dateFilter: StateFlow<DateFilterItem> = _dateFilter

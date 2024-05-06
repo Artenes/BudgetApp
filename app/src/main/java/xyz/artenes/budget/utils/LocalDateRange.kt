@@ -1,6 +1,7 @@
 package xyz.artenes.budget.utils
 
 import java.time.LocalDate
+import java.time.temporal.TemporalAdjusters
 
 data class LocalDateRange(
     val startInclusive: LocalDate,
@@ -38,9 +39,17 @@ data class LocalDateRange(
 
     companion object {
 
-        fun now(): LocalDateRange {
+        fun today(): LocalDateRange {
             val now = LocalDate.now()
             return LocalDateRange(now, now)
+        }
+
+        fun currentMonth(): LocalDateRange {
+            val now = LocalDate.now();
+            return LocalDateRange(
+                now.with(TemporalAdjusters.firstDayOfMonth()),
+                now.with(TemporalAdjusters.lastDayOfMonth())
+            )
         }
 
         fun fromString(value: String): LocalDateRange {

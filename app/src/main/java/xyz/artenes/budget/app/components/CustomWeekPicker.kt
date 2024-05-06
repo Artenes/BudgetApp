@@ -175,7 +175,7 @@ fun CustomWeekPicker(
 }
 
 private fun makeMonths(value: LocalDateRange?): List<DateItem> {
-    val realValue = value ?: LocalDateRange.now()
+    val realValue = value ?: LocalDateRange.today()
     val months = Month.entries.mapIndexed { index, month ->
         val label = month.getDisplayName(TextStyle.FULL, Locale.getDefault())
         val monthValue = month.value
@@ -185,7 +185,7 @@ private fun makeMonths(value: LocalDateRange?): List<DateItem> {
 }
 
 private fun makeYears(value: LocalDateRange?): List<DateItem> {
-    val realValue = value ?: LocalDateRange.now()
+    val realValue = value ?: LocalDateRange.today()
     val middle = realValue.year
     val start = middle - 5
     val end = middle + 5
