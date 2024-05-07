@@ -1,5 +1,6 @@
 package xyz.artenes.budget.app.transaction.list
 
+import android.app.Activity
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -23,10 +24,13 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -42,6 +46,12 @@ fun TransactionsListScreen(
     navigateToSearchScreen: () -> Unit,
     viewModel: TransactionsListViewModel = hiltViewModel()
 ) {
+
+    val view = LocalView.current
+    val statusBarColor = MaterialTheme.colorScheme.primary
+    SideEffect {
+        (view.context as Activity).window.statusBarColor = statusBarColor.toArgb()
+    }
 
     val transactionsDataState by viewModel.transactionsData.collectAsState()
 

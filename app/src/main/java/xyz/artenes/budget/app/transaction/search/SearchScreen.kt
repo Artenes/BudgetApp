@@ -1,5 +1,6 @@
 package xyz.artenes.budget.app.transaction.search
 
+import android.app.Activity
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.background
@@ -29,6 +30,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -37,6 +39,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
@@ -56,6 +60,12 @@ fun SearchScreen(
     back: () -> Unit,
     viewModel: SearchViewModel = hiltViewModel()
 ) {
+
+    val view = LocalView.current
+    val statusBarColor = MaterialTheme.colorScheme.tertiaryContainer
+    SideEffect {
+        (view.context as Activity).window.statusBarColor = statusBarColor.toArgb()
+    }
 
     val transactionsDataState by viewModel.transactions.collectAsState()
     val dateFilter by viewModel.dateFilter.collectAsState()
