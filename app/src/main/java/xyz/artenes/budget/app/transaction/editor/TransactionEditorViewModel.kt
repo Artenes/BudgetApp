@@ -18,6 +18,7 @@ import xyz.artenes.budget.data.AppRepository
 import xyz.artenes.budget.data.CategoryEntity
 import xyz.artenes.budget.data.TransactionEntity
 import xyz.artenes.budget.utils.Event
+import xyz.artenes.budget.utils.LabelPresenter
 import xyz.artenes.budget.utils.ValueAndLabel
 import xyz.artenes.budget.utils.ValueWithError
 import java.time.LocalDate
@@ -26,7 +27,10 @@ import java.util.UUID
 import javax.inject.Inject
 
 @HiltViewModel
-class TransactionEditorViewModel @Inject constructor(private val repository: AppRepository) :
+class TransactionEditorViewModel @Inject constructor(
+    private val repository: AppRepository,
+    private val labelPresenter: LabelPresenter
+) :
     ViewModel() {
 
     private val _description = MutableStateFlow(ValueWithError())
@@ -50,7 +54,7 @@ class TransactionEditorViewModel @Inject constructor(private val repository: App
 
             types.map { type ->
 
-                ValueAndLabel(type, type.name, type == selectedType)
+                ValueAndLabel(type, labelPresenter.present(type), type == selectedType)
 
             }
 
