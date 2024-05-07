@@ -63,5 +63,6 @@
     <string name="sort_by">Sort by</string>
     <string name="expenses">Expenses</string>
     <string name="search_by_name">Search by name</string>
+    <string name="balance">Balance</string>
 
 </resources>

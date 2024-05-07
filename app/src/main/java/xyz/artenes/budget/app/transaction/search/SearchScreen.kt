@@ -15,6 +15,8 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.FilterAlt
+import androidx.compose.material.icons.outlined.FilterAlt
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -63,7 +65,7 @@ fun SearchScreen(
     val query by viewModel.query.collectAsState()
     val scrollState = rememberLazyListState()
     var showFilters by remember {
-        mutableStateOf(true)
+        mutableStateOf(false)
     }
     val totalsPadding by animateDpAsState(
         targetValue = if (showFilters) 30.dp else 5.dp,
@@ -82,31 +84,41 @@ fun SearchScreen(
 
     Scaffold(
         topBar = {
-            AnimatedVisibility(visible = showFilters) {
-                TopAppBar(
-                    colors = TopAppBarDefaults.topAppBarColors()
-                        .copy(containerColor = MaterialTheme.colorScheme.tertiaryContainer),
-                    title = {
-                        OutlinedTextField(
-                            value = query,
-                            onValueChange = { newQuery ->
-                                viewModel.search(newQuery)
-                            },
-                            placeholder = { Text(text = stringResource(R.string.search_by_name)) },
-                            colors = CustomColorScheme.outlineTextField()
+
+            TopAppBar(
+                colors = TopAppBarDefaults.topAppBarColors()
+                    .copy(containerColor = MaterialTheme.colorScheme.tertiaryContainer),
+                title = {
+                    OutlinedTextField(
+                        value = query,
+                        onValueChange = { newQuery ->
+                            viewModel.search(newQuery)
+                        },
+                        placeholder = { Text(text = stringResource(R.string.search_by_name)) },
+                        colors = CustomColorScheme.outlineTextField()
+                    )
+                },
+                navigationIcon = {
+                    IconButton(onClick = back) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = "Back",
+                            tint = MaterialTheme.colorScheme.onBackground
                         )
-                    },
-                    navigationIcon = {
-                        IconButton(onClick = back) {
-                            Icon(
-                                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                                contentDescription = "Back",
-                                tint = MaterialTheme.colorScheme.onBackground
-                            )
-                        }
                     }
-                )
-            }
+                },
+                actions = {
+                    IconButton(onClick = {
+                        showFilters = !showFilters
+                    }) {
+                        Icon(
+                            imageVector = if (showFilters) Icons.Filled.FilterAlt else Icons.Outlined.FilterAlt,
+                            contentDescription = "",
+                            tint = MaterialTheme.colorScheme.onBackground
+                        )
+                    }
+                }
+            )
         }
     ) { paddings ->
 
@@ -158,82 +170,52 @@ fun SearchScreen(
                 }
 
                 //totals
-                Row(modifier = Modifier.padding(top = totalsPadding)) {
+                Row(modifier = Modifier.padding(vertical = 30.dp)) {
 
-                    Column(
-                        modifier = Modifier.weight(1f)
-                    ) {
-                        Text(
-                            modifier = Modifier.fillMaxWidth(),
-                            text = stringResource(id = R.string.income),
-                            color = CustomColorScheme.textColor(),
-                            style = MaterialTheme.typography.labelSmall,
-                            textAlign = TextAlign.Center
-                        )
-                        TotalText(
-                            dataState = transactionsDataState,
-                            value = { resultsData ->
-                                resultsData.formattedTotalIncome
-                            },
-                            opacity = {
-                                1.0f
-                            },
-                        )
-                    }
-
-                    Column(
+                    TotalText(
                         modifier = Modifier.weight(1f),
-                    ) {
-                        Text(
-                            modifier = Modifier.fillMaxWidth(),
-                            text = stringResource(R.string.expenses),
-                            color = CustomColorScheme.textColor(),
-                            style = MaterialTheme.typography.labelSmall,
-                            textAlign = TextAlign.Center
-                        )
-                        TotalText(
-                            dataState = transactionsDataState,
-                            value = { resultsData ->
-                                resultsData.formattedTotalExpenses
-                            },
-                            opacity = {
-                                0.8f
-                            },
-                        )
-                    }
+                        label = stringResource(id = R.string.income),
+                        dataState = transactionsDataState,
+                        value = { resultsData ->
+                            resultsData.formattedTotalIncome
+                        },
+                        opacity = {
+                            1.0f
+                        },
+                    )
+
+                    TotalText(
+                        modifier = Modifier.weight(1f),
+                        label = stringResource(R.string.expenses),
+                        dataState = transactionsDataState,
+                        value = { resultsData ->
+                            resultsData.formattedTotalExpenses
+                        },
+                        opacity = {
+                            0.8f
+                        },
+                    )
+
+                    TotalText(
+                        modifier = Modifier.weight(1f),
+                        label = stringResource(R.string.balance),
+                        dataState = transactionsDataState,
+                        value = { resultsData ->
+                            resultsData.formattedBalance
+                        },
+                        opacity = { resultsData ->
+                            resultsData.balanceOpacity
+                        },
+                    )
 
                 }
 
-                //balance
-                AnimatedVisibility(visible = showFilters) {
-                    Column {
-                        Text(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(top = 20.dp),
-                            text = "Balance",
-                            color = CustomColorScheme.textColor(),
-                            style = MaterialTheme.typography.labelSmall,
-                            textAlign = TextAlign.Center
-                        )
+                //total transactions
+                TransactionsAmount(
+                    dataState = transactionsDataState,
+                    padding = totalsPadding
+                )
 
-                        TotalText(
-                            dataState = transactionsDataState,
-                            value = { resultsData ->
-                                resultsData.formattedBalance
-                            },
-                            opacity = { resultsData ->
-                                resultsData.balanceOpacity
-                            },
-                        )
-
-                        TransactionsAmount(
-                            dataState = transactionsDataState,
-                            padding = totalsPadding
-                        )
-                    }
-
-                }
 
             }
 
@@ -247,23 +229,41 @@ fun SearchScreen(
 
 @Composable
 private fun TotalText(
+    modifier: Modifier = Modifier,
+    label: String,
     dataState: DataState<SearchResultsData>,
     value: (SearchResultsData) -> String,
     opacity: (SearchResultsData) -> Float,
 ) {
 
     if (dataState !is DataState.Success) {
-        Loading(modifier = Modifier.fillMaxWidth(), size = 15.dp)
+        Loading(modifier = Modifier
+            .fillMaxWidth()
+            .then(modifier), size = 15.dp)
         return
     }
 
-    Text(
-        modifier = Modifier.fillMaxWidth(),
-        text = value(dataState.data),
-        color = CustomColorScheme.textColor().copy(alpha = opacity(dataState.data)),
-        style = MaterialTheme.typography.titleMedium,
-        textAlign = TextAlign.Center
-    )
+    Column(
+        modifier = modifier
+    ) {
+
+        Text(
+            modifier = Modifier.fillMaxWidth(),
+            text = label,
+            color = CustomColorScheme.textColor(),
+            style = MaterialTheme.typography.labelSmall,
+            textAlign = TextAlign.Center
+        )
+
+        Text(
+            modifier = Modifier.fillMaxWidth(),
+            text = value(dataState.data),
+            color = CustomColorScheme.textColor().copy(alpha = opacity(dataState.data)),
+            style = MaterialTheme.typography.titleMedium,
+            textAlign = TextAlign.Center
+        )
+
+    }
 
 }
 
