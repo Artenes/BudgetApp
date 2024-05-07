@@ -24,7 +24,8 @@ import xyz.artenes.budget.app.transaction.list.TransactionItem
 
 @Composable
 fun Transaction(
-    transaction: TransactionItem
+    transaction: TransactionItem,
+    showDate: Boolean = false
 ) {
 
     Surface(
@@ -59,11 +60,29 @@ fun Transaction(
 
                 Spacer(modifier = Modifier.width(10.dp))
 
-                Text(
-                    color = MaterialTheme.colorScheme.onBackground,
-                    text = transaction.description,
-                    style = MaterialTheme.typography.titleLarge
-                )
+                Column {
+
+                    if (showDate) {
+                        /*
+                        Date
+                         */
+                        Text(
+                            color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.5f),
+                            text = transaction.formattedDate,
+                            style = MaterialTheme.typography.labelSmall
+                        )
+                    }
+
+                    /*
+                    Description
+                     */
+                    Text(
+                        color = MaterialTheme.colorScheme.onBackground,
+                        text = transaction.description,
+                        style = MaterialTheme.typography.titleLarge
+                    )
+
+                }
 
                 Spacer(modifier = Modifier.weight(1f))
 

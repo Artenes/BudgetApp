@@ -161,14 +161,20 @@ fun SearchScreen(
                     ) {
                         Text(
                             modifier = Modifier.fillMaxWidth(),
-                            text = "Income",
+                            text = stringResource(id = R.string.income),
                             color = CustomColorScheme.textColor(),
                             style = MaterialTheme.typography.labelSmall,
                             textAlign = TextAlign.Center
                         )
-                        TotalText(dataState = transactionsDataState) { resultsData ->
-                            resultsData.formattedTotalIncome
-                        }
+                        TotalText(
+                            dataState = transactionsDataState,
+                            value = { resultsData ->
+                                resultsData.formattedTotalIncome
+                            },
+                            opacity = {
+                                1.0f
+                            },
+                        )
                     }
 
                     Column(
@@ -176,14 +182,20 @@ fun SearchScreen(
                     ) {
                         Text(
                             modifier = Modifier.fillMaxWidth(),
-                            text = "Expenses",
+                            text = stringResource(R.string.expenses),
                             color = CustomColorScheme.textColor(),
                             style = MaterialTheme.typography.labelSmall,
                             textAlign = TextAlign.Center
                         )
-                        TotalText(dataState = transactionsDataState) { resultsData ->
-                            resultsData.formattedTotalExpenses
-                        }
+                        TotalText(
+                            dataState = transactionsDataState,
+                            value = { resultsData ->
+                                resultsData.formattedTotalExpenses
+                            },
+                            opacity = {
+                                0.8f
+                            },
+                        )
                     }
 
                 }
@@ -201,9 +213,15 @@ fun SearchScreen(
                             textAlign = TextAlign.Center
                         )
 
-                        TotalText(dataState = transactionsDataState) { resultsData ->
-                            resultsData.formattedBalance
-                        }
+                        TotalText(
+                            dataState = transactionsDataState,
+                            value = { resultsData ->
+                                resultsData.formattedBalance
+                            },
+                            opacity = { resultsData ->
+                                resultsData.balanceOpacity
+                            },
+                        )
 
                         TransactionsAmount(
                             dataState = transactionsDataState,
@@ -226,7 +244,8 @@ fun SearchScreen(
 @Composable
 private fun TotalText(
     dataState: DataState<SearchResultsData>,
-    value: (SearchResultsData) -> String
+    value: (SearchResultsData) -> String,
+    opacity: (SearchResultsData) -> Float,
 ) {
 
     if (dataState !is DataState.Success) {
@@ -237,7 +256,7 @@ private fun TotalText(
     Text(
         modifier = Modifier.fillMaxWidth(),
         text = value(dataState.data),
-        color = CustomColorScheme.textColor(),
+        color = CustomColorScheme.textColor().copy(alpha = opacity(dataState.data)),
         style = MaterialTheme.typography.titleMedium,
         textAlign = TextAlign.Center
     )
@@ -292,7 +311,10 @@ private fun TransactionList(
             key = { index -> transactions[index].id }
         ) { index ->
 
-            Transaction(transaction = transactions[index])
+            Transaction(
+                transaction = transactions[index],
+                showDate = true,
+            )
 
         }
 

@@ -225,6 +225,7 @@ class SearchViewModel @Inject constructor(
                         balance.absolute()
                     )
                 }",
+                balanceOpacity = if (balance.value >= 0) 1.0f else 0.8f,
                 totalTransactions = count,
                 transactions = transactions
             )
@@ -259,7 +260,9 @@ class SearchViewModel @Inject constructor(
             colorAlpha = colorAlpha,
             formattedAmount = "$sign $currencySymbol $formattedValue",
             amount = transaction.amount,
-            type = transaction.type
+            type = transaction.type,
+            date = transaction.date,
+            formattedDate = datePresenter.formatDate(transaction.date)
         )
     }
 

@@ -10,6 +10,7 @@ data class SearchResultsData(
     val formattedTotalIncome: String,
     val balance: Money,
     val formattedBalance: String,
+    val balanceOpacity: Float,
     val totalTransactions: Int,
     val transactions: List<TransactionItem>
 )

@@ -61,5 +61,6 @@
     <string name="sort_value_desc">By value (high to low)</string>
     <string name="sort_value_asc">By value (low to high)</string>
     <string name="sort_by">Sort by</string>
+    <string name="expenses">Expenses</string>
 
 </resources>

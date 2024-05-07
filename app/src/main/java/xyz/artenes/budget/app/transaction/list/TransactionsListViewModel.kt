@@ -23,12 +23,11 @@ import xyz.artenes.budget.utils.DatePresenter
 import java.time.LocalDate
 import javax.inject.Inject
 
-//TODO date filter and its value should be MutableStates inside viewmodel instead of persisted in storage
 @HiltViewModel
 class TransactionsListViewModel @Inject constructor(
     private val seeder: DatabaseSeeder,
     private val repository: AppRepository,
-    private val formatter: DatePresenter,
+    private val datePresenter: DatePresenter,
     private val messages: Messages
 ) :
     ViewModel() {
@@ -60,14 +59,14 @@ class TransactionsListViewModel @Inject constructor(
                 DataState.Success(
                     TransactionsData(
                         totalExpenses = totalExpense,
-                        formattedTotalExpenses = formatter.formatMoneyWithCurrency(totalExpense),
+                        formattedTotalExpenses = datePresenter.formatMoneyWithCurrency(totalExpense),
                         totalIncome = totalIncome,
-                        formattedTotalIncome = formatter.formatMoney(totalIncome),
+                        formattedTotalIncome = datePresenter.formatMoney(totalIncome),
                         balance = balance,
-                        formattedBalance = formatter.formatMoney(balance),
+                        formattedBalance = datePresenter.formatMoney(balance),
                         totalTransactions = totalTransactions,
                         groups = groups.map { item -> groupToItem(item) },
-                        formattedCurrentMonth = formatter.formatMonth(now)
+                        formattedCurrentMonth = datePresenter.formatMonth(now)
                     )
                 )
 
@@ -81,7 +80,7 @@ class TransactionsListViewModel @Inject constructor(
     private fun groupToItem(group: TransactionGroup): TransactionGroupItem {
         return TransactionGroupItem(
             key = group.date,
-            date = formatter.formatDateAsRelative(group.date),
+            date = datePresenter.formatDateAsRelative(group.date),
             transactions = group.transactions.map(this::transactionToItem)
         )
     }
@@ -102,8 +101,8 @@ class TransactionsListViewModel @Inject constructor(
             1.0f
         }
 
-        val currencySymbol = formatter.getCurrencySymbol()
-        val formattedValue = formatter.formatMoney(transaction.amount)
+        val currencySymbol = datePresenter.getCurrencySymbol()
+        val formattedValue = datePresenter.formatMoney(transaction.amount)
 
         return TransactionItem(
             id = transaction.id,
@@ -112,7 +111,9 @@ class TransactionsListViewModel @Inject constructor(
             colorAlpha = colorAlpha,
             formattedAmount = "$sign $currencySymbol $formattedValue",
             amount = transaction.amount,
-            type = transaction.type
+            type = transaction.type,
+            date = transaction.date,
+            formattedDate = datePresenter.formatDate(transaction.date)
         )
     }
 
