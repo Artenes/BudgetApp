@@ -64,5 +64,10 @@
     <string name="expenses">Expenses</string>
     <string name="search_by_name">Search by name</string>
     <string name="balance">Balance</string>
+    <string name="type">Type</string>
+    <string name="description">Description</string>
+    <string name="amount">Amount</string>
+    <string name="category">Category</string>
+    <string name="date">Date</string>
 
 </resources>

@@ -24,10 +24,12 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import xyz.artenes.budget.R
 import xyz.artenes.budget.app.components.CustomDatePickerInput
 import xyz.artenes.budget.app.components.CustomSpinner
 import xyz.artenes.budget.app.components.CustomTextField
@@ -96,8 +98,10 @@ fun TransactionEditorScreen(
 
             Spacer(modifier = Modifier.height(80.dp))
 
+            //TODO make text normal case and translated
+            //type
             CustomSpinner(
-                label = "Type",
+                label = stringResource(R.string.type),
                 options = types,
                 onOptionSelected = { item ->
                     viewModel.setType(item.value)
@@ -106,9 +110,10 @@ fun TransactionEditorScreen(
 
             Spacer(modifier = Modifier.height(10.dp))
 
+            //description
             CustomTextField(
                 modifier = Modifier.padding(bottom = 10.dp),
-                label = "Description",
+                label = stringResource(R.string.description),
                 value = description.value,
                 onValueChange = viewModel::setDescription,
                 errorMessage = description.error,
@@ -120,17 +125,20 @@ fun TransactionEditorScreen(
                 )
             )
 
+            //TODO add money mask
+            //amount
             CustomTextField(
                 modifier = Modifier.padding(bottom = 10.dp),
-                label = "Amount",
+                label = stringResource(R.string.amount),
                 value = amount.value,
                 errorMessage = amount.error,
                 onValueChange = viewModel::setAmount,
                 keyboardType = KeyboardType.Number
             )
 
+            //date
             CustomDatePickerInput(
-                label = "Date",
+                label = stringResource(R.string.date),
                 value = date,
                 onDateSelected = { newDate ->
                     viewModel.setDate(newDate)
@@ -139,8 +147,9 @@ fun TransactionEditorScreen(
 
             Spacer(modifier = Modifier.height(10.dp))
 
+            //category
             CustomSpinner(
-                label = "Category",
+                label = stringResource(R.string.category),
                 options = categories,
                 onOptionSelected = { item ->
                     viewModel.setCategory(item)

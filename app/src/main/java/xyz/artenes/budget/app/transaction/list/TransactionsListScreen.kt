@@ -60,7 +60,7 @@ fun TransactionsListScreen(
             TopAppBar(
                 colors = TopAppBarDefaults.topAppBarColors()
                     .copy(containerColor = MaterialTheme.colorScheme.background),
-                title = { /*TODO*/ },
+                title = {  },
                 actions = {
                     if (transactionsDataState is DataState.Success) {
                         IconButton(onClick = navigateToSearchScreen) {
