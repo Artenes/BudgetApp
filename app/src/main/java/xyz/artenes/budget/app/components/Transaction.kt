@@ -92,11 +92,12 @@ fun Transaction(
                 Amount
                  */
                 Text(
-                    modifier = Modifier.weight(1f),
+                    modifier = Modifier.weight(2f),
                     color = MaterialTheme.colorScheme.onBackground.copy(alpha = transaction.colorAlpha),
                     text = transaction.formattedAmount,
                     style = MaterialTheme.typography.titleLarge,
-                    textAlign = TextAlign.End
+                    textAlign = TextAlign.End,
+                    maxLines = 1
                 )
 
             }

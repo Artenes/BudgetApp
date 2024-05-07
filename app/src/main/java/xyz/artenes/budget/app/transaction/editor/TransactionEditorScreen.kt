@@ -98,7 +98,6 @@ fun TransactionEditorScreen(
 
             Spacer(modifier = Modifier.height(80.dp))
 
-            //TODO make text normal case and translated
             //type
             CustomSpinner(
                 label = stringResource(R.string.type),
