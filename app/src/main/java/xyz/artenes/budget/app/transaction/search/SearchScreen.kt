@@ -60,6 +60,7 @@ fun SearchScreen(
     val types by viewModel.types.collectAsState()
     val categories by viewModel.categories.collectAsState()
     val sorts by viewModel.sorts.collectAsState()
+    val query by viewModel.query.collectAsState()
     val scrollState = rememberLazyListState()
     var showFilters by remember {
         mutableStateOf(true)
@@ -87,8 +88,11 @@ fun SearchScreen(
                         .copy(containerColor = MaterialTheme.colorScheme.tertiaryContainer),
                     title = {
                         OutlinedTextField(
-                            value = "",
-                            onValueChange = {},
+                            value = query,
+                            onValueChange = { newQuery ->
+                                viewModel.search(newQuery)
+                            },
+                            placeholder = { Text(text = stringResource(R.string.search_by_name)) },
                             colors = CustomColorScheme.outlineTextField()
                         )
                     },

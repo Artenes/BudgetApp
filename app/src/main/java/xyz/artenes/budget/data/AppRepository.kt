@@ -22,6 +22,7 @@ class AppRepository @Inject constructor(
     suspend fun search(
         range: LocalDateRange,
         sort: SearchSortType,
+        description: String = "",
         category: CategoryEntity? = null,
         type: TransactionType? = null
     ): List<TransactionWithCategoryEntity> {
@@ -34,6 +35,7 @@ class AppRepository @Inject constructor(
             var categoryClause = ""
             var typeClause = ""
             var sortClause = ""
+            var descriptionClause = ""
 
             if (category != null) {
                 categoryClause = "AND categories.id = ? "
@@ -43,6 +45,11 @@ class AppRepository @Inject constructor(
             if (type != null) {
                 typeClause = "AND transactions.type = ? "
                 args.add(type.toString())
+            }
+
+            if (description.isNotEmpty()) {
+                descriptionClause = "AND transactions.description LIKE ? "
+                args.add("%$description%")
             }
 
             sortClause = when (sort) {
@@ -61,6 +68,7 @@ class AppRepository @Inject constructor(
                         "WHERE date >= ? AND date <= ? " +
                         categoryClause +
                         typeClause +
+                        descriptionClause +
                         sortClause,
                 args.toTypedArray()
             )

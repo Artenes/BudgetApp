@@ -30,6 +30,9 @@ class SearchViewModel @Inject constructor(
     private val labelPresenter: LabelPresenter
 ) : ViewModel() {
 
+    private val _query = MutableStateFlow("")
+    val query : StateFlow<String> = _query
+
     private val _dateFilter = MutableStateFlow(
         DateFilterItem(
             datePresenter.formatMonthAndYear(LocalDateRange.today().startInclusive),
@@ -156,6 +159,13 @@ class SearchViewModel @Inject constructor(
         _sorts.value = _sorts.value.map { it.copy(selected = it == sort) }
     }
 
+    fun search(query: String) {
+        viewModelScope.launch {
+            _query.value = query
+            loadTransactions()
+        }
+    }
+
     private suspend fun loadCategories() {
         val types = _types.value
         val selectedType = types.first { it.selected }
@@ -194,10 +204,12 @@ class SearchViewModel @Inject constructor(
         val type = _types.value.first { it.selected }.value
         val category = _categories.value.firstOrNull { it.selected }?.value?.value
         val sort = _sorts.value.first { it.selected }.value
+        val query = _query.value
 
         val items = repository.search(
             range = date,
             sort = sort,
+            description = query,
             category = category,
             type = when (type) {
                 DisplayType.ALL -> null
