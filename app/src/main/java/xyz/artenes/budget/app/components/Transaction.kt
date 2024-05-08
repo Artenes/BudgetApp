@@ -27,12 +27,13 @@ import xyz.artenes.budget.app.transaction.list.TransactionItem
 @Composable
 fun Transaction(
     transaction: TransactionItem,
+    onClicked: (TransactionItem) -> Unit,
     showDate: Boolean = false
 ) {
 
     Surface(
         color = Color.Transparent,
-        onClick = { }
+        onClick = { onClicked(transaction) }
     ) {
 
         Column {

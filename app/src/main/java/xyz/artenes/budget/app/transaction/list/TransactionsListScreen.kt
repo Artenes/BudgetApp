@@ -38,12 +38,14 @@ import xyz.artenes.budget.app.components.Transaction
 import xyz.artenes.budget.app.theme.CustomColorScheme
 import xyz.artenes.budget.data.TransactionsData
 import xyz.artenes.budget.utils.DataState
+import java.util.UUID
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TransactionsListScreen(
     navigateToTransactionEditScreen: () -> Unit,
     navigateToSearchScreen: () -> Unit,
+    navigateToTransaction: (UUID) -> Unit,
     viewModel: TransactionsListViewModel = hiltViewModel()
 ) {
 
@@ -60,7 +62,7 @@ fun TransactionsListScreen(
             TopAppBar(
                 colors = TopAppBarDefaults.topAppBarColors()
                     .copy(containerColor = MaterialTheme.colorScheme.background),
-                title = {  },
+                title = { },
                 actions = {
                     if (transactionsDataState is DataState.Success) {
                         IconButton(onClick = navigateToSearchScreen) {
@@ -121,7 +123,8 @@ fun TransactionsListScreen(
         ) {
 
             Transactions(
-                data = transactionsData
+                data = transactionsData,
+                navigateToTransaction = navigateToTransaction
             )
 
         }
@@ -132,7 +135,8 @@ fun TransactionsListScreen(
 
 @Composable
 private fun Transactions(
-    data: TransactionsData
+    data: TransactionsData,
+    navigateToTransaction: (UUID) -> Unit,
 ) {
     LazyColumn {
 
@@ -205,7 +209,8 @@ private fun Transactions(
             ) { index ->
 
                 Transaction(
-                    transaction = group.transactions[index]
+                    transaction = group.transactions[index],
+                    onClicked = { item -> navigateToTransaction(item.id) }
                 )
 
             }

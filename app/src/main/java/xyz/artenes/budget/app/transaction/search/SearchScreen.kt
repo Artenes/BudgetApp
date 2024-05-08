@@ -53,11 +53,13 @@ import xyz.artenes.budget.app.components.Transaction
 import xyz.artenes.budget.app.theme.CustomColorScheme
 import xyz.artenes.budget.data.SearchResultsData
 import xyz.artenes.budget.utils.DataState
+import java.util.UUID
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SearchScreen(
     back: () -> Unit,
+    navigateToTransaction: (UUID) -> Unit,
     viewModel: SearchViewModel = hiltViewModel()
 ) {
 
@@ -229,7 +231,11 @@ fun SearchScreen(
 
             }
 
-            TransactionList(dataState = transactionsDataState, state = scrollState)
+            TransactionList(
+                dataState = transactionsDataState,
+                state = scrollState,
+                navigateToTransaction = navigateToTransaction
+            )
 
         } //container
 
@@ -247,9 +253,11 @@ private fun TotalText(
 ) {
 
     if (dataState !is DataState.Success) {
-        Loading(modifier = Modifier
-            .fillMaxWidth()
-            .then(modifier), size = 15.dp)
+        Loading(
+            modifier = Modifier
+                .fillMaxWidth()
+                .then(modifier), size = 15.dp
+        )
         return
     }
 
@@ -305,7 +313,8 @@ private fun TransactionsAmount(
 @Composable
 private fun TransactionList(
     dataState: DataState<SearchResultsData>,
-    state: LazyListState
+    state: LazyListState,
+    navigateToTransaction: (UUID) -> Unit
 ) {
 
     if (dataState !is DataState.Success) {
@@ -327,6 +336,7 @@ private fun TransactionList(
 
             Transaction(
                 transaction = transactions[index],
+                onClicked = { item -> navigateToTransaction(item.id) },
                 showDate = true,
             )
 

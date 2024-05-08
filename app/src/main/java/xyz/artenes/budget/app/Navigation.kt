@@ -22,9 +22,11 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import xyz.artenes.budget.app.transaction.editor.TransactionEditorScreen
 import xyz.artenes.budget.app.transaction.list.TransactionsListScreen
 import xyz.artenes.budget.app.transaction.search.SearchScreen
+import java.util.UUID
 
 @Composable
 fun MainNavigation() {
@@ -39,12 +41,15 @@ fun MainNavigation() {
                 },
                 navigateToSearchScreen = {
                     navController.navigate("search")
+                },
+                navigateToTransaction = { id ->
+                    navController.navigate("transactionEditor?id=$id")
                 }
             )
         }
 
         composable(
-            "transactionEditor",
+            "transactionEditor?id={id}",
             enterTransition = {
                 slideIntoContainer(
                     AnimatedContentTransitionScope.SlideDirection.Up, tween(400)
@@ -55,11 +60,17 @@ fun MainNavigation() {
                     AnimatedContentTransitionScope.SlideDirection.Down, tween(400)
                 )
             },
-        ) {
+            arguments = listOf(navArgument("id") { nullable = true })
+        ) { backStack ->
+
+            val rawId = backStack.arguments?.getString("id")
+            val id = if (rawId != null) UUID.fromString(rawId) else null
+
             TransactionEditorScreen(
                 back = {
                     navController.popBackStack()
-                }
+                },
+                id = id
             )
         }
 
@@ -77,9 +88,14 @@ fun MainNavigation() {
             },
         ) {
 
-            SearchScreen(back = {
-                navController.popBackStack()
-            })
+            SearchScreen(
+                back = {
+                    navController.popBackStack()
+                },
+                navigateToTransaction = { id ->
+                    navController.navigate("transactionEditor?id=$id")
+                },
+            )
 
         }
 

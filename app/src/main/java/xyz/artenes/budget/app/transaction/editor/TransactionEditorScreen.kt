@@ -34,11 +34,13 @@ import xyz.artenes.budget.app.components.CustomDatePickerInput
 import xyz.artenes.budget.app.components.CustomSpinner
 import xyz.artenes.budget.app.components.CustomTextField
 import xyz.artenes.budget.app.components.MoneyTextField
+import java.util.UUID
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TransactionEditorScreen(
     back: () -> Unit,
+    id: UUID? = null,
     viewModel: TransactionEditorViewModel = hiltViewModel()
 ) {
 
