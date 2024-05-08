@@ -11,6 +11,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import xyz.artenes.budget.BuildConfig
 import xyz.artenes.budget.android.Messages
+import xyz.artenes.budget.app.presenters.MoneyPresenter
 import xyz.artenes.budget.core.Money
 import xyz.artenes.budget.core.TransactionType
 import xyz.artenes.budget.data.AppRepository
@@ -28,6 +29,7 @@ class TransactionsListViewModel @Inject constructor(
     private val seeder: DatabaseSeeder,
     private val repository: AppRepository,
     private val datePresenter: DatePresenter,
+    private val moneyPresenter: MoneyPresenter,
     private val messages: Messages
 ) :
     ViewModel() {
@@ -59,11 +61,11 @@ class TransactionsListViewModel @Inject constructor(
                 DataState.Success(
                     TransactionsData(
                         totalExpenses = totalExpense,
-                        formattedTotalExpenses = datePresenter.formatMoneyWithCurrency(totalExpense),
+                        formattedTotalExpenses = moneyPresenter.formatMoneyWithCurrency(totalExpense),
                         totalIncome = totalIncome,
-                        formattedTotalIncome = datePresenter.formatMoney(totalIncome),
+                        formattedTotalIncome = moneyPresenter.formatMoney(totalIncome),
                         balance = balance,
-                        formattedBalance = datePresenter.formatMoney(balance),
+                        formattedBalance = moneyPresenter.formatMoney(balance),
                         totalTransactions = totalTransactions,
                         groups = groups.map { item -> groupToItem(item) },
                         formattedCurrentMonth = datePresenter.formatMonth(now)
@@ -101,8 +103,8 @@ class TransactionsListViewModel @Inject constructor(
             1.0f
         }
 
-        val currencySymbol = datePresenter.getCurrencySymbol()
-        val formattedValue = datePresenter.formatMoney(transaction.amount)
+        val currencySymbol = moneyPresenter.getCurrencySymbol()
+        val formattedValue = moneyPresenter.formatMoney(transaction.amount)
 
         return TransactionItem(
             id = transaction.id,

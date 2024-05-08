@@ -92,7 +92,6 @@ fun Transaction(
                 Amount
                  */
                 Text(
-                    modifier = Modifier.weight(2f),
                     color = MaterialTheme.colorScheme.onBackground.copy(alpha = transaction.colorAlpha),
                     text = transaction.formattedAmount,
                     style = MaterialTheme.typography.titleLarge,

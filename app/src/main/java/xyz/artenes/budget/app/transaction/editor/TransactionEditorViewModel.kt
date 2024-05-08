@@ -12,6 +12,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import timber.log.Timber
+import xyz.artenes.budget.app.presenters.MoneyPresenter
 import xyz.artenes.budget.core.Money
 import xyz.artenes.budget.core.TransactionType
 import xyz.artenes.budget.data.AppRepository
@@ -29,7 +30,8 @@ import javax.inject.Inject
 @HiltViewModel
 class TransactionEditorViewModel @Inject constructor(
     private val repository: AppRepository,
-    private val labelPresenter: LabelPresenter
+    private val labelPresenter: LabelPresenter,
+    private val moneyPresenter: MoneyPresenter
 ) :
     ViewModel() {
 
@@ -95,7 +97,8 @@ class TransactionEditorViewModel @Inject constructor(
     }
 
     fun setAmount(value: String) {
-        _amount.value = ValueWithError(value)
+        val newFormattedValue = moneyPresenter.formatFromString(value)
+        _amount.value = ValueWithError(newFormattedValue)
     }
 
     fun setType(value: TransactionType) {
@@ -115,19 +118,15 @@ class TransactionEditorViewModel @Inject constructor(
         val description = _description.value
         val amount = _amount.value
         val category = categories.value.firstOrNull { it.selected }?.value
+        val parsedAmount = moneyPresenter.parse(amount.value)
 
         if (description.value.isEmpty()) {
             _description.value = description.copy(error = "Required")
             return
         }
 
-        if (amount.value.isEmpty()) {
+        if (parsedAmount.value == 0) {
             _amount.value = amount.copy(error = "Required")
-            return
-        }
-
-        if (amount.value.toIntOrNull() == null) {
-            _amount.value = amount.copy(error = "Invalid value")
             return
         }
 
@@ -136,7 +135,7 @@ class TransactionEditorViewModel @Inject constructor(
                 TransactionEntity(
                     UUID.randomUUID(),
                     description.value,
-                    Money(amount.value.toInt()),
+                    parsedAmount,
                     _date.value,
                     type.value!!,
                     category!!.id,

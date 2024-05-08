@@ -33,6 +33,7 @@ import xyz.artenes.budget.R
 import xyz.artenes.budget.app.components.CustomDatePickerInput
 import xyz.artenes.budget.app.components.CustomSpinner
 import xyz.artenes.budget.app.components.CustomTextField
+import xyz.artenes.budget.app.components.MoneyTextField
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -124,15 +125,14 @@ fun TransactionEditorScreen(
                 )
             )
 
-            //TODO add money mask
             //amount
-            CustomTextField(
+            MoneyTextField(
                 modifier = Modifier.padding(bottom = 10.dp),
                 label = stringResource(R.string.amount),
                 value = amount.value,
                 errorMessage = amount.error,
                 onValueChange = viewModel::setAmount,
-                keyboardType = KeyboardType.Number
+                imeAction = ImeAction.Done
             )
 
             //date

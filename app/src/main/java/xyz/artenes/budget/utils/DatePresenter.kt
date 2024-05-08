@@ -21,21 +21,6 @@ class DatePresenter @Inject constructor(private val messages: Messages) {
 
     fun getDateFormat() = DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT)
 
-    fun getMoneyFormat() = NumberFormat.getNumberInstance().also {
-        it.minimumFractionDigits = 2
-        it.maximumFractionDigits = 2
-    }
-
-    fun getCurrencySymbol() = Currency.getInstance(Locale.getDefault()).symbol
-
-    fun formatMoney(money: Money): String {
-        return getMoneyFormat().format(money.toDouble)
-    }
-
-    fun formatMoneyWithCurrency(money: Money): String {
-        return "${getCurrencySymbol()} ${getMoneyFormat().format(money.toDouble)}"
-    }
-
     fun formatDate(date: LocalDate): String {
         return date.format(DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT))
     }
