@@ -19,15 +19,23 @@ package xyz.artenes.budget
 import android.app.Application
 import dagger.hilt.android.HiltAndroidApp
 import timber.log.Timber
+import xyz.artenes.budget.app.transaction.editor.TransactionEditorFactory
+import xyz.artenes.budget.di.FactoryLocator
+import xyz.artenes.budget.di.FactoryLocatorMapping
 import xyz.artenes.budget.utils.ProductionTree
+import javax.inject.Inject
 
 @HiltAndroidApp
 class MyApplication : Application() {
+
+    @Inject
+    lateinit var mapping: FactoryLocatorMapping
 
     override fun onCreate() {
         super.onCreate()
         val tree = if (BuildConfig.DEBUG) Timber.DebugTree() else ProductionTree()
         Timber.plant(tree)
+        FactoryLocator.instance = mapping
     }
 
 }

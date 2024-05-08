@@ -1,8 +1,8 @@
 package xyz.artenes.budget.app.transaction.editor
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -13,7 +13,6 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import xyz.artenes.budget.app.presenters.MoneyPresenter
-import xyz.artenes.budget.core.Money
 import xyz.artenes.budget.core.TransactionType
 import xyz.artenes.budget.data.AppRepository
 import xyz.artenes.budget.data.CategoryEntity
@@ -26,9 +25,10 @@ import java.time.LocalDate
 import java.time.OffsetDateTime
 import java.util.UUID
 import javax.inject.Inject
+import javax.inject.Singleton
 
-@HiltViewModel
 class TransactionEditorViewModel @Inject constructor(
+    private val id: UUID?,
     private val repository: AppRepository,
     private val labelPresenter: LabelPresenter,
     private val moneyPresenter: MoneyPresenter
@@ -144,6 +144,33 @@ class TransactionEditorViewModel @Inject constructor(
             )
             _event.value = Event("finish")
         }
+    }
+
+}
+
+@Suppress("UNCHECKED_CAST")
+@Singleton
+class TransactionEditorFactory @Inject constructor(
+    private val repository: AppRepository,
+    private val labelPresenter: LabelPresenter,
+    private val moneyPresenter: MoneyPresenter,
+) {
+
+    fun make(id: UUID?): ViewModelProvider.Factory {
+
+        return object : ViewModelProvider.Factory {
+
+            override fun <T : ViewModel> create(modelClass: Class<T>): T {
+                return TransactionEditorViewModel(
+                    id,
+                    repository,
+                    labelPresenter,
+                    moneyPresenter
+                ) as T
+            }
+
+        }
+
     }
 
 }

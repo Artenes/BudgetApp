@@ -26,14 +26,14 @@ import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
 import xyz.artenes.budget.R
 import xyz.artenes.budget.app.components.CustomDatePickerInput
 import xyz.artenes.budget.app.components.CustomSpinner
 import xyz.artenes.budget.app.components.CustomTextField
 import xyz.artenes.budget.app.components.MoneyTextField
+import xyz.artenes.budget.di.FactoryLocator
 import java.util.UUID
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -41,7 +41,11 @@ import java.util.UUID
 fun TransactionEditorScreen(
     back: () -> Unit,
     id: UUID? = null,
-    viewModel: TransactionEditorViewModel = hiltViewModel()
+    viewModel: TransactionEditorViewModel = viewModel(
+        factory = FactoryLocator.instance.transactionEditorFactory.make(
+            id
+        )
+    )
 ) {
 
     Scaffold(
