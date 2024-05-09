@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Checklist
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -46,6 +47,7 @@ fun TransactionsListScreen(
     navigateToTransactionEditScreen: () -> Unit,
     navigateToSearchScreen: () -> Unit,
     navigateToTransaction: (UUID) -> Unit,
+    navigateToCategories: () -> Unit,
     viewModel: TransactionsListViewModel = hiltViewModel()
 ) {
 
@@ -65,6 +67,13 @@ fun TransactionsListScreen(
                 title = { },
                 actions = {
                     if (transactionsDataState is DataState.Success) {
+                        IconButton(onClick = navigateToCategories) {
+                            Icon(
+                                imageVector = Icons.Filled.Checklist,
+                                contentDescription = "",
+                                tint = MaterialTheme.colorScheme.onBackground
+                            )
+                        }
                         IconButton(onClick = navigateToSearchScreen) {
                             Icon(
                                 imageVector = Icons.Filled.Search,

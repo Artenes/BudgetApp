@@ -44,6 +44,9 @@ fun MainNavigation() {
                 },
                 navigateToTransaction = { id ->
                     navController.navigate("transactionEditor?id=$id")
+                },
+                navigateToCategories = {
+
                 }
             )
         }
