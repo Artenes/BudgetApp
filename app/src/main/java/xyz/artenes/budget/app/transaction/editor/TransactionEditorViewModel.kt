@@ -13,6 +13,7 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import xyz.artenes.budget.app.presenters.MoneyPresenter
+import xyz.artenes.budget.core.Money
 import xyz.artenes.budget.core.TransactionType
 import xyz.artenes.budget.data.AppRepository
 import xyz.artenes.budget.data.CategoryEntity
@@ -34,6 +35,8 @@ class TransactionEditorViewModel @Inject constructor(
     private val moneyPresenter: MoneyPresenter
 ) :
     ViewModel() {
+
+    private var createdAt: OffsetDateTime? = null
 
     private val _description = MutableStateFlow(ValueWithError())
     val description: StateFlow<ValueWithError> = _description
@@ -92,6 +95,21 @@ class TransactionEditorViewModel @Inject constructor(
     private val _event = MutableStateFlow(Event())
     val event: StateFlow<Event> = _event
 
+    init {
+        viewModelScope.launch {
+            if (id == null) {
+                return@launch
+            }
+            val data = repository.getTransactionById(id)
+            setType(data.transaction.type)
+            setDescription(data.transaction.description)
+            setAmount(data.transaction.amount)
+            setDate(data.transaction.date)
+            setCategory(data.category)
+            createdAt = data.transaction.createdAt
+        }
+    }
+
     fun setDescription(value: String) {
         _description.value = ValueWithError(value)
     }
@@ -101,12 +119,21 @@ class TransactionEditorViewModel @Inject constructor(
         _amount.value = ValueWithError(newFormattedValue)
     }
 
+    private fun setAmount(value: Money) {
+        val formatted = moneyPresenter.formatMoney(value)
+        _amount.value = ValueWithError(formatted)
+    }
+
     fun setType(value: TransactionType) {
         type.value = value
     }
 
     fun setCategory(value: ValueAndLabel<CategoryEntity>) {
-        category.value = value.value
+        setCategory(value.value)
+    }
+
+    private fun setCategory(value: CategoryEntity) {
+        category.value = value
     }
 
     fun setDate(value: LocalDate) {
@@ -133,13 +160,13 @@ class TransactionEditorViewModel @Inject constructor(
         viewModelScope.launch {
             repository.saveTransaction(
                 TransactionEntity(
-                    UUID.randomUUID(),
+                    id ?: UUID.randomUUID(),
                     description.value,
                     parsedAmount,
                     _date.value,
                     type.value!!,
                     category!!.id,
-                    OffsetDateTime.now()
+                    createdAt ?: OffsetDateTime.now()
                 )
             )
             _event.value = Event("finish")

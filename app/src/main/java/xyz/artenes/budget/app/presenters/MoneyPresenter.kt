@@ -15,7 +15,7 @@ class MoneyPresenter @Inject constructor() {
 
     fun formatFromString(value: String): String {
         val money = parse(value)
-        return getMoneyFormat().format(money.toDouble)
+        return formatMoney(money)
     }
 
     fun parse(value: String): Money {

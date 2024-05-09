@@ -3,11 +3,13 @@ package xyz.artenes.budget.data
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.room.ColumnInfo
 import androidx.room.Dao
+import androidx.room.Embedded
 import androidx.room.Entity
 import androidx.room.Insert
 import androidx.room.PrimaryKey
 import androidx.room.Query
 import androidx.room.RawQuery
+import androidx.room.Update
 import androidx.sqlite.db.SupportSQLiteQuery
 import kotlinx.coroutines.flow.Flow
 import xyz.artenes.budget.core.Money
@@ -42,11 +44,39 @@ data class TransactionWithCategoryEntity(
     val createdAt: OffsetDateTime
 )
 
+data class TransactionAndCategory(
+    @Embedded(prefix = "trans_")
+    val transaction: TransactionEntity,
+    @Embedded(prefix = "cate_")
+    val category: CategoryEntity
+)
+
 @Dao
 interface TransactionDao {
 
     @Query("SELECT * FROM transactions ORDER BY created_at DESC")
     fun getAll(): Flow<List<TransactionEntity>>
+
+    @Query(
+        "SELECT t.id as trans_id, " +
+                "t.description as trans_description, " +
+                "t.amount as trans_amount, " +
+                "t.date as trans_date, " +
+                "t.type as trans_type, " +
+                "t.category_id as trans_category_id, " +
+                "t.created_at as trans_created_at, " +
+                "c.id as cate_id, " +
+                "c.name as cate_name, " +
+                "c.color as cate_color, " +
+                "c.icon as cate_icon, " +
+                "c.type as cate_type, " +
+                "c.created_at as cate_created_at, " +
+                "c.deleted_at as cate_deleted_at " +
+                "FROM transactions t " +
+                "INNER JOIN categories c ON category_id = c.id " +
+                "WHERE t.id = :id "
+    )
+    fun getById(id: UUID): TransactionAndCategory
 
     @RawQuery
     fun search(query: SupportSQLiteQuery): List<TransactionWithCategoryEntity>
@@ -58,7 +88,10 @@ interface TransactionDao {
                 "WHERE date >= :startInclusive AND date <= :endInclusive " +
                 "ORDER BY transactions.date DESC"
     )
-    fun getByRange(startInclusive: LocalDate, endInclusive: LocalDate): Flow<List<TransactionWithCategoryEntity>>
+    fun getByRange(
+        startInclusive: LocalDate,
+        endInclusive: LocalDate
+    ): Flow<List<TransactionWithCategoryEntity>>
 
     @Query(
         "SELECT transactions.id, description, amount, date, transactions.type, color, icon, transactions.created_at " +
@@ -96,6 +129,12 @@ interface TransactionDao {
 
     @Insert
     suspend fun insert(transaction: TransactionEntity)
+
+    @Update
+    suspend fun update(transaction: TransactionEntity)
+
+    @Query("SELECT EXISTS(SELECT 1 FROM transactions WHERE id = :id)")
+    suspend fun exists(id: UUID): Boolean
 
     @Insert
     suspend fun insertAll(transactions: List<TransactionEntity>)

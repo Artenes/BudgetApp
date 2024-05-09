@@ -8,6 +8,7 @@ import xyz.artenes.budget.core.DateSerializer
 import xyz.artenes.budget.core.TransactionType
 import xyz.artenes.budget.utils.LocalDateRange
 import java.time.LocalDate
+import java.util.UUID
 import javax.inject.Inject
 import javax.inject.Singleton
 import kotlin.coroutines.CoroutineContext
@@ -83,6 +84,12 @@ class AppRepository @Inject constructor(
 
     fun getAllTransactions() = appDatabase.transactionsDao().getAll()
 
+    suspend fun getTransactionById(id: UUID): TransactionAndCategory {
+        return withContext(dispatcher) {
+            appDatabase.transactionsDao().getById(id)
+        }
+    }
+
     /**
      * This returns all transactions for a given month, grouped by date
      */
@@ -114,7 +121,12 @@ class AppRepository @Inject constructor(
 
     suspend fun saveTransaction(transaction: TransactionEntity) {
         withContext(dispatcher) {
-            appDatabase.transactionsDao().insert(transaction)
+            val dao = appDatabase.transactionsDao()
+            if (dao.exists(transaction.id)) {
+                dao.update(transaction)
+                return@withContext
+            }
+            dao.insert(transaction)
         }
     }
 
