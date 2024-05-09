@@ -57,6 +57,9 @@ interface TransactionDao {
     @Query("SELECT * FROM transactions ORDER BY created_at DESC")
     fun getAll(): Flow<List<TransactionEntity>>
 
+    @Query("DELETE FROM transactions WHERE id = :id")
+    suspend fun deleteById(id: UUID)
+
     @Query(
         "SELECT t.id as trans_id, " +
                 "t.description as trans_description, " +

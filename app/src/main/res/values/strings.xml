@@ -69,5 +69,7 @@
     <string name="amount">Amount</string>
     <string name="category">Category</string>
     <string name="date">Date</string>
+    <string name="confirm">Confirm</string>
+    <string name="cancel">Cancel</string>
 
 </resources>

@@ -140,6 +140,13 @@ class TransactionEditorViewModel @Inject constructor(
         _date.value = value
     }
 
+    fun delete() {
+        viewModelScope.launch {
+            repository.deleteTransactionById(id!!)
+            _event.value = Event("finish")
+        }
+    }
+
     fun save() {
 
         val description = _description.value

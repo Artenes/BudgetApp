@@ -99,5 +99,7 @@ fun MainNavigation() {
 
         }
 
+        //TODO add screen to list categories
+
     }
 }

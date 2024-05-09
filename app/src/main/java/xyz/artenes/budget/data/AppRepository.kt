@@ -142,6 +142,12 @@ class AppRepository @Inject constructor(
         }
     }
 
+    suspend fun deleteTransactionById(id: UUID) {
+        withContext(dispatcher) {
+            appDatabase.transactionsDao().deleteById(id)
+        }
+    }
+
     private fun groupTransactions(transactions: List<TransactionWithCategoryEntity>) =
         transactions.groupBy { transaction -> transaction.date }
             .entries.map { entry ->

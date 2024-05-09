@@ -100,6 +100,7 @@ class SearchViewModel @Inject constructor(
             listenForTypeChange()
             listenForCategoryChange()
             listenForSortChanges()
+            listenForTransactionsChanges()
             loadCategories()
             loadTransactions()
         }
@@ -133,6 +134,14 @@ class SearchViewModel @Inject constructor(
     private fun listenForSortChanges() {
         viewModelScope.launch {
             _sorts.drop(1).collectLatest {
+                loadTransactions()
+            }
+        }
+    }
+
+    private fun listenForTransactionsChanges() {
+        viewModelScope.launch {
+            repository.getAllTransactions().drop(1).collectLatest {
                 loadTransactions()
             }
         }
