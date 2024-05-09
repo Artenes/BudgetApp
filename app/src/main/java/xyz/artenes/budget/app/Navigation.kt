@@ -23,6 +23,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import xyz.artenes.budget.app.category.CategoryListScreen
 import xyz.artenes.budget.app.transaction.editor.TransactionEditorScreen
 import xyz.artenes.budget.app.transaction.list.TransactionsListScreen
 import xyz.artenes.budget.app.transaction.search.SearchScreen
@@ -46,7 +47,7 @@ fun MainNavigation() {
                     navController.navigate("transactionEditor?id=$id")
                 },
                 navigateToCategories = {
-
+                    navController.navigate("categories")
                 }
             )
         }
@@ -102,7 +103,25 @@ fun MainNavigation() {
 
         }
 
-        //TODO add screen to list categories
+        composable(
+            "categories",
+            enterTransition = {
+                slideIntoContainer(
+                    AnimatedContentTransitionScope.SlideDirection.Up, tween(400)
+                )
+            },
+            exitTransition = {
+                slideOutOfContainer(
+                    AnimatedContentTransitionScope.SlideDirection.Down, tween(400)
+                )
+            },
+        ) {
+
+            CategoryListScreen(
+                onBack = { navController.popBackStack() }
+            )
+
+        }
 
     }
 }
