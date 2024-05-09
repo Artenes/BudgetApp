@@ -142,6 +142,8 @@ class AppRepository @Inject constructor(
         }
     }
 
+    fun getAllCategoriesAsFlow() = appDatabase.categoryDao().getAllNotDeletedAsFlow()
+
     suspend fun deleteTransactionById(id: UUID) {
         withContext(dispatcher) {
             appDatabase.transactionsDao().deleteById(id)

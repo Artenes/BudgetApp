@@ -38,6 +38,9 @@ interface CategoryDao {
     @Query("SELECT * FROM categories WHERE deleted_at IS NULL")
     suspend fun getAllNotDeleted(): List<CategoryEntity>
 
+    @Query("SELECT * FROM categories WHERE deleted_at IS NULL")
+    fun getAllNotDeletedAsFlow(): Flow<List<CategoryEntity>>
+
     @Query("SELECT * FROM categories WHERE deleted_at IS NULL AND type = :type ORDER BY name ASC")
     suspend fun getAllNotDeletedByType(type: TransactionType): List<CategoryEntity>
 
