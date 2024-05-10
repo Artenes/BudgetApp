@@ -24,6 +24,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import xyz.artenes.budget.R
+import xyz.artenes.budget.app.components.CustomSpinner
 import xyz.artenes.budget.app.components.CustomTextField
 import xyz.artenes.budget.di.FactoryLocator
 import java.util.UUID
@@ -42,6 +43,7 @@ fun CategoryEditorScreen(
 
     val focusManager = LocalFocusManager.current
     val name by viewModel.name.collectAsState()
+    val types by viewModel.types.collectAsState()
 
     Scaffold(
         topBar = {
@@ -88,6 +90,14 @@ fun CategoryEditorScreen(
                         focusManager.moveFocus(FocusDirection.Down)
                     },
                 )
+            )
+
+            CustomSpinner(
+                label = stringResource(R.string.type),
+                options = types,
+                onOptionSelected = { item ->
+                    viewModel.setType(item.value)
+                }
             )
 
         }

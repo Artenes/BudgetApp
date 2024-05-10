@@ -20,7 +20,7 @@ import xyz.artenes.budget.data.CategoryEntity
 import xyz.artenes.budget.data.TransactionEntity
 import xyz.artenes.budget.utils.Event
 import xyz.artenes.budget.utils.LabelPresenter
-import xyz.artenes.budget.utils.ValueAndLabel
+import xyz.artenes.budget.utils.SelectableItem
 import xyz.artenes.budget.utils.ValueWithError
 import java.time.LocalDate
 import java.time.OffsetDateTime
@@ -59,7 +59,7 @@ class TransactionEditorViewModel @Inject constructor(
 
             types.map { type ->
 
-                ValueAndLabel(type, labelPresenter.present(type), type == selectedType)
+                SelectableItem(type, labelPresenter.present(type), type == selectedType)
 
             }
 
@@ -87,7 +87,7 @@ class TransactionEditorViewModel @Inject constructor(
         }
 
         categories.map { category ->
-            ValueAndLabel(category, category.name, category == selectedCategory)
+            SelectableItem(category, category.name, category == selectedCategory)
         }
 
     }.stateIn(viewModelScope, SharingStarted.Lazily, emptyList())
@@ -128,7 +128,7 @@ class TransactionEditorViewModel @Inject constructor(
         type.value = value
     }
 
-    fun setCategory(value: ValueAndLabel<CategoryEntity>) {
+    fun setCategory(value: SelectableItem<CategoryEntity>) {
         setCategory(value.value)
     }
 

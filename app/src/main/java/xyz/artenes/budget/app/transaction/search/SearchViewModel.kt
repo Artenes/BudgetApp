@@ -21,7 +21,7 @@ import xyz.artenes.budget.utils.DataState
 import xyz.artenes.budget.utils.DatePresenter
 import xyz.artenes.budget.utils.LabelPresenter
 import xyz.artenes.budget.utils.LocalDateRange
-import xyz.artenes.budget.utils.ValueAndLabel
+import xyz.artenes.budget.utils.SelectableItem
 import javax.inject.Inject
 
 @HiltViewModel
@@ -45,51 +45,51 @@ class SearchViewModel @Inject constructor(
 
     private val _types = MutableStateFlow(
         listOf(
-            ValueAndLabel(DisplayType.ALL, labelPresenter.present(DisplayType.ALL), true),
-            ValueAndLabel(DisplayType.EXPENSE, labelPresenter.present(DisplayType.EXPENSE), false),
-            ValueAndLabel(DisplayType.INCOME, labelPresenter.present(DisplayType.INCOME), false)
+            SelectableItem(DisplayType.ALL, labelPresenter.present(DisplayType.ALL), true),
+            SelectableItem(DisplayType.EXPENSE, labelPresenter.present(DisplayType.EXPENSE), false),
+            SelectableItem(DisplayType.INCOME, labelPresenter.present(DisplayType.INCOME), false)
         )
     )
-    val types: StateFlow<List<ValueAndLabel<DisplayType>>> = _types
+    val types: StateFlow<List<SelectableItem<DisplayType>>> = _types
 
     private val _sorts = MutableStateFlow(
         listOf(
-            ValueAndLabel(
+            SelectableItem(
                 SearchSortType.DATE_DESC,
                 labelPresenter.present(SearchSortType.DATE_DESC),
                 true
             ),
-            ValueAndLabel(
+            SelectableItem(
                 SearchSortType.DATE_ASC,
                 labelPresenter.present(SearchSortType.DATE_ASC),
                 false
             ),
-            ValueAndLabel(
+            SelectableItem(
                 SearchSortType.VALUE_ASC,
                 labelPresenter.present(SearchSortType.VALUE_ASC),
                 false
             ),
-            ValueAndLabel(
+            SelectableItem(
                 SearchSortType.VALUE_DESC,
                 labelPresenter.present(SearchSortType.VALUE_DESC),
                 false
             ),
-            ValueAndLabel(
+            SelectableItem(
                 SearchSortType.NAME_ASC,
                 labelPresenter.present(SearchSortType.NAME_ASC),
                 false
             ),
-            ValueAndLabel(
+            SelectableItem(
                 SearchSortType.NAME_DESC,
                 labelPresenter.present(SearchSortType.NAME_DESC),
                 false
             ),
         )
     )
-    val sorts: StateFlow<List<ValueAndLabel<SearchSortType>>> = _sorts
+    val sorts: StateFlow<List<SelectableItem<SearchSortType>>> = _sorts
 
-    private val _categories = MutableStateFlow<List<ValueAndLabel<CategoryParam>>>(emptyList())
-    val categories: StateFlow<List<ValueAndLabel<CategoryParam>>> = _categories
+    private val _categories = MutableStateFlow<List<SelectableItem<CategoryParam>>>(emptyList())
+    val categories: StateFlow<List<SelectableItem<CategoryParam>>> = _categories
 
     private val _transactions = MutableStateFlow<DataState<SearchResultsData>>(DataState.Loading)
     val transactions: StateFlow<DataState<SearchResultsData>> = _transactions
@@ -158,15 +158,15 @@ class SearchViewModel @Inject constructor(
         _dateFilter.value = DateFilterItem(label, filter)
     }
 
-    fun setType(type: ValueAndLabel<DisplayType>) {
+    fun setType(type: SelectableItem<DisplayType>) {
         _types.value = _types.value.map { it.copy(selected = it == type) }
     }
 
-    fun setCategory(category: ValueAndLabel<CategoryParam>) {
+    fun setCategory(category: SelectableItem<CategoryParam>) {
         _categories.value = _categories.value.map { it.copy(selected = it == category) }
     }
 
-    fun setSort(sort: ValueAndLabel<SearchSortType>) {
+    fun setSort(sort: SelectableItem<SearchSortType>) {
         _sorts.value = _sorts.value.map { it.copy(selected = it == sort) }
     }
 
@@ -200,11 +200,11 @@ class SearchViewModel @Inject constructor(
                 category.name
             }
 
-            ValueAndLabel(CategoryParam(category), label, false)
+            SelectableItem(CategoryParam(category), label, false)
         }.toMutableList()
 
         val allCategory = CategoryParam()
-        items.add(0, ValueAndLabel(allCategory, labelPresenter.present(allCategory), true))
+        items.add(0, SelectableItem(allCategory, labelPresenter.present(allCategory), true))
 
         _categories.value = items
     }

@@ -20,14 +20,14 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import xyz.artenes.budget.utils.ValueAndLabel
+import xyz.artenes.budget.utils.SelectableItem
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun <T> CustomSpinner(
     label: String,
-    options: List<ValueAndLabel<T>>,
-    onOptionSelected: (ValueAndLabel<T>) -> Unit
+    options: List<SelectableItem<T>>,
+    onOptionSelected: (SelectableItem<T>) -> Unit
 ) {
 
     var expanded by remember {
