@@ -130,6 +130,12 @@ class AppRepository @Inject constructor(
         }
     }
 
+    suspend fun getCategoryById(id: UUID): CategoryEntity {
+        return withContext(dispatcher) {
+            appDatabase.categoryDao().getCategoryById(id)
+        }
+    }
+
     suspend fun getCategoriesByType(type: TransactionType): List<CategoryEntity> {
         return withContext(dispatcher) {
             appDatabase.categoryDao().getAllNotDeletedByType(type)

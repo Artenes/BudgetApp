@@ -44,6 +44,9 @@ interface CategoryDao {
     @Query("SELECT * FROM categories WHERE deleted_at IS NULL AND type = :type ORDER BY name ASC")
     suspend fun getAllNotDeletedByType(type: TransactionType): List<CategoryEntity>
 
+    @Query("SELECT * FROM categories WHERE deleted_at IS NULL AND id = :id")
+    suspend fun getCategoryById(id: UUID): CategoryEntity
+
     @Query("SELECT EXISTS(SELECT 1 FROM categories LIMIT 1)")
     suspend fun hasEntries(): Boolean
 

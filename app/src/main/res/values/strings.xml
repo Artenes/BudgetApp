@@ -72,5 +72,6 @@
     <string name="confirm">Confirm</string>
     <string name="cancel">Cancel</string>
     <string name="categories">Categories</string>
+    <string name="name">Name</string>
 
 </resources>
