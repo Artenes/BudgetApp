@@ -73,5 +73,6 @@
     <string name="cancel">Cancel</string>
     <string name="categories">Categories</string>
     <string name="name">Name</string>
+    <string name="icon">Icon</string>
 
 </resources>

@@ -24,6 +24,9 @@ class CategoryEditorViewModel @Inject constructor(
     private val _name = MutableStateFlow(ValueWithError())
     val name: StateFlow<ValueWithError> = _name
 
+    private val _icon = MutableStateFlow(ValueWithError())
+    val icon: StateFlow<ValueWithError> = _icon
+
     private val _types = MutableStateFlow(
         listOf(
             SelectableItem(
