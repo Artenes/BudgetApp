@@ -23,6 +23,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import xyz.artenes.budget.app.category.CategoryEditorScreen
 import xyz.artenes.budget.app.category.CategoryListScreen
 import xyz.artenes.budget.app.transaction.editor.TransactionEditorScreen
 import xyz.artenes.budget.app.transaction.list.TransactionsListScreen
@@ -118,7 +119,37 @@ fun MainNavigation() {
         ) {
 
             CategoryListScreen(
-                onBack = { navController.popBackStack() }
+                onBack = { navController.popBackStack() },
+                navigateToCategory = { id ->
+                    navController.navigate("category?id=$id")
+                }
+            )
+
+        }
+
+        composable(
+            "category?id={id}",
+            arguments = listOf(navArgument("id") { nullable = true }),
+            enterTransition = {
+                slideIntoContainer(
+                    AnimatedContentTransitionScope.SlideDirection.Up, tween(400)
+                )
+            },
+            exitTransition = {
+                slideOutOfContainer(
+                    AnimatedContentTransitionScope.SlideDirection.Down, tween(400)
+                )
+            },
+        ) { backStack ->
+
+            val rawId = backStack.arguments?.getString("id")
+            val id = if (rawId != null) UUID.fromString(rawId) else null
+
+            CategoryEditorScreen(
+                id = id,
+                onBack = {
+                    navController.popBackStack()
+                }
             )
 
         }

@@ -35,11 +35,13 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import xyz.artenes.budget.R
 import xyz.artenes.budget.app.theme.CustomColorScheme
+import java.util.UUID
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CategoryListScreen(
     onBack: () -> Unit,
+    navigateToCategory: (UUID) -> Unit,
     viewModel: CategoryListViewModel = hiltViewModel()
 ) {
 
@@ -78,7 +80,10 @@ fun CategoryListScreen(
                     key = { index -> categories[index].id }
                 ) { index ->
 
-                    Category(category = categories[index])
+                    Category(
+                        category = categories[index],
+                        navigateToCategory = navigateToCategory
+                    )
 
                 }
 
@@ -91,11 +96,14 @@ fun CategoryListScreen(
 }
 
 @Composable
-fun Category(category: CategoryItem) {
+fun Category(
+    category: CategoryItem,
+    navigateToCategory: (UUID) -> Unit
+) {
 
     Surface(
         color = Color.Transparent,
-        onClick = { }
+        onClick = { navigateToCategory(category.id) }
     ) {
 
         Column {
