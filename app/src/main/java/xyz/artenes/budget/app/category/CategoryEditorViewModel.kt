@@ -114,6 +114,19 @@ class CategoryEditorViewModel @Inject constructor(
 
     }
 
+    fun delete() {
+
+        if (id == null) {
+            throw NullPointerException("Can't delete null category")
+        }
+
+        viewModelScope.launch {
+            repository.softDeleteCategoryById(id)
+            _event.value = Event("Finish")
+        }
+
+    }
+
 }
 
 @Suppress("UNCHECKED_CAST")

@@ -60,5 +60,7 @@
     <string name="icon">Icon</string>
 
     <string name="required">Required</string>
+    <string name="delete_category">Delete category?</string>
+    <string name="this_category_will_be_deleted_and_can_t_be_restored">This category will be deleted and can\'t be restored</string>
 
 </resources>

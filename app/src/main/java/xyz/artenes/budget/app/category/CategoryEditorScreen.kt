@@ -19,6 +19,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.platform.LocalFocusManager
@@ -27,6 +30,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import xyz.artenes.budget.R
+import xyz.artenes.budget.app.components.ConfirmDialog
 import xyz.artenes.budget.app.components.CustomIconPickerInput
 import xyz.artenes.budget.app.components.CustomSpinner
 import xyz.artenes.budget.app.components.CustomTextField
@@ -51,11 +55,23 @@ fun CategoryEditorScreen(
     val icon by viewModel.icon.collectAsState()
     val event by viewModel.event.collectAsState()
 
+    var showDeleteDialog by remember {
+        mutableStateOf(false)
+    }
+
     LaunchedEffect(key1 = event) {
         event.consume {
             onBack()
         }
     }
+
+    ConfirmDialog(
+        show = showDeleteDialog,
+        title = stringResource(R.string.delete_category),
+        body = stringResource(R.string.this_category_will_be_deleted_and_can_t_be_restored),
+        onDismiss = { showDeleteDialog = false },
+        onConfirm = viewModel::delete,
+    )
 
     Scaffold(
         topBar = {
@@ -75,7 +91,7 @@ fun CategoryEditorScreen(
                 },
                 actions = {
                     if (id != null) {
-                        IconButton(onClick = { }) {
+                        IconButton(onClick = { showDeleteDialog = true }) {
                             Icon(
                                 imageVector = Icons.Filled.Delete,
                                 contentDescription = ""

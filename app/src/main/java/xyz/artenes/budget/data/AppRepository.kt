@@ -8,6 +8,7 @@ import xyz.artenes.budget.core.DateSerializer
 import xyz.artenes.budget.core.TransactionType
 import xyz.artenes.budget.utils.LocalDateRange
 import java.time.LocalDate
+import java.time.OffsetDateTime
 import java.util.UUID
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -164,6 +165,13 @@ class AppRepository @Inject constructor(
     suspend fun deleteTransactionById(id: UUID) {
         withContext(dispatcher) {
             appDatabase.transactionsDao().deleteById(id)
+        }
+    }
+
+    suspend fun softDeleteCategoryById(id: UUID) {
+        withContext(dispatcher) {
+            val category = appDatabase.categoryDao().getCategoryById(id)
+            appDatabase.categoryDao().update(category.copy(deletedAt = OffsetDateTime.now()))
         }
     }
 

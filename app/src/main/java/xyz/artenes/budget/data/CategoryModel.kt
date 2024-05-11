@@ -25,7 +25,12 @@ data class CategoryEntity(
     val createdAt: OffsetDateTime,
     @ColumnInfo("deleted_at")
     val deletedAt: OffsetDateTime?,
-)
+) {
+
+    val isDeleted: Boolean
+        get() = deletedAt != null
+
+}
 
 @Dao
 interface CategoryDao {
