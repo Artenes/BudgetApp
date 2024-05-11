@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.requiredWidth
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AcUnit
@@ -66,15 +67,19 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
+import kotlinx.coroutines.launch
+import timber.log.Timber
 import xyz.artenes.budget.app.theme.CustomColorScheme
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -86,13 +91,29 @@ fun CustomIconPickerInput(
     modifier: Modifier = Modifier
 ) {
 
+    val coroutine = rememberCoroutineScope()
     val icons = items(value)
+    val state = rememberLazyGridState()
     var showDialog by remember {
         mutableStateOf(false)
     }
 
+    val dismiss: () -> Unit = {
+        showDialog = false
+        coroutine.launch {
+            state.scrollToItem(icons.indexOfFirst { it.selected })
+        }
+    }
+
     if (showDialog) {
-        BasicAlertDialog(onDismissRequest = { showDialog = false }) {
+
+        LaunchedEffect(key1 = value) {
+            val index = icons.indexOfFirst { it.selected }
+            Timber.d("Icon: ${value.name}, selected: $index")
+            state.scrollToItem(index)
+        }
+
+        BasicAlertDialog(onDismissRequest = dismiss) {
             Surface(
                 color = DatePickerDefaults.colors().containerColor,
                 shape = DatePickerDefaults.shape,
@@ -105,7 +126,8 @@ fun CustomIconPickerInput(
                     columns = GridCells.Fixed(3),
                     contentPadding = PaddingValues(30.dp),
                     verticalArrangement = Arrangement.spacedBy(10.dp),
-                    horizontalArrangement = Arrangement.spacedBy(10.dp)
+                    horizontalArrangement = Arrangement.spacedBy(10.dp),
+                    state = state
                 ) {
 
                     items(
@@ -126,7 +148,7 @@ fun CustomIconPickerInput(
                                 )
                                 .clickable {
                                     onIconSelected(icons[index].value)
-                                    showDialog = false
+                                    dismiss()
                                 },
                             contentAlignment = Alignment.Center
                         ) {
@@ -145,6 +167,7 @@ fun CustomIconPickerInput(
 
             }
         }
+
     }
 
     Box(
