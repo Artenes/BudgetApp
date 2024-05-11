@@ -69,6 +69,7 @@ class CategoryEditorViewModel @Inject constructor(
             createdAt = category.createdAt
             setName(category.name)
             setType(category.type)
+            setIcon(category.icon)
         }
     }
 
