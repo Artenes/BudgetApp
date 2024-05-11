@@ -38,11 +38,11 @@ class TransactionEditorViewModel @Inject constructor(
 
     private var createdAt: OffsetDateTime? = null
 
-    private val _description = MutableStateFlow(ValueWithError())
-    val description: StateFlow<ValueWithError> = _description
+    private val _description = MutableStateFlow(ValueWithError(""))
+    val description: StateFlow<ValueWithError<String>> = _description
 
-    private val _amount = MutableStateFlow(ValueWithError())
-    val amount: StateFlow<ValueWithError> = _amount
+    private val _amount = MutableStateFlow(ValueWithError(""))
+    val amount: StateFlow<ValueWithError<String>> = _amount
 
     private val _date = MutableStateFlow(LocalDate.now())
     val date: StateFlow<LocalDate> = _date

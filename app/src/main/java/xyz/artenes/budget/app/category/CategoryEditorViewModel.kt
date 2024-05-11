@@ -21,11 +21,11 @@ class CategoryEditorViewModel @Inject constructor(
     private val labelPresenter: LabelPresenter
 ) : ViewModel() {
 
-    private val _name = MutableStateFlow(ValueWithError())
-    val name: StateFlow<ValueWithError> = _name
+    private val _name = MutableStateFlow(ValueWithError(""))
+    val name: StateFlow<ValueWithError<String>> = _name
 
-    private val _icon = MutableStateFlow(ValueWithError())
-    val icon: StateFlow<ValueWithError> = _icon
+    private val _icon = MutableStateFlow(ValueWithError(""))
+    val icon: StateFlow<ValueWithError<String>> = _icon
 
     private val _types = MutableStateFlow(
         listOf(
