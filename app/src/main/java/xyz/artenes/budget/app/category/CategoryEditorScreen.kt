@@ -103,6 +103,7 @@ fun CategoryEditorScreen(
             )
 
             CustomIconPickerInput(
+                modifier = Modifier.padding(top = 20.dp),
                 label = stringResource(R.string.icon),
                 value = Icons.Filled.FitnessCenter,
                 onIconSelected = { icon -> })

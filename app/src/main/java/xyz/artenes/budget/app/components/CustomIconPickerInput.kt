@@ -2,12 +2,19 @@ package xyz.artenes.budget.app.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredWidth
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AcUnit
 import androidx.compose.material.icons.filled.AirportShuttle
@@ -34,6 +41,7 @@ import androidx.compose.material.icons.filled.HolidayVillage
 import androidx.compose.material.icons.filled.House
 import androidx.compose.material.icons.filled.Kitchen
 import androidx.compose.material.icons.filled.MeetingRoom
+import androidx.compose.material.icons.filled.MobileFriendly
 import androidx.compose.material.icons.filled.NightShelter
 import androidx.compose.material.icons.filled.OtherHouses
 import androidx.compose.material.icons.filled.Pool
@@ -63,21 +71,20 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import xyz.artenes.budget.app.theme.CustomColorScheme
-import java.time.format.DateTimeFormatter
-
-private val dateFormat = DateTimeFormatter.ISO_DATE
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CustomIconPickerInput(
     label: String,
     value: ImageVector,
-    onIconSelected: (ImageVector) -> Unit
+    onIconSelected: (ImageVector) -> Unit,
+    modifier: Modifier = Modifier
 ) {
 
     val icons = items(value)
@@ -95,33 +102,42 @@ fun CustomIconPickerInput(
                     .requiredWidth(360.dp)
             ) {
 
-                LazyVerticalGrid(columns = GridCells.Fixed(3)) {
+                LazyVerticalGrid(
+                    columns = GridCells.Fixed(3),
+                    contentPadding = PaddingValues(30.dp),
+                    verticalArrangement = Arrangement.spacedBy(10.dp),
+                    horizontalArrangement = Arrangement.spacedBy(10.dp)
+                ) {
 
                     items(
                         count = icons.size,
                         key = { index -> icons[index].value.name }
                     ) { index ->
 
-                        Surface(onClick = {
-                            onIconSelected(icons[index].value)
-                            showDialog = false
-                        }) {
-                            Box(
-                                modifier = Modifier
-                                    .border(
-                                        5.dp,
-                                        MaterialTheme.colorScheme.onBackground,
-                                        MaterialTheme.shapes.small
-                                    )
-                                    .background(
-                                        if (icons[index].selected) MaterialTheme.colorScheme.primary else Color.Transparent,
-                                        MaterialTheme.shapes.small
-                                    )
-                            ) {
+                        Box(
+                            modifier = Modifier
+                                .border(
+                                    1.dp,
+                                    MaterialTheme.colorScheme.onBackground,
+                                    MaterialTheme.shapes.small
+                                )
+                                .background(
+                                    if (icons[index].selected) MaterialTheme.colorScheme.primary else Color.Transparent,
+                                    MaterialTheme.shapes.small
+                                )
+                                .clickable {
+                                    onIconSelected(icons[index].value)
+                                    showDialog = false
+                                },
+                            contentAlignment = Alignment.Center
+                        ) {
 
-                                Icon(imageVector = icons[index].value, contentDescription = "")
+                            Icon(
+                                imageVector = icons[index].value,
+                                contentDescription = "",
+                                modifier = Modifier.size(100.dp),
+                            )
 
-                            }
                         }
 
                     }
@@ -132,11 +148,42 @@ fun CustomIconPickerInput(
         }
     }
 
-    Surface(onClick = { showDialog = true }) {
-        Text(text = label, color = CustomColorScheme.textColor())
-        Box(modifier = Modifier.fillMaxWidth()) {
-            Icon(imageVector = value, contentDescription = "")
+    Box(
+        modifier = Modifier.then(modifier)
+    ) {
+
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .border(
+                    1.dp,
+                    MaterialTheme.colorScheme.onBackground.copy(alpha = 0.5f),
+                    RoundedCornerShape(5.dp),
+                )
+                .clickable {
+                    showDialog = true
+                },
+            contentAlignment = Alignment.Center
+        ) {
+
+            Icon(
+                imageVector = Icons.Filled.MobileFriendly,
+                contentDescription = "",
+                modifier = Modifier.padding(vertical = 15.dp),
+                tint = MaterialTheme.colorScheme.onBackground
+            )
+
         }
+
+        Text(
+            text = label,
+            color = CustomColorScheme.textColor(),
+            modifier = Modifier
+                .offset(y = (-8).dp, x = 20.dp)
+                .background(MaterialTheme.colorScheme.background),
+            style = MaterialTheme.typography.bodySmall,
+        )
+
     }
 
 }
