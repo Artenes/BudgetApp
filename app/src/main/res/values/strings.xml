@@ -58,6 +58,7 @@
     <string name="categories">Categories</string>
     <string name="name">Name</string>
     <string name="icon">Icon</string>
+    <string name="category_deleted">Category was deleted</string>
 
     <string name="required">Required</string>
     <string name="delete_category">Delete category?</string>

@@ -182,10 +182,11 @@ fun TransactionEditorScreen(
             //category
             CustomSpinner(
                 label = stringResource(R.string.category),
-                options = categories,
+                options = categories.value,
                 onOptionSelected = { item ->
                     viewModel.setCategory(item)
-                }
+                },
+                error = categories.error
             )
 
         }

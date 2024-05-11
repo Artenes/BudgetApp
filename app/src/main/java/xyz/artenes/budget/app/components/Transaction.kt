@@ -54,6 +54,9 @@ fun Transaction(
                         ),
                     contentAlignment = Alignment.Center
                 ) {
+                    /*
+                    Category
+                     */
                     Icon(
                         imageVector = transaction.icon,
                         contentDescription = "",

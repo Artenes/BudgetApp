@@ -27,12 +27,22 @@ import xyz.artenes.budget.utils.SelectableItem
 fun <T> CustomSpinner(
     label: String,
     options: List<SelectableItem<T>>,
-    onOptionSelected: (SelectableItem<T>) -> Unit
+    onOptionSelected: (SelectableItem<T>) -> Unit,
+    error: String? = null
 ) {
 
     var expanded by remember {
         mutableStateOf(false)
     }
+
+    val resolveSupportText: (content: @Composable (() -> Unit)) -> @Composable (() -> Unit)? =
+        { content ->
+            if (error != null) {
+                content
+            } else {
+                null
+            }
+        }
 
     ExposedDropdownMenuBox(expanded = expanded, onExpandedChange = { expanded = !expanded }) {
         OutlinedTextField(
@@ -53,6 +63,10 @@ fun <T> CustomSpinner(
                     contentDescription = "",
                     tint = MaterialTheme.colorScheme.onBackground
                 )
+            },
+            isError = error != null,
+            supportingText = resolveSupportText {
+                Text(text = error!!)
             },
             colors = OutlinedTextFieldDefaults.colors().copy(
                 focusedTextColor = MaterialTheme.colorScheme.onBackground,

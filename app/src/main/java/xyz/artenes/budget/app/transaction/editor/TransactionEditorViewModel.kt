@@ -4,14 +4,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.launch
-import timber.log.Timber
+import xyz.artenes.budget.R
+import xyz.artenes.budget.android.Messages
 import xyz.artenes.budget.app.presenters.MoneyPresenter
 import xyz.artenes.budget.core.Money
 import xyz.artenes.budget.core.TransactionType
@@ -32,7 +30,8 @@ class TransactionEditorViewModel @Inject constructor(
     private val id: UUID?,
     private val repository: AppRepository,
     private val labelPresenter: LabelPresenter,
-    private val moneyPresenter: MoneyPresenter
+    private val moneyPresenter: MoneyPresenter,
+    private val messages: Messages
 ) :
     ViewModel() {
 
@@ -47,66 +46,52 @@ class TransactionEditorViewModel @Inject constructor(
     private val _date = MutableStateFlow(LocalDate.now())
     val date: StateFlow<LocalDate> = _date
 
-    private val type = MutableStateFlow<TransactionType?>(null)
-    val types =
-        flowOf(TransactionType.entries.toTypedArray()).combine(type) { types, selectedType ->
+    private val _types = MutableStateFlow(
+        listOf(
+            SelectableItem(
+                TransactionType.EXPENSE,
+                labelPresenter.present(TransactionType.EXPENSE),
+                true
+            ),
+            SelectableItem(
+                TransactionType.INCOME,
+                labelPresenter.present(TransactionType.INCOME),
+                false
+            ),
+        )
+    )
+    val types: StateFlow<List<SelectableItem<TransactionType>>> = _types
 
-            if (selectedType == null) {
-                type.value = types[0]
-            }
-
-            category.value = null
-
-            types.map { type ->
-
-                SelectableItem(type, labelPresenter.present(type), type == selectedType)
-
-            }
-
-        }.stateIn(viewModelScope, SharingStarted.Lazily, emptyList())
-
-    private val category = MutableStateFlow<CategoryEntity?>(null)
-    val categories = type.map { type ->
-
-        Timber.d("Type changed to $type")
-
-        if (type == null) {
-            return@map emptyList<CategoryEntity>()
-        }
-
-        category.value = null
-        repository.getCategoriesByType(type)
-
-    }.combine(category) { categories, selectedCategory ->
-
-        Timber.d("Categories has now ${categories.size} items")
-        Timber.d("Selected category: $selectedCategory")
-
-        if (category.value == null && categories.isNotEmpty()) {
-            category.value = categories[0]
-        }
-
-        categories.map { category ->
-            SelectableItem(category, category.name, category == selectedCategory)
-        }
-
-    }.stateIn(viewModelScope, SharingStarted.Lazily, emptyList())
+    private val _categories =
+        MutableStateFlow<ValueWithError<List<SelectableItem<CategoryEntity>>>>(
+            ValueWithError(emptyList())
+        )
+    val categories: StateFlow<ValueWithError<List<SelectableItem<CategoryEntity>>>> = _categories
 
     private val _event = MutableStateFlow(Event())
     val event: StateFlow<Event> = _event
 
     init {
         viewModelScope.launch {
-            if (id == null) {
+
+            if (id != null) {
+                val data = repository.getTransactionById(id)
+                setType(data.transaction.type)
+                setDescription(data.transaction.description)
+                setAmount(data.transaction.amount)
+                setDate(data.transaction.date)
+                createdAt = data.transaction.createdAt
+
+                loadCategories(_types.value.first { it.selected }.value)
+                setCategory(data.category)
+
+                listenForTypeChange()
                 return@launch
             }
-            val data = repository.getTransactionById(id)
-            setType(data.transaction.type)
-            setDescription(data.transaction.description)
-            setAmount(data.transaction.amount)
-            setDate(data.transaction.date)
-            setCategory(data.category)
-            createdAt = data.transaction.createdAt
+
+            loadCategories(_types.value.first { it.selected }.value)
+            listenForTypeChange()
+
         }
     }
 
@@ -125,7 +110,7 @@ class TransactionEditorViewModel @Inject constructor(
     }
 
     fun setType(value: TransactionType) {
-        type.value = value
+        _types.value = _types.value.map { it.copy(selected = it.value == value) }
     }
 
     fun setCategory(value: SelectableItem<CategoryEntity>) {
@@ -133,7 +118,9 @@ class TransactionEditorViewModel @Inject constructor(
     }
 
     private fun setCategory(value: CategoryEntity) {
-        category.value = value
+        val items = _categories.value.value
+        val error = if (value.isDeleted) messages.get(R.string.category_deleted) else null
+        _categories.value = ValueWithError(items.map { it.copy(selected = it.value == value) }, error)
     }
 
     fun setDate(value: LocalDate) {
@@ -151,8 +138,9 @@ class TransactionEditorViewModel @Inject constructor(
 
         val description = _description.value
         val amount = _amount.value
-        val category = categories.value.firstOrNull { it.selected }?.value
+        val category = categories.value.value.firstOrNull { it.selected }?.value
         val parsedAmount = moneyPresenter.parse(amount.value)
+        val type = _types.value.first { it.selected }
 
         if (description.value.isEmpty()) {
             _description.value = description.copy(error = "Required")
@@ -164,6 +152,11 @@ class TransactionEditorViewModel @Inject constructor(
             return
         }
 
+        if (category == null) {
+            _categories.value = _categories.value.copy(error = messages.get(R.string.required))
+            return
+        }
+
         viewModelScope.launch {
             repository.saveTransaction(
                 TransactionEntity(
@@ -171,13 +164,29 @@ class TransactionEditorViewModel @Inject constructor(
                     description.value,
                     parsedAmount,
                     _date.value,
-                    type.value!!,
+                    type.value,
                     category!!.id,
                     createdAt ?: OffsetDateTime.now()
                 )
             )
             _event.value = Event("finish")
         }
+    }
+
+    private fun listenForTypeChange() {
+        viewModelScope.launch {
+            _types.drop(1).collectLatest { items ->
+                val value = items.first { it.selected }.value
+                loadCategories(value)
+            }
+        }
+    }
+
+    private suspend fun loadCategories(value: TransactionType) {
+        _categories.value =
+            ValueWithError(repository.getCategoriesByType(value).mapIndexed { index, it ->
+                SelectableItem(it, it.name, index == 0)
+            })
     }
 
 }
@@ -188,6 +197,7 @@ class TransactionEditorFactory @Inject constructor(
     private val repository: AppRepository,
     private val labelPresenter: LabelPresenter,
     private val moneyPresenter: MoneyPresenter,
+    private val messages: Messages
 ) {
 
     fun make(id: UUID?): ViewModelProvider.Factory {
@@ -199,7 +209,8 @@ class TransactionEditorFactory @Inject constructor(
                     id,
                     repository,
                     labelPresenter,
-                    moneyPresenter
+                    moneyPresenter,
+                    messages
                 ) as T
             }
 
