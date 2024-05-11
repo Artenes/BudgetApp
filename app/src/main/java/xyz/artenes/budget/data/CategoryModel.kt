@@ -62,4 +62,13 @@ interface CategoryDao {
     @Query("SELECT EXISTS(SELECT 1 FROM categories WHERE id = :id)")
     suspend fun exists(id: UUID): Boolean
 
+    @Query("SELECT EXISTS(SELECT 1 FROM transactions t INNER JOIN categories c ON c.id = t.category_id WHERE c.id = :id AND c.deleted_at IS NULL)")
+    suspend fun hasDependencies(id: UUID): Boolean
+
+    @Query("SELECT COUNT(*) FROM categories WHERE type = :type AND deleted_at IS NULL")
+    suspend fun countByType(type: TransactionType): Int
+
+    @Query("UPDATE transactions SET category_id = :newCategory WHERE category_id = :oldCategory")
+    suspend fun replaceCategoryInTransactions(oldCategory: UUID, newCategory: UUID)
+
 }

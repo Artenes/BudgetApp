@@ -6,7 +6,6 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.FitnessCenter
 import androidx.compose.material.icons.filled.Save
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -54,14 +53,33 @@ fun CategoryEditorScreen(
     val types by viewModel.types.collectAsState()
     val icon by viewModel.icon.collectAsState()
     val event by viewModel.event.collectAsState()
+    val categories by viewModel.categories.collectAsState()
+    val isLastCategory by viewModel.lastCategory.collectAsState()
+
+    var showInfo by remember {
+        mutableStateOf(false)
+    }
 
     var showDeleteDialog by remember {
         mutableStateOf(false)
     }
 
+    var showConfirmDeleteDialog by remember {
+        mutableStateOf(false)
+    }
+
     LaunchedEffect(key1 = event) {
         event.consume {
-            onBack()
+            when (it) {
+                CategoryEditorActions.FINISH -> onBack()
+                CategoryEditorActions.REASSIGN_CATEGORY -> {
+                    showConfirmDeleteDialog = true
+                }
+
+                CategoryEditorActions.CONFIRM_DELETE -> {
+                    showDeleteDialog = true
+                }
+            }
         }
     }
 
@@ -71,6 +89,21 @@ fun CategoryEditorScreen(
         body = stringResource(R.string.this_category_will_be_deleted_and_can_t_be_restored),
         onDismiss = { showDeleteDialog = false },
         onConfirm = viewModel::delete,
+    )
+
+    ConfirmDialog(
+        show = showInfo,
+        title = stringResource(R.string.you_can_t_delete_this_category),
+        body = stringResource(R.string.create_new_categories),
+        onDismiss = { showInfo = false },
+        confirmText = stringResource(R.string.ok),
+    )
+
+    DeleteCategoryDialog(
+        show = showConfirmDeleteDialog,
+        categories = categories,
+        onDismiss = { showConfirmDeleteDialog = false },
+        onConfirm = viewModel::deleteAndReassign
     )
 
     Scaffold(
@@ -91,7 +124,13 @@ fun CategoryEditorScreen(
                 },
                 actions = {
                     if (id != null) {
-                        IconButton(onClick = { showDeleteDialog = true }) {
+                        IconButton(onClick = {
+                            if (!isLastCategory) {
+                                viewModel.requestDelete()
+                            } else {
+                                showInfo = true
+                            }
+                        }) {
                             Icon(
                                 imageVector = Icons.Filled.Delete,
                                 contentDescription = ""
@@ -138,7 +177,8 @@ fun CategoryEditorScreen(
                 modifier = Modifier.padding(top = 20.dp),
                 label = stringResource(R.string.icon),
                 value = icon.value,
-                onIconSelected = viewModel::setIcon)
+                onIconSelected = viewModel::setIcon
+            )
 
         }
 

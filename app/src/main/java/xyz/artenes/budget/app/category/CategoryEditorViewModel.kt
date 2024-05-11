@@ -25,6 +25,14 @@ import java.util.UUID
 import javax.inject.Inject
 import javax.inject.Singleton
 
+object CategoryEditorActions {
+
+    const val FINISH = "finish"
+    const val REASSIGN_CATEGORY = "reassign_category"
+    const val CONFIRM_DELETE = "confirm_delete"
+
+}
+
 class CategoryEditorViewModel @Inject constructor(
     private val id: UUID?,
     private val repository: AppRepository,
@@ -33,6 +41,11 @@ class CategoryEditorViewModel @Inject constructor(
 ) : ViewModel() {
 
     private lateinit var createdAt: OffsetDateTime
+
+    private var hasDependencies = false
+
+    private val _lastCategory = MutableStateFlow(false)
+    val lastCategory: StateFlow<Boolean> = _lastCategory
 
     private val _name = MutableStateFlow(ValueWithError(""))
     val name: StateFlow<ValueWithError<String>> = _name
@@ -56,6 +69,9 @@ class CategoryEditorViewModel @Inject constructor(
     )
     val types: StateFlow<List<SelectableItem<TransactionType>>> = _types
 
+    private val _categories = MutableStateFlow<List<CategoryEntity>>(emptyList())
+    val categories: StateFlow<List<CategoryEntity>> = _categories
+
     private val _event = MutableStateFlow(Event())
     val event: StateFlow<Event> = _event
 
@@ -70,6 +86,9 @@ class CategoryEditorViewModel @Inject constructor(
             setName(category.name)
             setType(category.type)
             setIcon(category.icon)
+            hasDependencies = repository.categoryHasDependencies(id)
+            _lastCategory.value = repository.getCategoryCountByType(category.type) == 1
+            _categories.value = repository.getCategoriesByType(category.type).filter { it.id != id }
         }
     }
 
@@ -109,8 +128,27 @@ class CategoryEditorViewModel @Inject constructor(
                     deletedAt = null
                 )
             )
-            _event.value = Event("Finish")
+            _event.value = Event(CategoryEditorActions.FINISH)
         }
+
+    }
+
+    fun requestDelete() {
+
+        if (id == null) {
+            throw NullPointerException("Can't delete null category")
+        }
+
+        if (_lastCategory.value) {
+            throw RuntimeException("Can't delete the last category of a type")
+        }
+
+        if (hasDependencies) {
+            _event.value = Event(CategoryEditorActions.REASSIGN_CATEGORY)
+            return
+        }
+
+        _event.value = Event(CategoryEditorActions.CONFIRM_DELETE)
 
     }
 
@@ -122,7 +160,20 @@ class CategoryEditorViewModel @Inject constructor(
 
         viewModelScope.launch {
             repository.softDeleteCategoryById(id)
-            _event.value = Event("Finish")
+            _event.value = Event(CategoryEditorActions.FINISH)
+        }
+    }
+
+    fun deleteAndReassign(newCategory: CategoryEntity) {
+
+        if (id == null) {
+            throw NullPointerException("Can't delete null category")
+        }
+
+        viewModelScope.launch {
+            repository.replaceCategoryInTransactions(id, newCategory.id)
+            repository.softDeleteCategoryById(id)
+            _event.value = Event(CategoryEditorActions.FINISH)
         }
 
     }

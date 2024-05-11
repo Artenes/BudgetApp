@@ -14,7 +14,8 @@ fun ConfirmDialog(
     title: String,
     body: String,
     onDismiss: () -> Unit,
-    onConfirm: () -> Unit
+    onConfirm: (() -> Unit)? = null,
+    confirmText: String = stringResource(R.string.confirm)
 ) {
 
     if (!show) {
@@ -28,20 +29,22 @@ fun ConfirmDialog(
         confirmButton = {
             Button(
                 onClick = {
-                    onConfirm()
+                    onConfirm?.let { it() }
                     onDismiss()
                 }
             ) {
-                Text(stringResource(R.string.confirm))
+                Text(confirmText)
             }
         },
-        dismissButton = {
-            OutlinedButton(
-                onClick = onDismiss
-            ) {
-                Text(stringResource(R.string.cancel))
+        dismissButton = if (onConfirm != null) {
+            {
+                OutlinedButton(
+                    onClick = onDismiss
+                ) {
+                    Text(stringResource(R.string.cancel))
+                }
             }
-        }
+        } else null
     )
 
 }

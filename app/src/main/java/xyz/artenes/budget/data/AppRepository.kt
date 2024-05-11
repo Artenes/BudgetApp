@@ -175,6 +175,24 @@ class AppRepository @Inject constructor(
         }
     }
 
+    suspend fun categoryHasDependencies(id: UUID): Boolean {
+        return withContext(dispatcher) {
+            appDatabase.categoryDao().hasDependencies(id)
+        }
+    }
+
+    suspend fun getCategoryCountByType(type: TransactionType): Int {
+        return withContext(dispatcher) {
+            appDatabase.categoryDao().countByType(type)
+        }
+    }
+
+    suspend fun replaceCategoryInTransactions(oldCategory: UUID, newCategory: UUID) {
+        withContext(dispatcher) {
+            appDatabase.categoryDao().replaceCategoryInTransactions(oldCategory, newCategory)
+        }
+    }
+
     private fun groupTransactions(transactions: List<TransactionWithCategoryEntity>) =
         transactions.groupBy { transaction -> transaction.date }
             .entries.map { entry ->
