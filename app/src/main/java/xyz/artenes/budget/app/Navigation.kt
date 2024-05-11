@@ -120,6 +120,9 @@ fun MainNavigation() {
 
             CategoryListScreen(
                 onBack = { navController.popBackStack() },
+                navigateToNewCategory = {
+                    navController.navigate("category")
+                },
                 navigateToCategory = { id ->
                     navController.navigate("category?id=$id")
                 }

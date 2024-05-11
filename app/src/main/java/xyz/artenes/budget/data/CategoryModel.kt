@@ -44,10 +44,10 @@ interface CategoryDao {
     @Insert
     suspend fun insertAll(categories: List<CategoryEntity>)
 
-    @Query("SELECT * FROM categories WHERE deleted_at IS NULL")
+    @Query("SELECT * FROM categories WHERE deleted_at IS NULL ORDER BY created_at DESC")
     suspend fun getAllNotDeleted(): List<CategoryEntity>
 
-    @Query("SELECT * FROM categories WHERE deleted_at IS NULL")
+    @Query("SELECT * FROM categories WHERE deleted_at IS NULL ORDER BY created_at DESC")
     fun getAllNotDeletedAsFlow(): Flow<List<CategoryEntity>>
 
     @Query("SELECT * FROM categories WHERE deleted_at IS NULL AND type = :type ORDER BY name ASC")
