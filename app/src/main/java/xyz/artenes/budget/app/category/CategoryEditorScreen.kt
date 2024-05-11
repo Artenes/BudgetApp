@@ -46,6 +46,7 @@ fun CategoryEditorScreen(
     val focusManager = LocalFocusManager.current
     val name by viewModel.name.collectAsState()
     val types by viewModel.types.collectAsState()
+    val icon by viewModel.icon.collectAsState()
 
     Scaffold(
         topBar = {
@@ -105,8 +106,8 @@ fun CategoryEditorScreen(
             CustomIconPickerInput(
                 modifier = Modifier.padding(top = 20.dp),
                 label = stringResource(R.string.icon),
-                value = Icons.Filled.FitnessCenter,
-                onIconSelected = { icon -> })
+                value = icon.value,
+                onIconSelected = viewModel::setIcon)
 
         }
 

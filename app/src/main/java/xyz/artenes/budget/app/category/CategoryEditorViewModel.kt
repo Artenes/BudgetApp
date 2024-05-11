@@ -1,5 +1,8 @@
 package xyz.artenes.budget.app.category
 
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Storefront
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
@@ -24,8 +27,8 @@ class CategoryEditorViewModel @Inject constructor(
     private val _name = MutableStateFlow(ValueWithError(""))
     val name: StateFlow<ValueWithError<String>> = _name
 
-    private val _icon = MutableStateFlow(ValueWithError(""))
-    val icon: StateFlow<ValueWithError<String>> = _icon
+    private val _icon = MutableStateFlow(ValueWithError(Icons.Filled.Storefront))
+    val icon: StateFlow<ValueWithError<ImageVector>> = _icon
 
     private val _types = MutableStateFlow(
         listOf(
@@ -61,6 +64,10 @@ class CategoryEditorViewModel @Inject constructor(
     fun setType(value: TransactionType) {
         _types.value =
             _types.value.map { item -> item.copy(selected = item.value == value) }
+    }
+
+    fun setIcon(value: ImageVector) {
+        _icon.value = ValueWithError(value)
     }
 
 }

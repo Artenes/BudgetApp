@@ -167,9 +167,9 @@ fun CustomIconPickerInput(
         ) {
 
             Icon(
-                imageVector = Icons.Filled.MobileFriendly,
+                imageVector = value,
                 contentDescription = "",
-                modifier = Modifier.padding(vertical = 15.dp),
+                modifier = Modifier.padding(vertical = 10.dp).size(50.dp),
                 tint = MaterialTheme.colorScheme.onBackground
             )
 
