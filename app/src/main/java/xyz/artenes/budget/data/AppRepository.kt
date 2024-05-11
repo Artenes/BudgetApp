@@ -130,6 +130,17 @@ class AppRepository @Inject constructor(
         }
     }
 
+    suspend fun saveCategory(category: CategoryEntity) {
+        withContext(dispatcher) {
+            val dao = appDatabase.categoryDao()
+            if (dao.exists(category.id)) {
+                dao.update(category)
+                return@withContext
+            }
+            dao.insert(category)
+        }
+    }
+
     suspend fun getCategoryById(id: UUID): CategoryEntity {
         return withContext(dispatcher) {
             appDatabase.categoryDao().getCategoryById(id)

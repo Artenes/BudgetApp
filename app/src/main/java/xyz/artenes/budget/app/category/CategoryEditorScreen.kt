@@ -7,6 +7,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.FitnessCenter
+import androidx.compose.material.icons.filled.Save
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -15,6 +16,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -47,6 +49,13 @@ fun CategoryEditorScreen(
     val name by viewModel.name.collectAsState()
     val types by viewModel.types.collectAsState()
     val icon by viewModel.icon.collectAsState()
+    val event by viewModel.event.collectAsState()
+
+    LaunchedEffect(key1 = event) {
+        event.consume {
+            onBack()
+        }
+    }
 
     Scaffold(
         topBar = {
@@ -72,6 +81,12 @@ fun CategoryEditorScreen(
                                 contentDescription = ""
                             )
                         }
+                    }
+                    IconButton(onClick = viewModel::save) {
+                        Icon(
+                            imageVector = Icons.Filled.Save,
+                            contentDescription = ""
+                        )
                     }
                 }
             )

@@ -31,6 +31,7 @@ import androidx.compose.material.icons.filled.Kitchen
 import androidx.compose.material.icons.filled.LocalGroceryStore
 import androidx.compose.material.icons.filled.MeetingRoom
 import androidx.compose.material.icons.filled.MonetizationOn
+import androidx.compose.material.icons.filled.Money
 import androidx.compose.material.icons.filled.MonitorHeart
 import androidx.compose.material.icons.filled.NightShelter
 import androidx.compose.material.icons.filled.OtherHouses
@@ -92,6 +93,7 @@ object IconsMap {
             "Filled.Home" -> Icons.Filled.Home
             "Filled.QuestionMark" -> Icons.Filled.QuestionMark
             "Filled.MonetizationOn" -> Icons.Filled.MonetizationOn
+            "Filled.Money" -> Icons.Filled.Money
             else -> throw RuntimeException("Invalid icon $name")
         }
 

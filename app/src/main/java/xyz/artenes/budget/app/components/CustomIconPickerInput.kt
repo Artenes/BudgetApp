@@ -22,6 +22,7 @@ import androidx.compose.material.icons.filled.AllInclusive
 import androidx.compose.material.icons.filled.Apartment
 import androidx.compose.material.icons.filled.Bathtub
 import androidx.compose.material.icons.filled.BeachAccess
+import androidx.compose.material.icons.filled.Book
 import androidx.compose.material.icons.filled.BusinessCenter
 import androidx.compose.material.icons.filled.Casino
 import androidx.compose.material.icons.filled.Checkroom
@@ -29,6 +30,7 @@ import androidx.compose.material.icons.filled.ChildCare
 import androidx.compose.material.icons.filled.ChildFriendly
 import androidx.compose.material.icons.filled.CorporateFare
 import androidx.compose.material.icons.filled.Cottage
+import androidx.compose.material.icons.filled.DirectionsBus
 import androidx.compose.material.icons.filled.EscalatorWarning
 import androidx.compose.material.icons.filled.FamilyRestroom
 import androidx.compose.material.icons.filled.FitnessCenter
@@ -38,13 +40,17 @@ import androidx.compose.material.icons.filled.FreeBreakfast
 import androidx.compose.material.icons.filled.Gite
 import androidx.compose.material.icons.filled.Grass
 import androidx.compose.material.icons.filled.HolidayVillage
+import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.House
 import androidx.compose.material.icons.filled.Kitchen
+import androidx.compose.material.icons.filled.LocalGroceryStore
 import androidx.compose.material.icons.filled.MeetingRoom
-import androidx.compose.material.icons.filled.MobileFriendly
+import androidx.compose.material.icons.filled.MonetizationOn
+import androidx.compose.material.icons.filled.MonitorHeart
 import androidx.compose.material.icons.filled.NightShelter
 import androidx.compose.material.icons.filled.OtherHouses
 import androidx.compose.material.icons.filled.Pool
+import androidx.compose.material.icons.filled.QuestionMark
 import androidx.compose.material.icons.filled.Roofing
 import androidx.compose.material.icons.filled.RoomPreferences
 import androidx.compose.material.icons.filled.RoomService
@@ -52,13 +58,6 @@ import androidx.compose.material.icons.filled.Spa
 import androidx.compose.material.icons.filled.SportsBar
 import androidx.compose.material.icons.filled.Storefront
 import androidx.compose.material.icons.filled.Villa
-import androidx.compose.material.icons.outlined.Book
-import androidx.compose.material.icons.outlined.DirectionsBus
-import androidx.compose.material.icons.outlined.Home
-import androidx.compose.material.icons.outlined.LocalGroceryStore
-import androidx.compose.material.icons.outlined.MonetizationOn
-import androidx.compose.material.icons.outlined.MonitorHeart
-import androidx.compose.material.icons.outlined.QuestionMark
 import androidx.compose.material3.BasicAlertDialog
 import androidx.compose.material3.DatePickerDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -169,7 +168,9 @@ fun CustomIconPickerInput(
             Icon(
                 imageVector = value,
                 contentDescription = "",
-                modifier = Modifier.padding(vertical = 10.dp).size(50.dp),
+                modifier = Modifier
+                    .padding(vertical = 10.dp)
+                    .size(50.dp),
                 tint = MaterialTheme.colorScheme.onBackground
             )
 
@@ -229,13 +230,13 @@ private fun items(selected: ImageVector): List<IconItem> = listOf(
     IconItem(Icons.Filled.Gite),
     IconItem(Icons.Filled.Villa),
     IconItem(Icons.Filled.NightShelter),
-    IconItem(Icons.Outlined.DirectionsBus),
-    IconItem(Icons.Outlined.MonitorHeart),
-    IconItem(Icons.Outlined.LocalGroceryStore),
-    IconItem(Icons.Outlined.Book),
-    IconItem(Icons.Outlined.Home),
-    IconItem(Icons.Outlined.QuestionMark),
-    IconItem(Icons.Outlined.MonetizationOn),
+    IconItem(Icons.Filled.DirectionsBus),
+    IconItem(Icons.Filled.MonitorHeart),
+    IconItem(Icons.Filled.LocalGroceryStore),
+    IconItem(Icons.Filled.Book),
+    IconItem(Icons.Filled.Home),
+    IconItem(Icons.Filled.QuestionMark),
+    IconItem(Icons.Filled.MonetizationOn),
 ).map { item ->
     item.copy(selected = item.value == selected)
 }

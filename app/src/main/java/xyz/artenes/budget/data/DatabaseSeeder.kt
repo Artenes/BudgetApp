@@ -1,13 +1,13 @@
 package xyz.artenes.budget.data
 
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Book
-import androidx.compose.material.icons.outlined.DirectionsBus
-import androidx.compose.material.icons.outlined.Home
-import androidx.compose.material.icons.outlined.LocalGroceryStore
-import androidx.compose.material.icons.outlined.Money
-import androidx.compose.material.icons.outlined.MonitorHeart
-import androidx.compose.material.icons.outlined.QuestionMark
+import androidx.compose.material.icons.filled.Book
+import androidx.compose.material.icons.filled.DirectionsBus
+import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.LocalGroceryStore
+import androidx.compose.material.icons.filled.Money
+import androidx.compose.material.icons.filled.MonitorHeart
+import androidx.compose.material.icons.filled.QuestionMark
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -98,49 +98,49 @@ class DatabaseSeeder @Inject constructor(
             makeCategory(
                 R.string.category_transportation,
                 Color.Blue,
-                Icons.Outlined.DirectionsBus,
+                Icons.Filled.DirectionsBus,
                 TransactionType.EXPENSE
             ),
             makeCategory(
                 R.string.category_health,
                 Color.Red,
-                Icons.Outlined.MonitorHeart,
+                Icons.Filled.MonitorHeart,
                 TransactionType.EXPENSE
             ),
             makeCategory(
                 R.string.category_groceries,
                 Color.Yellow,
-                Icons.Outlined.LocalGroceryStore,
+                Icons.Filled.LocalGroceryStore,
                 TransactionType.EXPENSE
             ),
             makeCategory(
                 R.string.category_education,
                 Color.Green,
-                Icons.Outlined.Book,
+                Icons.Filled.Book,
                 TransactionType.EXPENSE
             ),
             makeCategory(
                 R.string.category_home,
                 Color.Cyan,
-                Icons.Outlined.Home,
+                Icons.Filled.Home,
                 TransactionType.EXPENSE
             ),
             makeCategory(
                 R.string.category_others,
                 Color.Gray,
-                Icons.Outlined.QuestionMark,
+                Icons.Filled.QuestionMark,
                 TransactionType.EXPENSE
             ),
             makeCategory(
                 R.string.category_paycheck,
                 Color.Blue,
-                Icons.Outlined.Money,
+                Icons.Filled.Money,
                 TransactionType.INCOME
             ),
             makeCategory(
                 R.string.category_others,
                 Color.Gray,
-                Icons.Outlined.QuestionMark,
+                Icons.Filled.QuestionMark,
                 TransactionType.INCOME
             )
         )

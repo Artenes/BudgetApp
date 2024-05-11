@@ -7,6 +7,7 @@ import androidx.room.Entity
 import androidx.room.Insert
 import androidx.room.PrimaryKey
 import androidx.room.Query
+import androidx.room.Update
 import kotlinx.coroutines.flow.Flow
 import xyz.artenes.budget.core.TransactionType
 import java.time.OffsetDateTime
@@ -32,6 +33,9 @@ interface CategoryDao {
     @Insert
     suspend fun insert(category: CategoryEntity)
 
+    @Update
+    suspend fun update(category: CategoryEntity)
+
     @Insert
     suspend fun insertAll(categories: List<CategoryEntity>)
 
@@ -49,5 +53,8 @@ interface CategoryDao {
 
     @Query("SELECT EXISTS(SELECT 1 FROM categories LIMIT 1)")
     suspend fun hasEntries(): Boolean
+
+    @Query("SELECT EXISTS(SELECT 1 FROM categories WHERE id = :id)")
+    suspend fun exists(id: UUID): Boolean
 
 }
