@@ -35,10 +35,10 @@ import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import xyz.artenes.budget.app.components.Transaction
+import xyz.artenes.budget.app.transaction.Transaction
 import xyz.artenes.budget.app.theme.CustomColorScheme
-import xyz.artenes.budget.data.TransactionsData
-import xyz.artenes.budget.utils.DataState
+import xyz.artenes.budget.core.models.TransactionsData
+import xyz.artenes.budget.core.models.DataState
 import java.util.UUID
 
 @OptIn(ExperimentalMaterial3Api::class)

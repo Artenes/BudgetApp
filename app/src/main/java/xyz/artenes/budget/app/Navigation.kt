@@ -23,8 +23,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import xyz.artenes.budget.app.category.CategoryEditorScreen
-import xyz.artenes.budget.app.category.CategoryListScreen
+import xyz.artenes.budget.app.category.editor.CategoryEditorScreen
+import xyz.artenes.budget.app.category.list.CategoryListScreen
 import xyz.artenes.budget.app.transaction.editor.TransactionEditorScreen
 import xyz.artenes.budget.app.transaction.list.TransactionsListScreen
 import xyz.artenes.budget.app.transaction.search.SearchScreen

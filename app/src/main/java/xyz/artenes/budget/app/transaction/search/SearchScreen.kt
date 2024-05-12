@@ -49,10 +49,10 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import xyz.artenes.budget.R
 import xyz.artenes.budget.app.components.CustomAdvancedDatePicker
 import xyz.artenes.budget.app.components.CustomSpinner
-import xyz.artenes.budget.app.components.Transaction
+import xyz.artenes.budget.app.transaction.Transaction
 import xyz.artenes.budget.app.theme.CustomColorScheme
-import xyz.artenes.budget.data.SearchResultsData
-import xyz.artenes.budget.utils.DataState
+import xyz.artenes.budget.core.models.SearchResultsData
+import xyz.artenes.budget.core.models.DataState
 import java.util.UUID
 
 @OptIn(ExperimentalMaterial3Api::class)

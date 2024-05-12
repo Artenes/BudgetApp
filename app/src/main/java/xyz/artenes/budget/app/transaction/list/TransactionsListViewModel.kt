@@ -10,17 +10,18 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import xyz.artenes.budget.BuildConfig
-import xyz.artenes.budget.android.Messages
-import xyz.artenes.budget.app.presenters.MoneyPresenter
-import xyz.artenes.budget.core.Money
-import xyz.artenes.budget.core.TransactionType
+import xyz.artenes.budget.core.models.DataState
+import xyz.artenes.budget.core.models.Money
+import xyz.artenes.budget.core.models.TransactionGroup
+import xyz.artenes.budget.core.models.TransactionGroupItem
+import xyz.artenes.budget.core.models.TransactionItem
+import xyz.artenes.budget.core.models.TransactionType
+import xyz.artenes.budget.core.models.TransactionsData
+import xyz.artenes.budget.core.presenter.DatePresenter
+import xyz.artenes.budget.core.presenter.MoneyPresenter
 import xyz.artenes.budget.data.AppRepository
 import xyz.artenes.budget.data.DatabaseSeeder
-import xyz.artenes.budget.data.TransactionGroup
-import xyz.artenes.budget.data.TransactionWithCategoryEntity
-import xyz.artenes.budget.data.TransactionsData
-import xyz.artenes.budget.utils.DataState
-import xyz.artenes.budget.utils.DatePresenter
+import xyz.artenes.budget.data.models.TransactionWithCategoryEntity
 import java.time.LocalDate
 import javax.inject.Inject
 
@@ -29,8 +30,7 @@ class TransactionsListViewModel @Inject constructor(
     private val seeder: DatabaseSeeder,
     private val repository: AppRepository,
     private val datePresenter: DatePresenter,
-    private val moneyPresenter: MoneyPresenter,
-    private val messages: Messages
+    private val moneyPresenter: MoneyPresenter
 ) :
     ViewModel() {
 

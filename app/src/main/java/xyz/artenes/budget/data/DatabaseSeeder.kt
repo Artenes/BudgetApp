@@ -14,9 +14,11 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import com.github.javafaker.Faker
 import kotlinx.coroutines.withContext
 import xyz.artenes.budget.R
-import xyz.artenes.budget.android.Messages
-import xyz.artenes.budget.core.Money
-import xyz.artenes.budget.core.TransactionType
+import xyz.artenes.budget.core.Messages
+import xyz.artenes.budget.core.models.Money
+import xyz.artenes.budget.core.models.TransactionType
+import xyz.artenes.budget.data.models.CategoryEntity
+import xyz.artenes.budget.data.models.TransactionEntity
 import java.time.LocalDate
 import java.time.OffsetDateTime
 import java.util.UUID
@@ -26,7 +28,7 @@ import kotlin.coroutines.CoroutineContext
 class DatabaseSeeder @Inject constructor(
     private val database: AppDatabase,
     private val dispatcher: CoroutineContext,
-    private val messages: Messages,
+    private val androidMessages: Messages,
     private val faker: Faker
 ) {
 
@@ -156,7 +158,7 @@ class DatabaseSeeder @Inject constructor(
     ): CategoryEntity {
         return CategoryEntity(
             UUID.randomUUID(),
-            messages.get(id),
+            androidMessages.get(id),
             color.toArgb(),
             icon,
             type,

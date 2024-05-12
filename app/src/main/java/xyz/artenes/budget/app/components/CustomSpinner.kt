@@ -20,7 +20,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import xyz.artenes.budget.utils.SelectableItem
+import xyz.artenes.budget.core.models.SelectableItem
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

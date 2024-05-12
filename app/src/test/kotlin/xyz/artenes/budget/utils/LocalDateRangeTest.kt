@@ -2,6 +2,7 @@ package xyz.artenes.budget.utils
 
 import org.junit.Assert.assertEquals
 import org.junit.Test
+import xyz.artenes.budget.core.models.LocalDateRange
 import java.time.LocalDate
 import java.time.format.TextStyle
 import java.util.Locale

@@ -9,17 +9,17 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.launch
 import xyz.artenes.budget.R
-import xyz.artenes.budget.android.Messages
-import xyz.artenes.budget.app.presenters.MoneyPresenter
-import xyz.artenes.budget.core.Money
-import xyz.artenes.budget.core.TransactionType
+import xyz.artenes.budget.core.Messages
+import xyz.artenes.budget.core.models.Event
+import xyz.artenes.budget.core.models.Money
+import xyz.artenes.budget.core.models.SelectableItem
+import xyz.artenes.budget.core.models.TransactionType
+import xyz.artenes.budget.core.models.ValueWithError
+import xyz.artenes.budget.core.presenter.LabelPresenter
+import xyz.artenes.budget.core.presenter.MoneyPresenter
 import xyz.artenes.budget.data.AppRepository
-import xyz.artenes.budget.data.CategoryEntity
-import xyz.artenes.budget.data.TransactionEntity
-import xyz.artenes.budget.utils.Event
-import xyz.artenes.budget.utils.LabelPresenter
-import xyz.artenes.budget.utils.SelectableItem
-import xyz.artenes.budget.utils.ValueWithError
+import xyz.artenes.budget.data.models.CategoryEntity
+import xyz.artenes.budget.data.models.TransactionEntity
 import java.time.LocalDate
 import java.time.OffsetDateTime
 import java.util.UUID
@@ -31,7 +31,7 @@ class TransactionEditorViewModel @Inject constructor(
     private val repository: AppRepository,
     private val labelPresenter: LabelPresenter,
     private val moneyPresenter: MoneyPresenter,
-    private val messages: Messages
+    private val androidMessages: Messages
 ) :
     ViewModel() {
 
@@ -119,8 +119,9 @@ class TransactionEditorViewModel @Inject constructor(
 
     private fun setCategory(value: CategoryEntity) {
         val items = _categories.value.value
-        val error = if (value.isDeleted) messages.get(R.string.category_deleted) else null
-        _categories.value = ValueWithError(items.map { it.copy(selected = it.value == value) }, error)
+        val error = if (value.isDeleted) androidMessages.get(R.string.category_deleted) else null
+        _categories.value =
+            ValueWithError(items.map { it.copy(selected = it.value == value) }, error)
     }
 
     fun setDate(value: LocalDate) {
@@ -153,7 +154,8 @@ class TransactionEditorViewModel @Inject constructor(
         }
 
         if (category == null) {
-            _categories.value = _categories.value.copy(error = messages.get(R.string.required))
+            _categories.value =
+                _categories.value.copy(error = androidMessages.get(R.string.required))
             return
         }
 
@@ -197,7 +199,7 @@ class TransactionEditorFactory @Inject constructor(
     private val repository: AppRepository,
     private val labelPresenter: LabelPresenter,
     private val moneyPresenter: MoneyPresenter,
-    private val messages: Messages
+    private val androidMessages: Messages
 ) {
 
     fun make(id: UUID?): ViewModelProvider.Factory {
@@ -210,7 +212,7 @@ class TransactionEditorFactory @Inject constructor(
                     repository,
                     labelPresenter,
                     moneyPresenter,
-                    messages
+                    androidMessages
                 ) as T
             }
 

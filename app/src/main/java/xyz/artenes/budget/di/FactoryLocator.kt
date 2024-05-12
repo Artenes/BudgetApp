@@ -1,7 +1,6 @@
 package xyz.artenes.budget.di
 
-import xyz.artenes.budget.app.category.CategoryEditorFactory
-import xyz.artenes.budget.app.category.CategoryEditorViewModel
+import xyz.artenes.budget.app.category.editor.CategoryEditorFactory
 import xyz.artenes.budget.app.transaction.editor.TransactionEditorFactory
 import javax.inject.Inject
 import javax.inject.Singleton

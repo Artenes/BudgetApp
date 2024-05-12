@@ -2,8 +2,9 @@ package xyz.artenes.budget.data
 
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.room.TypeConverter
-import xyz.artenes.budget.core.Money
-import xyz.artenes.budget.utils.IconsMap
+import xyz.artenes.budget.core.models.Money
+import xyz.artenes.budget.core.IconsMap
+import xyz.artenes.budget.core.serializer.DateSerializer
 import java.time.Instant
 import java.time.LocalDate
 import java.time.OffsetDateTime
@@ -12,11 +13,14 @@ import java.util.UUID
 
 class Converters {
 
-    private val dateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+    private val dateSerializer = DateSerializer()
 
     @TypeConverter
     fun fromLocalDate(localDate: LocalDate?): String? {
-        return localDate?.format(dateFormat)
+        if (localDate == null) {
+            return null
+        }
+        return dateSerializer.serializeDate(localDate)
     }
 
     @TypeConverter
@@ -24,7 +28,7 @@ class Converters {
         if (string == null) {
             return null
         }
-        return LocalDate.parse(string, dateFormat)
+        return dateSerializer.deserializeDate(string)
     }
 
     @TypeConverter
