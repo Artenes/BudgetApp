@@ -1,4 +1,4 @@
-package xyz.artenes.budget.core.presenter
+package xyz.artenes.budget.app.presenter
 
 import xyz.artenes.budget.core.models.Money
 import java.text.NumberFormat

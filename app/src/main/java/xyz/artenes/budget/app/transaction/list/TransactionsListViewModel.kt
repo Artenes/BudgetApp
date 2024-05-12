@@ -17,8 +17,8 @@ import xyz.artenes.budget.core.models.TransactionGroupItem
 import xyz.artenes.budget.core.models.TransactionItem
 import xyz.artenes.budget.core.models.TransactionType
 import xyz.artenes.budget.core.models.TransactionsData
-import xyz.artenes.budget.core.presenter.DatePresenter
-import xyz.artenes.budget.core.presenter.MoneyPresenter
+import xyz.artenes.budget.app.presenter.DatePresenter
+import xyz.artenes.budget.app.presenter.MoneyPresenter
 import xyz.artenes.budget.data.AppRepository
 import xyz.artenes.budget.data.DatabaseSeeder
 import xyz.artenes.budget.data.models.TransactionWithCategoryEntity

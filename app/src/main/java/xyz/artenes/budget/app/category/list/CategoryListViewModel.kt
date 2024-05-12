@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import xyz.artenes.budget.core.models.CategoryItem
 import xyz.artenes.budget.data.AppRepository
-import xyz.artenes.budget.core.presenter.LabelPresenter
+import xyz.artenes.budget.app.presenter.LabelPresenter
 import javax.inject.Inject
 
 @HiltViewModel

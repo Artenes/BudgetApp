@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.launch
-import xyz.artenes.budget.core.presenter.MoneyPresenter
+import xyz.artenes.budget.app.presenter.MoneyPresenter
 import xyz.artenes.budget.core.models.TransactionItem
 import xyz.artenes.budget.core.models.Money
 import xyz.artenes.budget.core.models.TransactionType
@@ -21,8 +21,8 @@ import xyz.artenes.budget.core.models.DataState
 import xyz.artenes.budget.core.models.DateFilter
 import xyz.artenes.budget.core.models.DateFilterItem
 import xyz.artenes.budget.core.models.DateFilterType
-import xyz.artenes.budget.core.presenter.DatePresenter
-import xyz.artenes.budget.core.presenter.LabelPresenter
+import xyz.artenes.budget.app.presenter.DatePresenter
+import xyz.artenes.budget.app.presenter.LabelPresenter
 import xyz.artenes.budget.core.models.LocalDateRange
 import xyz.artenes.budget.core.models.SelectableItem
 import javax.inject.Inject

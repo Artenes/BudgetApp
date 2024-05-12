@@ -1,4 +1,4 @@
-package xyz.artenes.budget.core.presenter
+package xyz.artenes.budget.app.presenter
 
 import xyz.artenes.budget.R
 import xyz.artenes.budget.app.transaction.search.SearchViewModel

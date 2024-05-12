@@ -15,8 +15,8 @@ import xyz.artenes.budget.core.models.Money
 import xyz.artenes.budget.core.models.SelectableItem
 import xyz.artenes.budget.core.models.TransactionType
 import xyz.artenes.budget.core.models.ValueWithError
-import xyz.artenes.budget.core.presenter.LabelPresenter
-import xyz.artenes.budget.core.presenter.MoneyPresenter
+import xyz.artenes.budget.app.presenter.LabelPresenter
+import xyz.artenes.budget.app.presenter.MoneyPresenter
 import xyz.artenes.budget.data.AppRepository
 import xyz.artenes.budget.data.models.CategoryEntity
 import xyz.artenes.budget.data.models.TransactionEntity

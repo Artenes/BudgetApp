@@ -5,15 +5,15 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import xyz.artenes.budget.core.Messages
-import xyz.artenes.budget.core.presenter.DatePresenter
-import xyz.artenes.budget.core.presenter.LabelPresenter
-import xyz.artenes.budget.core.presenter.MoneyPresenter
+import xyz.artenes.budget.app.presenter.DatePresenter
+import xyz.artenes.budget.app.presenter.LabelPresenter
+import xyz.artenes.budget.app.presenter.MoneyPresenter
 import xyz.artenes.budget.core.serializer.DateSerializer
 import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-class CoreModule {
+class PresenterModule {
 
     @Singleton
     @Provides
