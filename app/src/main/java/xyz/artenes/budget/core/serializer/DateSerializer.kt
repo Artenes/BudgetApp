@@ -2,11 +2,8 @@ package xyz.artenes.budget.core.serializer
 
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
-import javax.inject.Inject
-import javax.inject.Singleton
 
-@Singleton
-class DateSerializer @Inject constructor() {
+class DateSerializer {
 
     private val dateSerializeFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd")
     private val monthSerializeFormat = DateTimeFormatter.ofPattern("yyyy-MM")

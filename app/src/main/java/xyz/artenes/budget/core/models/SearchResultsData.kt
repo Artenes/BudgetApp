@@ -1,8 +1,5 @@
 package xyz.artenes.budget.core.models
 
-import xyz.artenes.budget.core.models.TransactionItem
-import xyz.artenes.budget.core.models.Money
-
 data class SearchResultsData(
     val totalExpenses: Money,
     val formattedTotalExpenses: String,

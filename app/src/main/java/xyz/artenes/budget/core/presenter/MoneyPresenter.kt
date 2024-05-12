@@ -4,11 +4,8 @@ import xyz.artenes.budget.core.models.Money
 import java.text.NumberFormat
 import java.util.Currency
 import java.util.Locale
-import javax.inject.Inject
-import javax.inject.Singleton
 
-@Singleton
-class MoneyPresenter @Inject constructor() {
+class MoneyPresenter {
 
     fun getCurrencySymbol(): String = Currency.getInstance(Locale.getDefault()).symbol
 

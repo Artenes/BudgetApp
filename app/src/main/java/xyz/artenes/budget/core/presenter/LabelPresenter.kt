@@ -3,14 +3,11 @@ package xyz.artenes.budget.core.presenter
 import xyz.artenes.budget.R
 import xyz.artenes.budget.app.transaction.search.SearchViewModel
 import xyz.artenes.budget.core.Messages
+import xyz.artenes.budget.core.models.SearchSortType
 import xyz.artenes.budget.core.models.TransactionType
 import xyz.artenes.budget.data.models.CategoryEntity
-import xyz.artenes.budget.core.models.SearchSortType
-import javax.inject.Inject
-import javax.inject.Singleton
 
-@Singleton
-class LabelPresenter @Inject constructor(private val androidMessages: Messages) {
+class LabelPresenter(private val androidMessages: Messages) {
 
     fun present(type: TransactionType): String {
         return when (type) {

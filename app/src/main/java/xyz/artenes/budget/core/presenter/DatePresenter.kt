@@ -1,18 +1,15 @@
 package xyz.artenes.budget.core.presenter
 
 import xyz.artenes.budget.R
-import xyz.artenes.budget.core.models.LocalDateRange
 import xyz.artenes.budget.core.Messages
+import xyz.artenes.budget.core.models.LocalDateRange
 import xyz.artenes.budget.core.models.RelativeDate
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
 import java.time.temporal.ChronoUnit
-import javax.inject.Inject
-import javax.inject.Singleton
 
-@Singleton
-class DatePresenter @Inject constructor(private val androidMessages: Messages) {
+class DatePresenter(private val androidMessages: Messages) {
 
     private val dayOfWeekFormat = DateTimeFormatter.ofPattern("EEEE")
 
