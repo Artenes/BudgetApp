@@ -20,6 +20,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import xyz.artenes.budget.app.theme.CustomColorScheme
 import xyz.artenes.budget.core.models.SelectableItem
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -61,28 +62,20 @@ fun <T> CustomSpinner(
                         Icons.Filled.ArrowDropDown
                     },
                     contentDescription = "",
-                    tint = MaterialTheme.colorScheme.onBackground
+                    tint = CustomColorScheme.icon()
                 )
             },
             isError = error != null,
             supportingText = resolveSupportText {
                 Text(text = error!!)
             },
-            colors = OutlinedTextFieldDefaults.colors().copy(
-                focusedTextColor = MaterialTheme.colorScheme.onBackground,
-                focusedLabelColor = MaterialTheme.colorScheme.onBackground,
-                unfocusedLabelColor = MaterialTheme.colorScheme.onBackground,
-                unfocusedIndicatorColor = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.5f),
-                focusedIndicatorColor = MaterialTheme.colorScheme.onBackground,
-                errorIndicatorColor = MaterialTheme.colorScheme.tertiary,
-                cursorColor = MaterialTheme.colorScheme.onBackground,
-            )
+            colors = CustomColorScheme.outlineTextField()
         )
         DropdownMenu(
             expanded = expanded,
             onDismissRequest = { expanded = false },
             modifier = Modifier
-                .background(MaterialTheme.colorScheme.tertiary)
+                .background(CustomColorScheme.dropDownMenu())
                 .exposedDropdownSize()
         ) {
             options.forEach {

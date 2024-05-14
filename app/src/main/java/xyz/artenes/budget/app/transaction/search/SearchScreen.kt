@@ -64,7 +64,7 @@ fun SearchScreen(
 ) {
 
     val view = LocalView.current
-    val statusBarColor = MaterialTheme.colorScheme.tertiaryContainer
+    val statusBarColor = CustomColorScheme.statusBarDark()
     SideEffect {
         (view.context as Activity).window.statusBarColor = statusBarColor.toArgb()
     }
@@ -98,8 +98,7 @@ fun SearchScreen(
         topBar = {
 
             TopAppBar(
-                colors = TopAppBarDefaults.topAppBarColors()
-                    .copy(containerColor = MaterialTheme.colorScheme.tertiaryContainer),
+                colors = CustomColorScheme.topAppBarDark(),
                 title = {
                     OutlinedTextField(
                         value = query,
@@ -115,7 +114,7 @@ fun SearchScreen(
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = "Back",
-                            tint = MaterialTheme.colorScheme.onBackground
+                            tint = CustomColorScheme.icon()
                         )
                     }
                 },
@@ -126,7 +125,7 @@ fun SearchScreen(
                         Icon(
                             imageVector = if (showFilters) Icons.Filled.FilterAlt else Icons.Outlined.FilterAlt,
                             contentDescription = "",
-                            tint = MaterialTheme.colorScheme.onBackground
+                            tint = CustomColorScheme.icon()
                         )
                     }
                 }
@@ -141,7 +140,7 @@ fun SearchScreen(
 
             //general container
             Column(
-                modifier = Modifier.background(MaterialTheme.colorScheme.tertiaryContainer)
+                modifier = Modifier.background(CustomColorScheme.backgroundDark())
             ) {
 
                 //filters
@@ -352,7 +351,7 @@ private fun Loading(modifier: Modifier = Modifier, size: Dp = 40.dp) {
     Box(modifier = modifier, contentAlignment = Alignment.Center) {
         CircularProgressIndicator(
             modifier = Modifier.size(size),
-            color = MaterialTheme.colorScheme.onBackground,
+            color = CustomColorScheme.icon(),
         )
     }
 

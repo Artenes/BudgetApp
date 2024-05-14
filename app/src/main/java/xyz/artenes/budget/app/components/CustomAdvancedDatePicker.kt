@@ -95,7 +95,7 @@ fun CustomAdvancedDatePicker(value: DateFilterItem, onChange: (DateFilter) -> Un
             Icon(
                 imageVector = Icons.Filled.CalendarMonth,
                 contentDescription = "",
-                tint = MaterialTheme.colorScheme.onBackground
+                tint = CustomColorScheme.icon()
             )
         },
         readOnly = true
@@ -252,7 +252,7 @@ private fun DateTypeItem(label: String, onClick: () -> Unit, modifier: Modifier 
         modifier = Modifier
             .fillMaxWidth()
             .then(modifier),
-        border = BorderStroke(1.dp, MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f)),
+        border = BorderStroke(1.dp, CustomColorScheme.border()),
         shape = MaterialTheme.shapes.medium,
         onClick = onClick
     ) {

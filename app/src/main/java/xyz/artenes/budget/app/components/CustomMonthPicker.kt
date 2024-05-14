@@ -26,6 +26,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
 import xyz.artenes.budget.R
+import xyz.artenes.budget.app.theme.CustomColorScheme
 import xyz.artenes.budget.core.models.DateItem
 import java.time.LocalDate
 import java.time.Month
@@ -170,7 +171,7 @@ private fun DateRow(
             val dateItem = items[index]
 
             Surface(
-                color = if (dateItem.selected) MaterialTheme.colorScheme.primary else DatePickerDefaults.colors().containerColor,
+                color = CustomColorScheme.datePickerItem(selected = dateItem.selected),
                 onClick = {
                     onClick(dateItem)
                 },

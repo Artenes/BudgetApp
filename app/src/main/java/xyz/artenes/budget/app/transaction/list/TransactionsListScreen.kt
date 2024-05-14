@@ -52,7 +52,7 @@ fun TransactionsListScreen(
 ) {
 
     val view = LocalView.current
-    val statusBarColor = MaterialTheme.colorScheme.primary
+    val statusBarColor = CustomColorScheme.statusBar()
     SideEffect {
         (view.context as Activity).window.statusBarColor = statusBarColor.toArgb()
     }
@@ -62,8 +62,7 @@ fun TransactionsListScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                colors = TopAppBarDefaults.topAppBarColors()
-                    .copy(containerColor = MaterialTheme.colorScheme.background),
+                colors = CustomColorScheme.topAppBar(),
                 title = { },
                 actions = {
                     if (transactionsDataState is DataState.Success) {
@@ -71,14 +70,14 @@ fun TransactionsListScreen(
                             Icon(
                                 imageVector = Icons.Filled.Checklist,
                                 contentDescription = "",
-                                tint = MaterialTheme.colorScheme.onBackground
+                                tint = CustomColorScheme.icon()
                             )
                         }
                         IconButton(onClick = navigateToSearchScreen) {
                             Icon(
                                 imageVector = Icons.Filled.Search,
                                 contentDescription = "Search",
-                                tint = MaterialTheme.colorScheme.onBackground
+                                tint = CustomColorScheme.icon()
                             )
                         }
                     }
@@ -98,7 +97,7 @@ fun TransactionsListScreen(
         if (transactionsDataState is DataState.Loading) {
             Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                 CircularProgressIndicator(
-                    color = MaterialTheme.colorScheme.onBackground
+                    color = CustomColorScheme.icon()
                 )
             }
             return@Scaffold
@@ -195,13 +194,13 @@ private fun Transactions(
                 ) {
                     Text(
                         modifier = Modifier.padding(end = 10.dp),
-                        color = MaterialTheme.colorScheme.onBackground,
+                        color = CustomColorScheme.textColor(),
                         text = group.date.displayValue,
                         style = MaterialTheme.typography.bodyLarge
                     )
                     if (group.date.isRelative) {
                         Text(
-                            color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.5f),
+                            color = CustomColorScheme.textColorLight(),
                             text = group.date.absolute,
                             style = MaterialTheme.typography.bodySmall
                         )

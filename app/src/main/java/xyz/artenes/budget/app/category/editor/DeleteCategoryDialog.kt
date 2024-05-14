@@ -19,6 +19,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import xyz.artenes.budget.R
+import xyz.artenes.budget.app.theme.CustomColorScheme
 import xyz.artenes.budget.data.models.CategoryEntity
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -73,7 +74,7 @@ fun DeleteCategoryDialog(
                                 modifier = Modifier
                                     .border(
                                         1.dp,
-                                        MaterialTheme.colorScheme.onBackground.copy(alpha = 0.5f),
+                                        CustomColorScheme.border(),
                                         MaterialTheme.shapes.small
                                     )
                                     .fillMaxWidth()

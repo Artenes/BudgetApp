@@ -27,6 +27,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
+import xyz.artenes.budget.app.theme.CustomColorScheme
 import xyz.artenes.budget.core.models.DateItem
 import xyz.artenes.budget.core.models.LocalDateRange
 import java.time.LocalDate
@@ -130,7 +131,7 @@ fun CustomWeekPicker(
                             val weekItem = weeks[index]
 
                             Surface(
-                                color = if (weekItem.selected) MaterialTheme.colorScheme.primary else DatePickerDefaults.colors().containerColor,
+                                color = CustomColorScheme.datePickerItem(selected = weekItem.selected),
                                 onClick = {
                                     weeks =
                                         weeks.map { item -> item.copy(selected = weekItem == item) }
@@ -235,7 +236,7 @@ private fun DateRow(
             val dateItem = items[index]
 
             Surface(
-                color = if (dateItem.selected) MaterialTheme.colorScheme.primary else DatePickerDefaults.colors().containerColor,
+                color = CustomColorScheme.datePickerItem(selected = dateItem.selected),
                 onClick = {
                     onClick(dateItem)
                 },

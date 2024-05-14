@@ -21,6 +21,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import xyz.artenes.budget.app.theme.CustomColorScheme
 import xyz.artenes.budget.core.models.TransactionItem
 
 @Composable
@@ -48,7 +49,7 @@ fun Transaction(
                         .clip(CircleShape)
                         .border(
                             1.dp,
-                            MaterialTheme.colorScheme.onBackground.copy(alpha = 0.5f),
+                            CustomColorScheme.border(),
                             CircleShape
                         ),
                     contentAlignment = Alignment.Center
@@ -59,7 +60,7 @@ fun Transaction(
                     Icon(
                         imageVector = transaction.icon,
                         contentDescription = "",
-                        tint = MaterialTheme.colorScheme.onBackground
+                        tint = CustomColorScheme.icon()
                     )
                 }
 
@@ -74,7 +75,7 @@ fun Transaction(
                         Date
                          */
                         Text(
-                            color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.5f),
+                            color = CustomColorScheme.textColorLight(),
                             text = transaction.formattedDate,
                             style = MaterialTheme.typography.labelSmall
                         )
@@ -84,7 +85,7 @@ fun Transaction(
                     Description
                      */
                     Text(
-                        color = MaterialTheme.colorScheme.onBackground,
+                        color = CustomColorScheme.textColor(),
                         text = transaction.description,
                         style = MaterialTheme.typography.titleLarge
                     )
@@ -95,7 +96,7 @@ fun Transaction(
                 Amount
                  */
                 Text(
-                    color = MaterialTheme.colorScheme.onBackground.copy(alpha = transaction.colorAlpha),
+                    color = CustomColorScheme.textColor(alpha = transaction.colorAlpha),
                     text = transaction.formattedAmount,
                     style = MaterialTheme.typography.titleLarge,
                     textAlign = TextAlign.End,
@@ -106,7 +107,7 @@ fun Transaction(
 
             HorizontalDivider(
                 thickness = 2.dp,
-                color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.2f)
+                color = CustomColorScheme.textColorExtraLight()
             )
 
         }

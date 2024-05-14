@@ -91,7 +91,7 @@ fun CustomDatePickerInput(
             Icon(
                 imageVector = Icons.Filled.CalendarMonth,
                 contentDescription = "",
-                tint = MaterialTheme.colorScheme.onBackground
+                tint = CustomColorScheme.icon()
             )
         },
         readOnly = true

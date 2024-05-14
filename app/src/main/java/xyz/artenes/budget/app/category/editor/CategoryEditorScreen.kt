@@ -34,6 +34,7 @@ import xyz.artenes.budget.app.components.ConfirmDialog
 import xyz.artenes.budget.app.components.CustomIconPickerInput
 import xyz.artenes.budget.app.components.CustomSpinner
 import xyz.artenes.budget.app.components.CustomTextField
+import xyz.artenes.budget.app.theme.CustomColorScheme
 import xyz.artenes.budget.di.FactoryLocator
 import java.util.UUID
 
@@ -112,9 +113,7 @@ fun CategoryEditorScreen(
 
             TopAppBar(
                 title = { },
-                colors = TopAppBarDefaults.topAppBarColors().copy(
-                    containerColor = MaterialTheme.colorScheme.background
-                ),
+                colors = CustomColorScheme.topAppBar(),
                 navigationIcon = {
                     IconButton(onClick = onBack) {
                         Icon(

@@ -38,6 +38,7 @@ import xyz.artenes.budget.app.components.CustomDatePickerInput
 import xyz.artenes.budget.app.components.CustomSpinner
 import xyz.artenes.budget.app.components.CustomTextField
 import xyz.artenes.budget.app.components.MoneyTextField
+import xyz.artenes.budget.app.theme.CustomColorScheme
 import xyz.artenes.budget.di.FactoryLocator
 import java.util.UUID
 
@@ -71,9 +72,7 @@ fun TransactionEditorScreen(
 
             TopAppBar(
                 title = { },
-                colors = TopAppBarDefaults.topAppBarColors().copy(
-                    containerColor = MaterialTheme.colorScheme.background
-                ),
+                colors = CustomColorScheme.topAppBar(),
                 navigationIcon = {
                     IconButton(onClick = back) {
                         Icon(

@@ -139,11 +139,11 @@ fun CustomIconPickerInput(
                             modifier = Modifier
                                 .border(
                                     1.dp,
-                                    MaterialTheme.colorScheme.onBackground,
+                                    CustomColorScheme.solidBorder(),
                                     MaterialTheme.shapes.small
                                 )
                                 .background(
-                                    if (icons[index].selected) MaterialTheme.colorScheme.primary else Color.Transparent,
+                                    CustomColorScheme.iconBackground(selected = icons[index].selected),
                                     MaterialTheme.shapes.small
                                 )
                                 .clickable {
@@ -179,7 +179,7 @@ fun CustomIconPickerInput(
                 .fillMaxWidth()
                 .border(
                     1.dp,
-                    MaterialTheme.colorScheme.onBackground.copy(alpha = 0.5f),
+                    CustomColorScheme.border(),
                     RoundedCornerShape(5.dp),
                 )
                 .clickable {
@@ -194,7 +194,7 @@ fun CustomIconPickerInput(
                 modifier = Modifier
                     .padding(vertical = 10.dp)
                     .size(50.dp),
-                tint = MaterialTheme.colorScheme.onBackground
+                tint = CustomColorScheme.icon()
             )
 
         }
@@ -204,7 +204,7 @@ fun CustomIconPickerInput(
             color = CustomColorScheme.textColor(),
             modifier = Modifier
                 .offset(y = (-8).dp, x = 20.dp)
-                .background(MaterialTheme.colorScheme.background),
+                .background(CustomColorScheme.labelBackground()),
             style = MaterialTheme.typography.bodySmall,
         )
 

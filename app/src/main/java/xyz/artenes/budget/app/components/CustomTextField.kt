@@ -3,14 +3,13 @@ package xyz.artenes.budget.app.components
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
+import xyz.artenes.budget.app.theme.CustomColorScheme
 
 @Composable
 fun CustomTextField(
@@ -39,15 +38,7 @@ fun CustomTextField(
         },
         value = value,
         onValueChange = onValueChange,
-        colors = OutlinedTextFieldDefaults.colors().copy(
-            focusedTextColor = MaterialTheme.colorScheme.onBackground,
-            focusedLabelColor = MaterialTheme.colorScheme.onBackground,
-            unfocusedLabelColor = MaterialTheme.colorScheme.onBackground,
-            unfocusedIndicatorColor = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.5f),
-            focusedIndicatorColor = MaterialTheme.colorScheme.onBackground,
-            errorIndicatorColor = MaterialTheme.colorScheme.tertiary,
-            cursorColor = MaterialTheme.colorScheme.onBackground,
-        ),
+        colors = CustomColorScheme.outlineTextField(),
         maxLines = 1,
         keyboardOptions = KeyboardOptions(
             imeAction = imeAction,

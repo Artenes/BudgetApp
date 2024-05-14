@@ -23,7 +23,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -54,8 +53,7 @@ fun CategoryListScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                colors = TopAppBarDefaults.topAppBarColors()
-                    .copy(containerColor = MaterialTheme.colorScheme.background),
+                colors = CustomColorScheme.topAppBar(),
                 title = {
                     Text(
                         text = stringResource(R.string.categories),
@@ -67,7 +65,7 @@ fun CategoryListScreen(
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = "",
-                            tint = MaterialTheme.colorScheme.onBackground
+                            tint = CustomColorScheme.icon()
                         )
                     }
                 },
@@ -130,7 +128,7 @@ fun Category(
                         .clip(CircleShape)
                         .border(
                             1.dp,
-                            MaterialTheme.colorScheme.onBackground.copy(alpha = 0.5f),
+                            CustomColorScheme.border(),
                             CircleShape
                         ),
                     contentAlignment = Alignment.Center
@@ -138,7 +136,7 @@ fun Category(
                     Icon(
                         imageVector = category.icon,
                         contentDescription = "",
-                        tint = MaterialTheme.colorScheme.onBackground
+                        tint = CustomColorScheme.icon()
                     )
                 }
 
@@ -152,7 +150,7 @@ fun Category(
                     Description
                      */
                     Text(
-                        color = MaterialTheme.colorScheme.onBackground,
+                        color = CustomColorScheme.textColor(),
                         text = category.name,
                         style = MaterialTheme.typography.titleLarge
                     )
@@ -163,7 +161,7 @@ fun Category(
                 Amount
                  */
                 Text(
-                    color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.5f),
+                    color = CustomColorScheme.textColorLight(),
                     text = category.type,
                     style = MaterialTheme.typography.titleLarge,
                     textAlign = TextAlign.End,
@@ -174,7 +172,7 @@ fun Category(
 
             HorizontalDivider(
                 thickness = 2.dp,
-                color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.2f)
+                color = CustomColorScheme.divider()
             )
 
         }
