@@ -150,7 +150,11 @@ fun CategoryEditorScreen(
         }
     ) { screen ->
 
-        Column(modifier = Modifier.padding(screen)) {
+        Column(
+            modifier = Modifier
+                .padding(screen)
+                .padding(20.dp),
+        ) {
 
             CustomTextField(
                 modifier = Modifier.padding(bottom = 10.dp),
