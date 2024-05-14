@@ -61,11 +61,16 @@ object CustomColorScheme {
     fun outlineTextField() = OutlinedTextFieldDefaults.colors().copy(
         focusedTextColor = MaterialTheme.colorScheme.onBackground,
         focusedLabelColor = MaterialTheme.colorScheme.onBackground,
+        unfocusedTextColor = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.8f),
         unfocusedLabelColor = MaterialTheme.colorScheme.onBackground,
         unfocusedIndicatorColor = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.5f),
         focusedIndicatorColor = MaterialTheme.colorScheme.onBackground,
-        errorIndicatorColor = MaterialTheme.colorScheme.tertiary,
         cursorColor = MaterialTheme.colorScheme.onBackground,
+        errorIndicatorColor = MaterialTheme.colorScheme.scrim,
+        errorLabelColor = MaterialTheme.colorScheme.scrim,
+        errorCursorColor = MaterialTheme.colorScheme.scrim,
+        focusedPlaceholderColor = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.5f),
+        unfocusedPlaceholderColor = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.5f),
     )
 
     @Composable
@@ -99,6 +104,9 @@ object CustomColorScheme {
 
     @Composable
     fun textColorExtraLight() = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.2f)
+
+    @Composable
+    fun textError() = MaterialTheme.colorScheme.scrim
 
     @Composable
     fun divider() = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.2f)

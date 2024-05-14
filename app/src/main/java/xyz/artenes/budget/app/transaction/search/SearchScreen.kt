@@ -113,7 +113,7 @@ fun SearchScreen(
                     IconButton(onClick = back) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Back",
+                            contentDescription = "",
                             tint = CustomColorScheme.icon()
                         )
                     }

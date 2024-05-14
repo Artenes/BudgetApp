@@ -7,6 +7,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 import xyz.artenes.budget.R
+import xyz.artenes.budget.app.theme.CustomColorScheme
 
 @Composable
 fun ConfirmDialog(
@@ -33,7 +34,10 @@ fun ConfirmDialog(
                     onDismiss()
                 }
             ) {
-                Text(confirmText)
+                Text(
+                    text = confirmText,
+                    color = CustomColorScheme.textColor()
+                )
             }
         },
         dismissButton = if (onConfirm != null) {
@@ -41,7 +45,10 @@ fun ConfirmDialog(
                 OutlinedButton(
                     onClick = onDismiss
                 ) {
-                    Text(stringResource(R.string.cancel))
+                    Text(
+                        text = stringResource(R.string.cancel),
+                        color = CustomColorScheme.textColor()
+                    )
                 }
             }
         } else null

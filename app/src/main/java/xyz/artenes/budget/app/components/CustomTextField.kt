@@ -32,7 +32,12 @@ fun CustomTextField(
         },
         isError = errorMessage != null,
         supportingText = if (errorMessage != null) {
-            { Text(text = errorMessage) }
+            {
+                Text(
+                    text = errorMessage,
+                    color = CustomColorScheme.textError()
+                )
+            }
         } else {
             null
         },

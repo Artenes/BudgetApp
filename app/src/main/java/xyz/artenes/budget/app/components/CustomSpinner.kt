@@ -10,9 +10,7 @@ import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -67,7 +65,10 @@ fun <T> CustomSpinner(
             },
             isError = error != null,
             supportingText = resolveSupportText {
-                Text(text = error!!)
+                Text(
+                    text = error!!,
+                    color = CustomColorScheme.textError()
+                )
             },
             colors = CustomColorScheme.outlineTextField()
         )
@@ -80,7 +81,12 @@ fun <T> CustomSpinner(
         ) {
             options.forEach {
                 DropdownMenuItem(
-                    text = { Text(text = it.label) },
+                    text = {
+                        Text(
+                            text = it.label,
+                            color = CustomColorScheme.textColor()
+                        )
+                    },
                     onClick = {
                         onOptionSelected(it)
                         expanded = false

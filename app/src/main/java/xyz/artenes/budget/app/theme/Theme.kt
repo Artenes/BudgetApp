@@ -16,24 +16,44 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.ViewCompat
 
+val primaryDark = Color(0XFFC2185B)
+val secondaryDark = Color(0xFF009688)
+val tertiaryDark = Color(0XFF512DA8)
+val white = Color(0XFFFFFFFF)
+val darkGray = Color(0xFF424040)
+val tertiaryContainerDark = Color(0xFF9E1048)
+
+val primaryDarker = Color(0xFF63092C)
+val tertiaryDarker = Color(0xFF381886)
+val tertiaryContainerDarker = Color(0xFF47041E)
+val lightGray = Color(0XFF757575)
+
 private val DarkColorScheme = darkColorScheme(
-    primary = Color(0XFFC2185B),
-    secondary = Color(0xFF009688),
-    tertiary = Color(0XFF512DA8),
-    background = Color(0XFFC2185B),
-    onBackground = Color(0XFFFFFFFF),
-    secondaryContainer = Color(0XFFFFFFFF),
-    onSecondaryContainer = Color(0XFF757575),
-    onTertiary = Color(0XFFFFFFFF),
-    scrim = Color(0XFF757575),
-    tertiaryContainer = Color(0xFF9E1048)
+    primary = primaryDarker,
+    secondary = secondaryDark,
+    tertiary = tertiaryDarker,
+    background = primaryDarker,
+    onBackground = white,
+    secondaryContainer = white,
+    onSecondaryContainer = lightGray,
+    onTertiary = white,
+    scrim = lightGray,
+    primaryContainer = tertiaryDarker,
+    tertiaryContainer = tertiaryContainerDarker
 )
 
 private val LightColorScheme = lightColorScheme(
-    primary = Color(0XFFE91E63),
-    secondary = Color(0xFF009688),
-    tertiary = Color(0xFF673AB7),
-    background = Color(0XFFE91E63),
+    primary = primaryDark,
+    secondary = secondaryDark,
+    tertiary = tertiaryDark,
+    background = primaryDark,
+    onBackground = white,
+    secondaryContainer = white,
+    onSecondaryContainer = lightGray,
+    onTertiary = white,
+    scrim = darkGray,
+    primaryContainer = tertiaryDark,
+    tertiaryContainer = tertiaryContainerDark
 )
 
 @Composable
