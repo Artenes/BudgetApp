@@ -49,7 +49,6 @@ android {
         getByName("debug") {
             applicationIdSuffix = ".debug"
             versionNameSuffix = "-debug"
-            resValue("string", "app_name", "Budget App (Debug)")
         }
         getByName("release") {
             isMinifyEnabled = false
