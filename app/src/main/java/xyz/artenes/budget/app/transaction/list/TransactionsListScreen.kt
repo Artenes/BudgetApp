@@ -23,7 +23,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.collectAsState
@@ -32,13 +31,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalView
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import xyz.artenes.budget.app.transaction.Transaction
+import xyz.artenes.budget.R
 import xyz.artenes.budget.app.theme.CustomColorScheme
-import xyz.artenes.budget.core.models.TransactionsData
+import xyz.artenes.budget.app.transaction.Transaction
 import xyz.artenes.budget.core.models.DataState
+import xyz.artenes.budget.core.models.TransactionsData
 import java.util.UUID
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -112,13 +113,13 @@ fun TransactionsListScreen(
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 Text(
-                    text = "No transactions",
+                    text = stringResource(R.string.no_transactions),
                     color = CustomColorScheme.textColor(),
                     style = MaterialTheme.typography.titleLarge,
                     modifier = Modifier.padding(bottom = 10.dp)
                 )
                 Text(
-                    text = "Tap the '+' button to add your first expense",
+                    text = stringResource(R.string.tap_the_button_to_add_your_first_expense),
                     color = CustomColorScheme.textColor(),
                     style = MaterialTheme.typography.bodySmall
                 )
@@ -155,7 +156,10 @@ private fun Transactions(
             ) {
 
                 Text(
-                    text = "You've spent this month (${data.formattedCurrentMonth})",
+                    text = stringResource(
+                        R.string.you_ve_spent_this_month,
+                        data.formattedCurrentMonth
+                    ),
                     color = CustomColorScheme.textColor(),
                     style = MaterialTheme.typography.labelSmall
                 )
@@ -166,13 +170,13 @@ private fun Transactions(
                     modifier = Modifier.padding(bottom = 30.dp)
                 )
                 Text(
-                    text = "Earned: ${data.formattedTotalIncome}",
+                    text = stringResource(R.string.earned, data.formattedTotalIncome),
                     color = CustomColorScheme.textColor().copy(alpha = 0.9f),
                     style = MaterialTheme.typography.titleSmall,
                     modifier = Modifier.padding(bottom = 10.dp)
                 )
                 Text(
-                    text = "Balance: ${data.formattedBalance}",
+                    text = stringResource(id = R.string.balance_with_value, data.formattedBalance),
                     color = CustomColorScheme.textColor().copy(alpha = 0.6f),
                     style = MaterialTheme.typography.titleSmall
                 )

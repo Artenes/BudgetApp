@@ -19,7 +19,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusEvent
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.res.stringResource
 import xyz.artenes.budget.app.theme.CustomColorScheme
+import xyz.artenes.budget.R
 import java.time.Instant
 import java.time.LocalDate
 import java.time.LocalTime
@@ -64,7 +66,7 @@ fun CustomDatePickerInput(
                     },
                 ) {
                     Text(
-                        text = "Select date",
+                        text = stringResource(id = R.string.select_date),
                         color = CustomColorScheme.textColor()
                     )
                 }

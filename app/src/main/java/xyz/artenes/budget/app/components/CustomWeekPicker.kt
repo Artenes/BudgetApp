@@ -24,9 +24,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
+import xyz.artenes.budget.R
 import xyz.artenes.budget.app.theme.CustomColorScheme
 import xyz.artenes.budget.core.models.DateItem
 import xyz.artenes.budget.core.models.LocalDateRange
@@ -165,7 +167,7 @@ fun CustomWeekPicker(
                             .padding(top = 20.dp),
                         enabled = weeks.find { it.selected } != null
                     ) {
-                        Text(text = "Select week")
+                        Text(text = stringResource(R.string.select_week))
                     }
 
                 }

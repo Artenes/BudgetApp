@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Aplicativo de Orçamento</string>
+
+    <string name="today">Hoje</string>
+    <string name="yesterday">Ontem</string>
+
+    <string name="day">Dia</string>
+    <string name="week">Semana</string>
+    <string name="month">Mês</string>
+    <string name="year">Ano</string>
+    <string name="custom_range">Intervalo Personalizado</string>
+
+    <!-- CATEGORIAS -->
+    <string name="category_transportation">Transporte</string>
+    <string name="category_health">Saúde</string>
+    <string name="category_groceries">Mercado</string>
+    <string name="category_education">Educação</string>
+    <string name="category_home">Casa</string>
+    <string name="category_others">Outros</string>
+    <string name="category_paycheck">Salário</string>
+
+    <string name="filter_by_day">Selecionar dia</string>
+    <string name="filter_by_week">Selecionar semana</string>
+    <string name="filter_by_month">Selecionar mês</string>
+    <string name="filter_by_year">Selecionar ano</string>
+    <string name="filter_by_custom_range">Selecionar intervalo personalizado</string>
+    <string name="filter_by_type">Filtrar por tipo</string>
+    <string name="filter_by_date">Filtrar por data</string>
+    <string name="filter_by_category">Filtrar por categoria</string>
+    <string name="select_month">Selecionar mês</string>
+    <string name="select_year">Selecionar ano</string>
+    <string name="select_range">Selecionar intervalo</string>
+    <string name="select_date">Selecionar data</string>
+    <string name="select">Selecionar</string>
+    <string name="transactions_count">%d transações</string>
+
+    <string name="expense">Despesa</string>
+    <string name="income">Renda</string>
+    <string name="all">Todos</string>
+
+    <string name="sort_date_asc">Por data (do mais antigo ao mais recente)</string>
+    <string name="sort_date_desc">Por data (do mais recente ao mais antigo)</string>
+    <string name="sort_name_asc">Por nome</string>
+    <string name="sort_name_desc">Por nome (inverso)</string>
+    <string name="sort_value_desc">Por valor (do maior para o menor)</string>
+    <string name="sort_value_asc">Por valor (do menor para o maior)</string>
+    <string name="sort_by">Ordenar por</string>
+    <string name="expenses">Despesas</string>
+    <string name="search_by_name">Buscar por nome</string>
+    <string name="balance">Saldo</string>
+    <string name="balance_with_value">Saldo: %s</string>
+    <string name="type">Tipo</string>
+    <string name="description">Descrição</string>
+    <string name="amount">Valor</string>
+    <string name="category">Categoria</string>
+    <string name="date">Data</string>
+    <string name="confirm">Confirmar</string>
+    <string name="cancel">Cancelar</string>
+    <string name="categories">Categorias</string>
+    <string name="name">Nome</string>
+    <string name="icon">Ícone</string>
+    <string name="category_deleted">Categoria foi excluída</string>
+
+    <string name="required">Obrigatório</string>
+    <string name="delete_category">Excluir categoria?</string>
+    <string name="this_category_will_be_deleted_and_can_t_be_restored">Esta categoria será excluída e não poderá ser restaurada</string>
+    <string name="before_deleting_category">Antes de excluir esta categoria, você precisa escolher uma nova para ser vinculada a qualquer transação associada a esta categoria</string>
+    <string name="you_can_t_delete_this_category">Você não pode excluir esta categoria</string>
+    <string name="create_new_categories">Crie novas categorias deste tipo antes de excluir esta</string>
+    <string name="ok">Ok</string>
+    <string name="select_a_new_category">Selecionar uma nova categoria</string>
+    <string name="no_transactions">Nenhuma transação</string>
+    <string name="tap_the_button_to_add_your_first_expense">Toque no botão \'+\' para adicionar sua primeira despesa</string>
+    <string name="you_ve_spent_this_month">Você gastou este mês (%s)</string>
+    <string name="earned">Ganho: %s</string>
+    <string name="select_week">Selecionar semana</string>
+
+</resources>
