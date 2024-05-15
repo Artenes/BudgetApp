@@ -9,10 +9,12 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.launch
 import xyz.artenes.budget.R
+import xyz.artenes.budget.app.presenter.DatePresenter
 import xyz.artenes.budget.app.presenter.LabelPresenter
 import xyz.artenes.budget.app.presenter.MoneyPresenter
 import xyz.artenes.budget.core.Messages
 import xyz.artenes.budget.core.models.Event
+import xyz.artenes.budget.core.models.FormattedValue
 import xyz.artenes.budget.core.models.Money
 import xyz.artenes.budget.core.models.SelectableItem
 import xyz.artenes.budget.core.models.TransactionType
@@ -26,11 +28,12 @@ import java.util.UUID
 import javax.inject.Inject
 import javax.inject.Singleton
 
-class TransactionEditorViewModel @Inject constructor(
+class TransactionEditorViewModel(
     private val id: UUID?,
     private val repository: AppRepository,
-    private val labelPresenter: LabelPresenter,
+    labelPresenter: LabelPresenter,
     private val moneyPresenter: MoneyPresenter,
+    private val datePresenter: DatePresenter,
     private val messages: Messages
 ) :
     ViewModel() {
@@ -43,8 +46,13 @@ class TransactionEditorViewModel @Inject constructor(
     private val _amount = MutableStateFlow(ValueWithError(""))
     val amount: StateFlow<ValueWithError<String>> = _amount
 
-    private val _date = MutableStateFlow(LocalDate.now())
-    val date: StateFlow<LocalDate> = _date
+    private val _date = MutableStateFlow(
+        FormattedValue<LocalDate>(
+            LocalDate.now(),
+            datePresenter.formatDate(LocalDate.now())
+        )
+    )
+    val date: StateFlow<FormattedValue<LocalDate>> = _date
 
     private val _types = MutableStateFlow(
         listOf(
@@ -125,7 +133,7 @@ class TransactionEditorViewModel @Inject constructor(
     }
 
     fun setDate(value: LocalDate) {
-        _date.value = value
+        _date.value = FormattedValue(value, datePresenter.formatDate(value))
     }
 
     fun delete() {
@@ -165,9 +173,9 @@ class TransactionEditorViewModel @Inject constructor(
                     id ?: UUID.randomUUID(),
                     description.value,
                     parsedAmount,
-                    _date.value,
+                    _date.value.original,
                     type.value,
-                    category!!.id,
+                    category.id,
                     createdAt ?: OffsetDateTime.now()
                 )
             )
@@ -199,6 +207,7 @@ class TransactionEditorFactory @Inject constructor(
     private val repository: AppRepository,
     private val labelPresenter: LabelPresenter,
     private val moneyPresenter: MoneyPresenter,
+    private val datePresenter: DatePresenter,
     private val androidMessages: Messages
 ) {
 
@@ -212,6 +221,7 @@ class TransactionEditorFactory @Inject constructor(
                     repository,
                     labelPresenter,
                     moneyPresenter,
+                    datePresenter,
                     androidMessages
                 ) as T
             }

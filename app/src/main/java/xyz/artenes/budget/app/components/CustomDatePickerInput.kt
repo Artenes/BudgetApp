@@ -20,23 +20,21 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusEvent
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
-import xyz.artenes.budget.app.theme.CustomColorScheme
 import xyz.artenes.budget.R
+import xyz.artenes.budget.app.theme.CustomColorScheme
+import xyz.artenes.budget.core.models.FormattedValue
 import java.time.Instant
 import java.time.LocalDate
 import java.time.LocalTime
 import java.time.OffsetDateTime
 import java.time.ZoneId
 import java.time.ZoneOffset
-import java.time.format.DateTimeFormatter
-
-private val dateFormat = DateTimeFormatter.ISO_DATE
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CustomDatePickerInput(
     label: String,
-    value: LocalDate,
+    value: FormattedValue<LocalDate>,
     onDateSelected: (LocalDate) -> Unit
 ) {
 
@@ -46,7 +44,11 @@ fun CustomDatePickerInput(
     }
 
     val datePickerState = rememberDatePickerState(
-        initialSelectedDateMillis = OffsetDateTime.of(value, LocalTime.now(), ZoneOffset.UTC)
+        initialSelectedDateMillis = OffsetDateTime.of(
+            value.original,
+            LocalTime.now(),
+            ZoneOffset.UTC
+        )
             .toInstant().toEpochMilli()
     )
 
@@ -77,7 +79,7 @@ fun CustomDatePickerInput(
     }
 
     OutlinedTextField(
-        value = value.format(dateFormat),
+        value = value.formatted,
         onValueChange = { },
         modifier = Modifier
             .fillMaxWidth()
