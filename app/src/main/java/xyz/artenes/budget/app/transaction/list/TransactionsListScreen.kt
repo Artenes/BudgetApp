@@ -147,6 +147,7 @@ private fun Transactions(
     data: TransactionsData,
     navigateToTransaction: (UUID) -> Unit,
 ) {
+
     LazyColumn {
 
         item {
