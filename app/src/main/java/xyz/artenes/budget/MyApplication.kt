@@ -18,7 +18,12 @@ package xyz.artenes.budget
 
 import android.app.Application
 import dagger.hilt.android.HiltAndroidApp
+import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import timber.log.Timber
+import xyz.artenes.budget.analytics.CrashAnalytics
+import xyz.artenes.budget.analytics.ProductionTree
 import xyz.artenes.budget.di.FactoryLocator
 import xyz.artenes.budget.di.FactoryLocatorMapping
 import javax.inject.Inject
@@ -29,11 +34,31 @@ class MyApplication : Application() {
     @Inject
     lateinit var mapping: FactoryLocatorMapping
 
+    @Inject
+    lateinit var crashAnalytics: CrashAnalytics
+
+    @Inject
+    lateinit var productionTree: ProductionTree
+
     override fun onCreate() {
         super.onCreate()
-        val tree = if (BuildConfig.DEBUG) Timber.DebugTree() else ProductionTree()
-        Timber.plant(tree)
         FactoryLocator.instance = mapping
+        setupLogging()
+        setupCrashAnalytics()
+    }
+
+    private fun setupLogging() {
+        val tree = if (BuildConfig.DEBUG) Timber.DebugTree() else productionTree
+        Timber.plant(tree)
+    }
+
+    @OptIn(DelicateCoroutinesApi::class)
+    private fun setupCrashAnalytics() {
+        crashAnalytics.setKey("testKeyA", "banana")
+        crashAnalytics.setKey("testKeyB", "apple")
+        GlobalScope.launch {
+            crashAnalytics.setIdentifier(crashAnalytics.getId())
+        }
     }
 
 }

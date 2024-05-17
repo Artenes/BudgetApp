@@ -8,6 +8,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import xyz.artenes.budget.R
 import xyz.artenes.budget.app.presenter.DatePresenter
 import xyz.artenes.budget.app.presenter.LabelPresenter
@@ -153,17 +154,20 @@ class TransactionEditorViewModel(
 
         if (description.value.isEmpty()) {
             _description.value = description.copy(error = messages.get(R.string.required))
+            Timber.w("User trying to save a transaction with empty description")
             return
         }
 
         if (parsedAmount.value == 0) {
             _amount.value = amount.copy(error = messages.get(R.string.required))
+            Timber.w("User trying to save a transaction with empty amount")
             return
         }
 
         if (category == null) {
             _categories.value =
                 _categories.value.copy(error = messages.get(R.string.required))
+            Timber.e("Category was not selected")
             return
         }
 

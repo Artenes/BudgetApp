@@ -20,6 +20,9 @@ ksp = "1.9.22-1.0.17"
 desugar = "2.0.3"
 faker = "1.0.2"
 datastore = "1.1.0"
+googleServices = "4.4.1"
+googleFirebase = "33.0.0"
+googleFirebaseCrashlytics = "3.0.1"
 
 [libraries]
 androidx-core-ktx = { module = "androidx.core:core-ktx", version.ref = "androidxCore" }
@@ -39,6 +42,9 @@ timber = { group = "com.jakewharton.timber", name = "timber", version.ref = "tim
 icons-extended = { group = "androidx.compose.material", name = "material-icons-extended"}
 faker = { group = "com.github.javafaker", name = "javafaker", version.ref= "faker" }
 datastore = { group = "androidx.datastore", name = "datastore-preferences", version.ref = "datastore" }
+google-firebase = { group = "com.google.firebase", name = "firebase-bom", version.ref = "googleFirebase" }
+google-firebase-crashlytics = { group = "com.google.firebase", name = "firebase-crashlytics" }
+google-firebase-analytics = { group = "com.google.firebase", name = "firebase-analytics" }
 
 # modules
 androidx-hilt-navigation-compose = { module = "androidx.hilt:hilt-navigation-compose", version.ref = "androidxHilt" }
@@ -67,3 +73,5 @@ kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-kapt = { id = "org.jetbrains.kotlin.kapt", version.ref = "kotlin" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp"}
 hilt-gradle = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
+google-services ={ id = "com.google.gms.google-services", version.ref = "googleServices" }
+google-services-crashlytics ={ id = "com.google.firebase.crashlytics", version.ref = "googleFirebaseCrashlytics" }

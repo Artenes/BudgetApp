@@ -11,6 +11,8 @@ plugins {
     alias(libs.plugins.kotlin.kapt)
     alias(libs.plugins.hilt.gradle)
     alias(libs.plugins.ksp)
+    alias(libs.plugins.google.services)
+    alias(libs.plugins.google.services.crashlytics)
 }
 
 android {
@@ -136,6 +138,10 @@ dependencies {
 
     implementation(libs.faker)
     implementation(libs.datastore)
+
+    implementation(platform(libs.google.firebase))
+    implementation(libs.google.firebase.analytics)
+    implementation(libs.google.firebase.crashlytics)
 
     // Tooling
     debugImplementation(libs.androidx.compose.ui.tooling)
