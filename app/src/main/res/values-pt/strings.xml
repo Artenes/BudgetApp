@@ -76,4 +76,10 @@
     <string name="earned">Ganho: %s</string>
     <string name="select_week">Selecionar semana</string>
 
+    <string name="version">Versão %s</string>
+    <string name="user_id">ID de usuário %s</string>
+    <string name="made_by">Feito por Artenes Nogueira</string>
+    <string name="default_email_subject">Quero falar sobre o %s</string>
+    <string name="no_email_app_found">Nenhum aplicativo de email encontrado</string>
+
 </resources>

@@ -9,6 +9,7 @@ import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.SolidColor
 
 object CustomColorScheme {
@@ -98,6 +99,9 @@ object CustomColorScheme {
 
     @Composable
     fun textColor(alpha: Float = 1F) = MaterialTheme.colorScheme.onBackground.copy(alpha = alpha)
+
+    @Composable
+    fun image() = ColorFilter.tint(MaterialTheme.colorScheme.onBackground)
 
     @Composable
     fun textColorLight() = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.5f)

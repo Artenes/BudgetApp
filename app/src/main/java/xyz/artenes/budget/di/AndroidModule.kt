@@ -9,8 +9,10 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import xyz.artenes.budget.android.AndroidApplications
 import xyz.artenes.budget.android.AndroidMessages
 import xyz.artenes.budget.android.AndroidUserPreferences
+import xyz.artenes.budget.core.Applications
 import xyz.artenes.budget.core.Messages
 import xyz.artenes.budget.core.UserPreferences
 import javax.inject.Singleton
@@ -31,6 +33,12 @@ class AndroidModule {
     @Singleton
     fun providesMessages(@ApplicationContext context: Context): Messages {
         return AndroidMessages(context)
+    }
+
+    @Provides
+    @Singleton
+    fun providesApplications(@ApplicationContext context: Context): Applications {
+        return AndroidApplications(context)
     }
 
     @Provides

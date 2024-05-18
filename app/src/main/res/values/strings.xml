@@ -75,4 +75,11 @@
     <string name="earned">Earned: %s</string>
     <string name="select_week">Select week</string>
 
+    <string name="version">Version %s</string>
+    <string name="user_id">User id %s</string>
+    <string name="made_by">Made by Artenes Nogueira</string>
+    <string name="dev_email" translatable="false">artenes.dev@gmail.com</string>
+    <string name="default_email_subject">I want to talk about %s</string>
+    <string name="no_email_app_found">No email app found</string>
+
 </resources>

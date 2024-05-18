@@ -25,6 +25,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import xyz.artenes.budget.app.category.editor.CategoryEditorScreen
 import xyz.artenes.budget.app.category.list.CategoryListScreen
+import xyz.artenes.budget.app.info.InfoScreen
 import xyz.artenes.budget.app.transaction.editor.TransactionEditorScreen
 import xyz.artenes.budget.app.transaction.list.TransactionsListScreen
 import xyz.artenes.budget.app.transaction.search.SearchScreen
@@ -49,6 +50,9 @@ fun MainNavigation() {
                 },
                 navigateToCategories = {
                     navController.navigate("categories")
+                },
+                navigateToInfoScreen = {
+                    navController.navigate("info")
                 }
             )
         }
@@ -151,6 +155,16 @@ fun MainNavigation() {
             CategoryEditorScreen(
                 id = id,
                 onBack = {
+                    navController.popBackStack()
+                }
+            )
+
+        }
+
+        composable("info") {
+
+            InfoScreen(
+                navigateBack = {
                     navController.popBackStack()
                 }
             )

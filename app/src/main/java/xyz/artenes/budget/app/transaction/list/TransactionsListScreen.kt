@@ -14,6 +14,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Checklist
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
@@ -49,6 +50,7 @@ fun TransactionsListScreen(
     navigateToSearchScreen: () -> Unit,
     navigateToTransaction: (UUID) -> Unit,
     navigateToCategories: () -> Unit,
+    navigateToInfoScreen: () -> Unit,
     viewModel: TransactionsListViewModel = hiltViewModel()
 ) {
 
@@ -83,6 +85,17 @@ fun TransactionsListScreen(
                         }
                     }
                 },
+                navigationIcon = {
+                    if (transactionsDataState is DataState.Success) {
+                        IconButton(onClick = navigateToInfoScreen) {
+                            Icon(
+                                imageVector = Icons.Outlined.Info,
+                                contentDescription = "",
+                                tint = CustomColorScheme.icon()
+                            )
+                        }
+                    }
+                }
             )
         },
         floatingActionButton = {
