@@ -22,6 +22,10 @@ class CrashAnalytics @Inject constructor() {
         Firebase.crashlytics.setCustomKey(key, value)
     }
 
+    /**
+     * Log error for next crash report.
+     * This will be send only next time a crash, ANR or non-fatal error happens
+     */
     fun logError(error: String) {
         Firebase.crashlytics.log(error)
     }

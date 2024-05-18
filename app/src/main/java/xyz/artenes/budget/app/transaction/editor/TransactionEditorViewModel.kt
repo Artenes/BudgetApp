@@ -154,20 +154,17 @@ class TransactionEditorViewModel(
 
         if (description.value.isEmpty()) {
             _description.value = description.copy(error = messages.get(R.string.required))
-            Timber.w("User trying to save a transaction with empty description")
             return
         }
 
         if (parsedAmount.value == 0) {
             _amount.value = amount.copy(error = messages.get(R.string.required))
-            Timber.w("User trying to save a transaction with empty amount")
             return
         }
 
         if (category == null) {
             _categories.value =
                 _categories.value.copy(error = messages.get(R.string.required))
-            Timber.e("Category was not selected")
             return
         }
 
