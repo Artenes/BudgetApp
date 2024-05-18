@@ -82,4 +82,6 @@
     <string name="default_email_subject">I want to talk about %s</string>
     <string name="no_email_app_found">No email app found</string>
 
+    <string name="no_transactions_found">No transactions found</string>
+
 </resources>

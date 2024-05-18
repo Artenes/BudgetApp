@@ -27,7 +27,6 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
@@ -49,10 +48,10 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import xyz.artenes.budget.R
 import xyz.artenes.budget.app.components.CustomAdvancedDatePicker
 import xyz.artenes.budget.app.components.CustomSpinner
-import xyz.artenes.budget.app.transaction.Transaction
 import xyz.artenes.budget.app.theme.CustomColorScheme
-import xyz.artenes.budget.core.models.SearchResultsData
+import xyz.artenes.budget.app.transaction.Transaction
 import xyz.artenes.budget.core.models.DataState
+import xyz.artenes.budget.core.models.SearchResultsData
 import java.util.UUID
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -322,6 +321,19 @@ private fun TransactionList(
     }
 
     val transactions = dataState.data.transactions
+
+    if (transactions.isEmpty()) {
+        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+
+            Text(
+                text = stringResource(id = R.string.no_transactions_found),
+                color = CustomColorScheme.textColor(),
+                style = MaterialTheme.typography.bodyMedium
+            )
+
+        }
+        return
+    }
 
     LazyColumn(
         modifier = Modifier.fillMaxWidth(),

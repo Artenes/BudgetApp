@@ -170,13 +170,16 @@ fun CategoryEditorScreen(
                 )
             )
 
-            CustomSpinner(
-                label = stringResource(R.string.type),
-                options = types,
-                onOptionSelected = { item ->
-                    viewModel.setType(item.value)
-                }
-            )
+            //type
+            if (id == null) {
+                CustomSpinner(
+                    label = stringResource(R.string.type),
+                    options = types,
+                    onOptionSelected = { item ->
+                        viewModel.setType(item.value)
+                    }
+                )
+            }
 
             CustomIconPickerInput(
                 modifier = Modifier.padding(top = 20.dp),
