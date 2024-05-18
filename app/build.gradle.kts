@@ -159,3 +159,22 @@ dependencies {
     androidTestImplementation(libs.androidx.test.ext.junit)
     androidTestImplementation(libs.androidx.test.runner)
 }
+
+tasks.register("checkGoogleServicesJson") {
+    doLast {
+        val debugFile = file("${projectDir}/src/debug/google-services.json")
+        val releaseFile = file("${projectDir}/src/release/google-services.json")
+
+        if (!debugFile.exists()) {
+            throw GradleException("Missing google-services.json file in src/debug")
+        }
+
+        if (!releaseFile.exists()) {
+            throw GradleException("Missing google-services.json file in src/release")
+        }
+    }
+}
+
+tasks.named("preBuild").configure {
+    dependsOn(tasks.named("checkGoogleServicesJson"))
+}
