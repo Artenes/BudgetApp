@@ -39,11 +39,7 @@ class TransactionsListViewModel @Inject constructor(
 
             emit(DataState.Loading)
 
-            if (BuildConfig.LOAD_DATA) {
-                seeder.seedTest()
-            } else {
-                seeder.seed()
-            }
+            seeder.seed()
 
             val now = LocalDate.now()
             emitAll(repository.getGroupsByMonth(now).map { groups ->

@@ -174,6 +174,13 @@ class AppRepository @Inject constructor(
         }
     }
 
+    suspend fun clearDatabase() {
+        withContext(dispatcher) {
+            appDatabase.transactionsDao().deleteAll()
+            appDatabase.categoryDao().deleteAll()
+        }
+    }
+
     suspend fun softDeleteCategoryById(id: UUID) {
         withContext(dispatcher) {
             val category = appDatabase.categoryDao().getCategoryById(id)

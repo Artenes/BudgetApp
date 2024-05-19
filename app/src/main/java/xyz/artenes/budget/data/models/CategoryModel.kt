@@ -71,4 +71,7 @@ interface CategoryDao {
     @Query("UPDATE transactions SET category_id = :newCategory WHERE category_id = :oldCategory")
     suspend fun replaceCategoryInTransactions(oldCategory: UUID, newCategory: UUID)
 
+    @Query("DELETE FROM categories")
+    suspend fun deleteAll()
+
 }

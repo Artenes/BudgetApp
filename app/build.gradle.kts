@@ -39,12 +39,24 @@ android {
             useSupportLibrary = true
         }
 
-        buildConfigField("Boolean", "LOAD_DATA", secrets["loadData"] as String)
-
         // Enable room auto-migrations
         ksp {
             arg("room.schemaLocation", "$projectDir/schemas")
         }
+    }
+
+    flavorDimensions.add("app")
+
+    productFlavors {
+
+        create("production") {
+            dimension = "app"
+        }
+
+        create("development") {
+            dimension = "app"
+        }
+
     }
 
     buildTypes {
