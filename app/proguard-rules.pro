@@ -19,3 +19,7 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
+
+#<module-name>/build/outputs/mapping/<build-type>
+-keepattributes LineNumberTable,SourceFile
+-renamesourcefileattribute SourceFile
