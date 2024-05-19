@@ -1,4 +1,5 @@
 import java.util.Properties
+import com.google.gms.googleservices.GoogleServicesTask
 
 val secrets = Properties().apply {
     load(rootProject.file("secrets.properties").inputStream())
@@ -65,7 +66,7 @@ android {
             versionNameSuffix = "-debug"
         }
         getByName("release") {
-            isMinifyEnabled = false
+            isMinifyEnabled = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
@@ -193,4 +194,10 @@ tasks.register<DefaultTask>("checkGoogleServicesJson") {
 
 tasks.named("preBuild").configure {
     dependsOn(tasks.named("checkGoogleServicesJson"))
+}
+
+project.afterEvaluate {
+    tasks.withType<GoogleServicesTask> {
+        gmpAppId.set(project.buildDir.resolve("$name-gmpAppId.txt"))
+    }
 }
