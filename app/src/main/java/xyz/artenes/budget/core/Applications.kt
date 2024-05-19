@@ -6,4 +6,6 @@ interface Applications {
 
     fun sendEmailTo(email: String, subject: String, message: String = ""): FunctionResult<Nothing>
 
+    fun openBudgetApp()
+
 }

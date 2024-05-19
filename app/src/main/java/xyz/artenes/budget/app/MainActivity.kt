@@ -18,8 +18,10 @@ package xyz.artenes.budget.app
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.compose.setContent
 import dagger.hilt.android.AndroidEntryPoint
+import xyz.artenes.budget.BuildConfig
 import xyz.artenes.budget.app.theme.MyApplicationTheme
 
 @AndroidEntryPoint
@@ -34,5 +36,17 @@ class MainActivity : ComponentActivity() {
 
             }
         }
+
+        @Suppress("KotlinConstantConditions")
+        if (BuildConfig.FLAVOR != "production") {
+            onBackPressedDispatcher.addCallback(backPressHandler)
+        }
     }
+
+    private val backPressHandler = object : OnBackPressedCallback(true) {
+        override fun handleOnBackPressed() {
+            finishAffinity()
+        }
+    }
+
 }

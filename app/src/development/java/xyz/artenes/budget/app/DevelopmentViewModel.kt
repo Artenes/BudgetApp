@@ -6,6 +6,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import xyz.artenes.budget.core.Applications
 import xyz.artenes.budget.core.models.Event
 import xyz.artenes.budget.data.AppRepository
 import xyz.artenes.budget.data.DatabaseSeeder
@@ -14,7 +15,8 @@ import javax.inject.Inject
 @HiltViewModel
 class DevelopmentViewModel @Inject constructor(
     private val repository: AppRepository,
-    private val seeder: DatabaseSeeder
+    private val seeder: DatabaseSeeder,
+    private val applications: Applications
 ) : ViewModel() {
 
     private val _showSnackBar = MutableStateFlow(Event())
@@ -42,6 +44,10 @@ class DevelopmentViewModel @Inject constructor(
             _insertFakeDataButtonState.value = true
             _showSnackBar.value = Event("Done")
         }
+    }
+
+    fun openBudgetApp() {
+        applications.openBudgetApp()
     }
 
 }

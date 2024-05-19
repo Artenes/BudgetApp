@@ -64,6 +64,14 @@ fun DevelopmentScreen(
                 Text(text = "Insert fake data")
             }
 
+            Button(
+                modifier = Modifier.fillMaxWidth().padding(top = 20.dp),
+                onClick = { viewModel.openBudgetApp() },
+                enabled = insertFakeDataButtonState
+            ) {
+                Text(text = "Open Budget App")
+            }
+
         }
 
     }

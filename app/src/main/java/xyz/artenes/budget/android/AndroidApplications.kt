@@ -5,6 +5,7 @@ import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import xyz.artenes.budget.app.MainActivity
 import xyz.artenes.budget.core.Applications
 import xyz.artenes.budget.core.models.FunctionResult
 
@@ -30,6 +31,12 @@ class AndroidApplications(private val context: Context) : Applications {
         } catch (exception: ActivityNotFoundException) {
             FunctionResult.Error(exception)
         }
+    }
+
+    override fun openBudgetApp() {
+        val intent = Intent(context, MainActivity::class.java)
+        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+        context.startActivity(intent)
     }
 
 }
