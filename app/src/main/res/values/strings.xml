@@ -62,6 +62,7 @@
     <string name="category_deleted">Category was deleted</string>
 
     <string name="required">Required</string>
+    <string name="invalid_value">Invalid value</string>
     <string name="delete_category">Delete category?</string>
     <string name="this_category_will_be_deleted_and_can_t_be_restored">This category will be deleted and can\'t be restored</string>
     <string name="before_deleting_category">Before deleting this category you need to choose a new one to be linked to any transaction associated with this category</string>

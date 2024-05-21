@@ -8,7 +8,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.launch
-import timber.log.Timber
 import xyz.artenes.budget.R
 import xyz.artenes.budget.app.presenter.DatePresenter
 import xyz.artenes.budget.app.presenter.LabelPresenter
@@ -16,6 +15,7 @@ import xyz.artenes.budget.app.presenter.MoneyPresenter
 import xyz.artenes.budget.core.Messages
 import xyz.artenes.budget.core.models.Event
 import xyz.artenes.budget.core.models.FormattedValue
+import xyz.artenes.budget.core.models.FunctionResult
 import xyz.artenes.budget.core.models.Money
 import xyz.artenes.budget.core.models.SelectableItem
 import xyz.artenes.budget.core.models.TransactionType
@@ -109,8 +109,24 @@ class TransactionEditorViewModel(
     }
 
     fun setAmount(value: String) {
-        val newFormattedValue = moneyPresenter.formatFromString(value)
-        _amount.value = ValueWithError(newFormattedValue)
+        val result = moneyPresenter.formatFromString(value)
+
+        if (result is FunctionResult.Error) {
+
+            if (result.exception is MoneyPresenter.NumberTooBigException) {
+                val safeValue = result.exception.rawValue.substring(0, 9)
+                val formattedValue = (moneyPresenter.formatFromString(safeValue) as FunctionResult.Success).data
+                _amount.value = ValueWithError(formattedValue)
+                return
+            }
+
+            val formattedValue = (moneyPresenter.formatFromString("0") as FunctionResult.Success).data
+            _amount.value = ValueWithError(formattedValue, messages.get(R.string.invalid_value))
+            return
+        }
+
+        val formattedValue = (result as FunctionResult.Success).data
+        _amount.value = ValueWithError(formattedValue)
     }
 
     private fun setAmount(value: Money) {
@@ -149,7 +165,7 @@ class TransactionEditorViewModel(
         val description = _description.value
         val amount = _amount.value
         val category = categories.value.value.firstOrNull { it.selected }?.value
-        val parsedAmount = moneyPresenter.parse(amount.value)
+        val parsedResult = moneyPresenter.parse(amount.value)
         val type = _types.value.first { it.selected }
 
         if (description.value.isEmpty()) {
@@ -157,7 +173,12 @@ class TransactionEditorViewModel(
             return
         }
 
-        if (parsedAmount.value == 0) {
+        if (parsedResult is FunctionResult.Error) {
+            _amount.value = amount.copy(error = messages.get(R.string.invalid_value))
+            return
+        }
+
+        if ((parsedResult as FunctionResult.Success).data.value == 0) {
             _amount.value = amount.copy(error = messages.get(R.string.required))
             return
         }
@@ -173,7 +194,7 @@ class TransactionEditorViewModel(
                 TransactionEntity(
                     id ?: UUID.randomUUID(),
                     description.value,
-                    parsedAmount,
+                    parsedResult.data,
                     _date.value.original,
                     type.value,
                     category.id,

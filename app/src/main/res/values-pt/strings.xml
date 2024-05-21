@@ -83,5 +83,6 @@
     <string name="no_email_app_found">Nenhum aplicativo de email encontrado</string>
 
     <string name="no_transactions_found">Nenhuma transação encontrada</string>
+    <string name="invalid_value">Valor inválido</string>
 
 </resources>
