@@ -1,5 +1,6 @@
 import java.util.Properties
 import com.google.gms.googleservices.GoogleServicesTask
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.archivesName
 
 val secrets = Properties().apply {
     load(rootProject.file("secrets.properties").inputStream())
@@ -34,7 +35,7 @@ android {
         targetSdk = 34
         versionCode = 2
         versionName = "1.0.1"
-
+        archivesName = "budget_app_v${versionName}_c$versionCode"
         testInstrumentationRunner = "xyz.artenes.budget.HiltTestRunner"
         vectorDrawables {
             useSupportLibrary = true
